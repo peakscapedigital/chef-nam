@@ -1,0 +1,226 @@
+---
+import Button from '../ui/Button.astro';
+
+export interface Props {
+  logoUrl?: string;
+  logoAlt?: string;
+}
+
+const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
+---
+
+<header class="bg-brand-indigo shadow-sm">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center py-4">
+      <!-- Logo -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center">
+          {logoUrl ? (
+            <img 
+              src={logoUrl}
+              alt={logoAlt}
+              class="h-12 md:h-16 w-auto object-contain"
+              loading="eager"
+            />
+          ) : (
+            <span class="text-3xl font-serif font-bold text-white">
+              Chef Nam Catering
+            </span>
+          )}
+        </a>
+      </div>
+      
+      <!-- Navigation -->
+      <nav class="hidden md:flex space-x-8">
+        <!-- Services Dropdown -->
+        <div class="relative group">
+          <div class="flex items-center">
+            <a href="/services" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">
+              Catering Services
+            </a>
+            <button class="ml-1 text-white hover:text-brand-amber transition-colors" aria-label="Toggle catering services menu">
+              <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+          
+          <!-- Dropdown Menu -->
+          <div class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="py-2">
+              <a href="/services/corporate" class="block px-4 py-2 font-serif text-brand-indigo hover:bg-brand-cream/50 hover:text-brand-amber transition-colors">Corporate Events</a>
+              <a href="/services/weddings" class="block px-4 py-2 font-serif text-brand-indigo hover:bg-brand-cream/50 hover:text-brand-amber transition-colors">Weddings</a>
+              <a href="/services/social" class="block px-4 py-2 font-serif text-brand-indigo hover:bg-brand-cream/50 hover:text-brand-amber transition-colors">Social Events</a>
+            </div>
+          </div>
+        </div>
+        
+        <a href="/menus" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Menus</a>
+        <a href="/venues" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Venues</a>
+        <a href="/about" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">About</a>
+        <a href="/blog" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Blog</a>
+      </nav>
+      
+      <!-- CTA Button -->
+      <div class="hidden md:block">
+        <Button href="/start-planning" variant="primary">
+          Start Planning
+        </Button>
+      </div>
+      
+      <!-- Mobile menu button -->
+      <button id="mobile-menu-button" class="md:hidden p-2 text-white" aria-label="Open menu">
+        <svg id="menu-icon" class="w-6 h-6 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+        <svg id="close-icon" class="w-6 h-6 hidden transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Overlay -->
+  <div id="mobile-menu" class="fixed inset-0 z-[100] md:hidden hidden">
+    <!-- Backdrop -->
+    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" id="mobile-menu-backdrop"></div>
+    
+    <!-- Menu Panel -->
+    <div class="fixed top-0 right-0 h-full w-80 max-w-full bg-brand-indigo shadow-xl transition-transform duration-300 ease-in-out translate-x-full" id="mobile-menu-panel">
+      <div class="flex flex-col h-full">
+        <!-- Header -->
+        <div class="flex items-center justify-between p-4 border-b border-white/10">
+          <span class="text-xl font-serif font-bold text-white">Menu</span>
+          <button id="mobile-menu-close" class="p-2 text-white" aria-label="Close menu">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
+        </div>
+        
+        <!-- Navigation Links -->
+        <nav class="flex-1 px-4 py-6 space-y-6">
+          <!-- Services -->
+          <div>
+            <button class="flex items-center justify-between w-full text-left text-white font-serif text-lg" id="mobile-services-toggle">
+              <span>Catering Services</span>
+              <svg class="w-5 h-5 transition-transform" id="mobile-services-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div class="mt-3 ml-4 space-y-3 hidden" id="mobile-services-menu">
+              <a href="/services/corporate" class="block text-white/80 hover:text-brand-amber transition-colors">Corporate Events</a>
+              <a href="/services/weddings" class="block text-white/80 hover:text-brand-amber transition-colors">Weddings</a>
+              <a href="/services/social" class="block text-white/80 hover:text-brand-amber transition-colors">Social Events</a>
+            </div>
+          </div>
+          
+          <a href="/menus" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Menus</a>
+          <a href="/venues" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Venues</a>
+          <a href="/about" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">About</a>
+          <a href="/blog" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Blog</a>
+          
+          <!-- CTA Button -->
+          <div class="pt-6">
+            <a href="/start-planning" class="block w-full text-center bg-brand-amber text-white font-semibold py-3 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors">
+              Start Planning
+            </a>
+          </div>
+        </nav>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Mobile Menu JavaScript -->
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const mobileMenuPanel = document.getElementById('mobile-menu-panel');
+    const mobileMenuClose = document.getElementById('mobile-menu-close');
+    const mobileMenuBackdrop = document.getElementById('mobile-menu-backdrop');
+    const menuIcon = document.getElementById('menu-icon');
+    const closeIcon = document.getElementById('close-icon');
+    const servicesToggle = document.getElementById('mobile-services-toggle');
+    const servicesMenu = document.getElementById('mobile-services-menu');
+    const servicesArrow = document.getElementById('mobile-services-arrow');
+
+    function openMenu() {
+      if (!mobileMenu || !mobileMenuPanel) return;
+      
+      mobileMenu.classList.remove('hidden');
+      // Force reflow to ensure the transition works
+      void mobileMenuPanel.offsetWidth;
+      // Use classList instead of direct style manipulation
+      mobileMenuPanel.classList.remove('translate-x-full');
+      mobileMenuPanel.classList.add('translate-x-0');
+      
+      if (menuIcon) menuIcon.classList.add('hidden');
+      if (closeIcon) closeIcon.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeMenu() {
+      if (!mobileMenu || !mobileMenuPanel) return;
+      
+      mobileMenuPanel.classList.remove('translate-x-0');
+      mobileMenuPanel.classList.add('translate-x-full');
+      
+      setTimeout(() => {
+        mobileMenu.classList.add('hidden');
+        if (menuIcon) menuIcon.classList.remove('hidden');
+        if (closeIcon) closeIcon.classList.add('hidden');
+        document.body.style.overflow = '';
+      }, 300);
+    }
+
+    function toggleServices() {
+      const isOpen = !servicesMenu.classList.contains('hidden');
+      if (isOpen) {
+        servicesMenu.classList.add('hidden');
+        servicesArrow.style.transform = 'rotate(0deg)';
+      } else {
+        servicesMenu.classList.remove('hidden');
+        servicesArrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
+    // Event listeners - check if elements exist before adding listeners
+    if (mobileMenuButton) {
+      mobileMenuButton.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openMenu();
+      });
+    }
+    
+    if (mobileMenuClose) {
+      mobileMenuClose.addEventListener('click', function(e) {
+        e.preventDefault();
+        closeMenu();
+      });
+    }
+    
+    if (mobileMenuBackdrop) {
+      mobileMenuBackdrop.addEventListener('click', closeMenu);
+    }
+    
+    if (servicesToggle) {
+      servicesToggle.addEventListener('click', toggleServices);
+    }
+
+    // Close menu when clicking on navigation links
+    const navLinks = mobileMenu.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', closeMenu);
+    });
+
+    // Close menu on escape key
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+        closeMenu();
+      }
+    });
+  });
+</script>

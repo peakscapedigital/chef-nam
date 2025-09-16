@@ -1,0 +1,71 @@
+---
+export interface Props {
+  chefImage?: string;
+  headline?: string;
+  description?: string;
+  credentials?: string[];
+}
+
+const {
+  chefImage,
+  headline,
+  description,
+  credentials
+} = Astro.props;
+
+// Use defaults if Sanity fields are empty/null
+const finalHeadline = headline || "Rooted in Flavor.<br><span class='text-brand-amber'>Driven By Heart.</span>";
+const finalDescription = description || "Chef Nam believes that the best events start with good food — and good food starts with heart. After years of working in professional kitchens and sharing meals with loved ones, she launched Chef Nam Catering to bring that same sense of care, connection, and celebration to every event.";
+const finalCredentials = credentials && credentials.length > 0 ? credentials : [
+  "15+ Years Professional Experience", 
+  "Ann Arbor Local Business",
+  "Global Culinary Training",
+  "5-Star Customer Rating"
+];
+---
+
+<section class="py-20 bg-brand-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div>
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6" set:html={finalHeadline}>
+        </h2>
+        <div class="prose prose-lg text-brand-indigo/80 leading-relaxed mb-8">
+          <p class="mb-6">
+            {finalDescription}
+          </p>
+          <p>
+            Based in Ann Arbor, Chef Nam blends her deep appreciation for global flavors with a love for 
+            thoughtful hospitality. From elegant weddings to corporate lunches, her team crafts menus and 
+            experiences that make people feel seen, celebrated, and well-fed.
+          </p>
+        </div>
+        
+        
+        <a 
+          href="/about" 
+          class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors"
+        >
+          Learn More About Chef Nam
+          <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+          </svg>
+        </a>
+      </div>
+      <div class="relative">
+        {chefImage ? (
+          <img 
+            src={chefImage} 
+            alt="Chef Nam" 
+            class="w-full h-[450px] lg:h-[450px] rounded-2xl object-cover shadow-lg"
+            loading="lazy"
+          />
+        ) : (
+          <div class="w-full h-[500px] lg:h-[600px] bg-brand-cream rounded-2xl flex items-center justify-center shadow-lg">
+            <span class="text-brand-indigo/40 text-lg">Chef Nam Photo</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+</section>

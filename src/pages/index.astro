@@ -1,0 +1,245 @@
+---
+import Layout from '../layouts/Layout.astro';
+import HeroSection from '../components/sections/HeroSection.astro';
+import BrandValuesSection from '../components/sections/BrandValuesSection.astro';
+import ServicesOverviewSection from '../components/sections/ServicesOverviewSection.astro';
+import AboutPreviewSection from '../components/sections/AboutPreviewSection.astro';
+import TestimonialsSection from '../components/sections/TestimonialsSection.astro';
+import GalleryPreviewSection from '../components/sections/GalleryPreviewSection.astro';
+import BlogPreviewSection from '../components/sections/BlogPreviewSection.astro';
+import CTASection from '../components/sections/CTASection.astro';
+import ContactSection from '../components/sections/ContactSection.astro';
+import { getPosts, getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
+
+// Fetch dynamic content from Sanity with fallback for performance
+let homepage = null;
+let recentPosts = null;
+
+// Fetch dynamic content from Sanity
+try {
+  [homepage, recentPosts] = await Promise.all([getHomepage(), getPosts(3)]);
+} catch (error) {
+  console.error('Error fetching Sanity content:', error.message);
+  // Use fallback content if Sanity is unavailable
+  homepage = null;
+  recentPosts = null;
+}
+
+// Transform posts to match component interface with fallback images
+const fallbackImages = [
+  "https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=384&q=60",
+  "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=384&q=60",
+  "https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&auto=format&fit=crop&w=384&q=60"
+];
+
+const posts = recentPosts?.map((post, index) => ({
+  title: post.title,
+  excerpt: post.excerpt,
+  category: post.categories?.[0] || 'Blog',
+  date: post.publishedAt,
+  slug: post.slug?.current,
+  featuredImage: post.featuredImage ? 
+    urlForOptimized(post.featuredImage.asset, 384, 256).url() : 
+    fallbackImages[index % fallbackImages.length]
+})) || [];
+
+// Prepare hero props with fallback to static image
+const heroProps = homepage?.hero ? {
+  headline: homepage.hero.headline,
+  subheading: homepage.hero.subheading,
+  primaryCTA: homepage.hero.primaryCTA || 'Start Planning',
+  secondaryCTA: homepage.hero.secondaryCTA || 'View Services',
+  backgroundImage: homepage.hero.backgroundImage ? 
+    urlForOptimized(homepage.hero.backgroundImage.asset, 1920, 1080).url() : 
+    '/images/hero/hero-catering-800.jpg' // Fallback to mobile-optimized image
+} : {
+  // Static fallbacks for when Sanity is unavailable
+  headline: "Catering With Care\nFor Moments That Matter",
+  subheading: "Elevating your special moments with exquisite cuisine and impeccable service throughout Ann Arbor and Michigan.",
+  primaryCTA: 'Start Planning',
+  secondaryCTA: 'View Services',
+  backgroundImage: '/images/hero/hero-catering-800.jpg'
+};
+
+// Prepare about props from Sanity
+const aboutProps = homepage?.about ? {
+  headline: homepage.about.headline,
+  description: homepage.about.description,
+  chefImage: homepage.about.chefImage ? 
+    urlForOptimized(homepage.about.chefImage.asset, 380, 380).url() : 
+    undefined,
+  credentials: homepage.about.credentials
+} : {};
+---
+
+<Layout 
+  title="Chef Nam Catering | Ann Arbor Weddings, Corporate & Social"
+  description="Ann Arbor's trusted catering team for weddings, corporate events, and social gatherings. Chef Nam blends flavor, style, and exceptional service for every occasion."
+>
+  <!-- Main Business Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": ["Caterer", "Organization"],
+      "@id": "https://chefnamcatering.com/#caterer",
+      "name": "Chef Nam Catering",
+      "alternateName": "Chef Nam",
+      "description": "Premier catering service in Ann Arbor, Michigan specializing in Thai fusion cuisine for weddings, corporate events, and social gatherings. Professional catering with authentic flavors and exceptional service.",
+      "url": "https://chefnamcatering.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://chefnamcatering.com/logo.png",
+        "width": 512,
+        "height": 512
+      },
+      "image": [
+        "https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+      ],
+      "telephone": "+1-734-623-9799",
+      "hasMap": "https://maps.app.goo.gl/myS6TpT33dQj8C1p6",
+      "email": "nam@chefnamcatering.com",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Ann Arbor",
+        "addressRegion": "MI",
+        "addressCountry": "US",
+        "postalCode": "48104"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 42.2808,
+        "longitude": -83.7430
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "servesCuisine": [
+        "Thai",
+        "Asian Fusion",
+        "American",
+        "Contemporary"
+      ],
+      "priceRange": "$$-$$$",
+      "currenciesAccepted": "USD",
+      "paymentAccepted": ["Cash", "Credit Card", "Check", "Invoice"],
+      "openingHours": "Mo-Fr 09:00-18:00",
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Catering Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Wedding Catering",
+              "description": "Full-service wedding catering with customized menus"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Corporate Catering",
+              "description": "Professional business catering for meetings and events"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Social Event Catering",
+              "description": "Catering for parties, celebrations, and social gatherings"
+            }
+          }
+        ]
+      },
+      "owns": [
+        {
+          "@type": "Service",
+          "@id": "https://chefnamcatering.com/services/weddings#weddingservice"
+        },
+        {
+          "@type": "Service", 
+          "@id": "https://chefnamcatering.com/services/corporate#corporateservice"
+        },
+        {
+          "@type": "Service",
+          "@id": "https://chefnamcatering.com/services/social#socialservice"
+        }
+      ],
+      "sameAs": [
+        "https://www.facebook.com/chefnamcatering",
+        "https://www.instagram.com/chefnamcatering"
+      ],
+      "foundingDate": "2020",
+      "founder": {
+        "@type": "Person",
+        "name": "Nam",
+        "jobTitle": "Chef and Owner"
+      },
+      "slogan": "Authentic Thai Fusion Catering in Ann Arbor",
+      "knowsAbout": [
+        "Thai Cuisine",
+        "Catering",
+        "Event Planning",
+        "Wedding Catering",
+        "Corporate Events"
+      ]
+    }
+  </script>
+
+  <!-- Website Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "@id": "https://chefnamcatering.com/#website",
+      "url": "https://chefnamcatering.com",
+      "name": "Chef Nam Catering",
+      "description": "Professional catering services in Ann Arbor, Michigan for weddings, corporate events, and social gatherings.",
+      "publisher": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#caterer"
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://chefnamcatering.com/search?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      }
+    }
+  </script>
+
+  <!-- BreadcrumbList for Homepage -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://chefnamcatering.com/"
+        }
+      ]
+    }
+  </script>
+  <main>
+    <HeroSection {...heroProps} height="compact" />
+    <AboutPreviewSection {...aboutProps} />
+    <BrandValuesSection />
+    <ServicesOverviewSection />
+    <TestimonialsSection testimonials={homepage?.testimonials} />
+    <GalleryPreviewSection images={homepage?.gallery} />
+    <BlogPreviewSection posts={posts.length > 0 ? posts : undefined} />
+    <CTASection />
+  </main>
+</Layout>

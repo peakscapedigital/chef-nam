@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&family=Caveat:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@layer base {
+  html {
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  /* Ensure body has proper background - Off White from brand guidelines */
+  body {
+    background-color: #FFFEFA; /* Off White - primary background */
+    color: #2C3E50; /* Deep Indigo Blue - primary text */
+  }
+}
+
+@layer components {
+  /* Beautiful button hover effects */
+  .btn-hover-lift {
+    @apply transform transition-all duration-200 hover:scale-105 hover:shadow-lg;
+  }
+  
+  /* Gradient overlays for images */
+  .img-overlay {
+    @apply relative overflow-hidden;
+  }
+  
+  .img-overlay::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-300;
+  }
+  
+  .img-overlay:hover::after {
+    @apply opacity-100;
+  }
+}
+
+@layer utilities {
+  /* Text gradients */
+  .text-gradient {
+    background: linear-gradient(135deg, #2C3E50 0%, #F39C12 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  /* Beautiful shadows */
+  .shadow-brand {
+    box-shadow: 0 10px 25px -3px rgba(44, 62, 80, 0.1), 0 4px 6px -2px rgba(44, 62, 80, 0.05);
+  }
+  
+  .shadow-brand-lg {
+    box-shadow: 0 20px 25px -5px rgba(44, 62, 80, 0.1), 0 10px 10px -5px rgba(44, 62, 80, 0.04);
+  }
+}

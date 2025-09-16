@@ -1,0 +1,356 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Services Component Testing - Chef Nam Catering"
+  description="Testing different service component styles with various layouts and animations"
+>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <main>
+    <!-- Hero -->
+    <section class="pt-32 pb-16 bg-gradient-to-r from-brand-amber to-brand-amber/80">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-serif font-bold text-white mb-6">
+          Services Component Testing
+        </h1>
+        <p class="text-xl text-white/90">
+          Exploring different service card layouts, tabs, and presentation styles
+        </p>
+      </div>
+    </section>
+
+    <!-- Service Style 1: Tabbed Services (from test-design) -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Style 1: Tabbed Service Cards
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Interactive tabs with image cards and hover effects
+          </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex justify-center mb-12">
+          <div class="inline-flex bg-gradient-to-r from-brand-cream/50 to-white/50 rounded-full p-1 shadow-inner">
+            <button class="tab-btn-style1 active px-8 py-3 rounded-full bg-brand-amber text-white font-semibold transition-all duration-300" data-tab="social">
+              Social Events
+            </button>
+            <button class="tab-btn-style1 px-8 py-3 rounded-full text-brand-indigo font-semibold hover:bg-white/70 transition-all duration-300" data-tab="corporate">
+              Corporate
+            </button>
+            <button class="tab-btn-style1 px-8 py-3 rounded-full text-brand-indigo font-semibold hover:bg-white/70 transition-all duration-300" data-tab="weddings">
+              Weddings
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Content -->
+        <div id="social-tab-content" class="tab-content-style1">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { title: 'Birthday Celebrations', image: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=800', desc: 'Make your special day memorable' },
+              { title: 'Family Reunions', image: 'https://images.unsplash.com/photo-1511795409834-ef04bbd61622?w=800', desc: 'Bring everyone together' },
+              { title: 'Graduation Parties', image: 'https://images.unsplash.com/photo-1627556704302-624286467c65?w=800', desc: 'Celebrate achievements' }
+            ].map((service, index) => (
+              <div class="service-card-animated" style={`animation-delay: ${index * 100}ms`}>
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+                  <div class="relative h-48 overflow-hidden">
+                    <img src={service.image} alt={service.title} class="w-full h-full object-cover transform hover:scale-110 transition-transform duration-700" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-brand-indigo/60 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-500"></div>
+                  </div>
+                  <div class="p-6">
+                    <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">{service.title}</h3>
+                    <p class="text-brand-indigo/70 mb-4">{service.desc}</p>
+                    <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80">
+                      Learn More →
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Style 2: Hover Cards with Icons -->
+    <section class="py-20 bg-gradient-to-br from-brand-cream to-white relative overflow-hidden">
+      <!-- Background Pattern -->
+      <div class="absolute inset-0 opacity-5">
+        <div class="absolute inset-0" style="background-image: radial-gradient(circle at 30% 50%, #F39C12 0%, transparent 50%), radial-gradient(circle at 70% 80%, #2C3E50 0%, transparent 50%)"></div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Style 2: Icon Cards with 3D Hover
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Service cards with icons and 3D transform effects
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            { icon: 'mdi:silverware-fork-knife', title: 'Full Service', color: 'from-brand-amber to-orange-400' },
+            { icon: 'mdi:truck-delivery', title: 'Drop-off Catering', color: 'from-brand-indigo to-blue-600' },
+            { icon: 'mdi:chef-hat', title: 'Private Chef', color: 'from-purple-500 to-pink-500' },
+            { icon: 'mdi:party-popper', title: 'Event Planning', color: 'from-green-500 to-teal-500' }
+          ].map((service, index) => (
+            <div 
+              class="service-card-3d group"
+              style={`animation: fadeInUp 0.6s ease-out ${index * 100}ms both`}
+            >
+              <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:rotateY-5 hover:-translate-y-2">
+                <div class={`w-20 h-20 bg-gradient-to-br ${service.color} rounded-2xl flex items-center justify-center mb-6 mx-auto transform group-hover:rotate-6 transition-transform duration-500`}>
+                  <Icon name={service.icon} class="w-10 h-10 text-white" />
+                </div>
+                <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3 text-center">{service.title}</h3>
+                <p class="text-brand-indigo/70 text-center text-sm">
+                  Professional service tailored to your specific needs and preferences.
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Style 3: Timeline/Process Cards -->
+    <section class="py-20 bg-brand-indigo relative">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-white mb-6">
+            Style 3: Service Process Timeline
+          </h2>
+          <p class="text-xl text-white/80">
+            Step-by-step service flow with connecting lines
+          </p>
+        </div>
+
+        <div class="relative">
+          <!-- Connecting Line -->
+          <div class="hidden lg:block absolute top-1/2 left-0 right-0 h-1 bg-brand-amber/30 transform -translate-y-1/2"></div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            {[
+              { step: '01', title: 'Consultation', desc: 'Discuss your vision', icon: 'mdi:message-text' },
+              { step: '02', title: 'Menu Design', desc: 'Create custom menu', icon: 'mdi:clipboard-text' },
+              { step: '03', title: 'Preparation', desc: 'Fresh ingredients', icon: 'mdi:chef-hat' },
+              { step: '04', title: 'Execution', desc: 'Flawless service', icon: 'mdi:check-circle' }
+            ].map((step, index) => (
+              <div class="relative" style={`animation: slideInUp 0.6s ease-out ${index * 200}ms both`}>
+                <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-6 text-center hover:bg-white/20 transition-all duration-500 group">
+                  <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4 relative z-10 group-hover:scale-110 transition-transform">
+                    <Icon name={step.icon} class="w-8 h-8 text-white" />
+                  </div>
+                  <div class="text-brand-amber font-bold text-2xl mb-2">{step.step}</div>
+                  <h3 class="text-white font-semibold text-lg mb-2">{step.title}</h3>
+                  <p class="text-white/70 text-sm">{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Style 4: Bento Grid -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Style 4: Bento Grid Layout
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Modern asymmetric grid with varied card sizes
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <!-- Large Featured Card -->
+          <div class="md:col-span-2 lg:col-span-2 md:row-span-2 group">
+            <div class="h-full bg-gradient-to-br from-brand-amber to-brand-amber/80 rounded-3xl p-8 text-white relative overflow-hidden">
+              <div class="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32"></div>
+              <div class="relative z-10">
+                <Icon name="mdi:crown" class="w-12 h-12 mb-4" />
+                <h3 class="text-2xl font-serif font-bold mb-4">Premium Weddings</h3>
+                <p class="text-white/90 mb-6">
+                  Full-service wedding catering with personalized menus, professional staff, and flawless execution for your special day.
+                </p>
+                <a href="#" class="inline-flex items-center bg-white text-brand-amber px-6 py-3 rounded-full font-semibold hover:bg-white/90 transition-colors">
+                  Explore Packages
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Small Cards -->
+          <div class="group">
+            <div class="h-full bg-brand-cream rounded-3xl p-6 hover:shadow-xl transition-all duration-500">
+              <Icon name="mdi:office-building" class="w-8 h-8 text-brand-amber mb-3" />
+              <h3 class="text-lg font-semibold text-brand-indigo mb-2">Corporate</h3>
+              <p class="text-brand-indigo/70 text-sm">Professional business catering</p>
+            </div>
+          </div>
+
+          <div class="group">
+            <div class="h-full bg-brand-indigo text-white rounded-3xl p-6 hover:shadow-xl transition-all duration-500">
+              <Icon name="mdi:party-popper" class="w-8 h-8 text-brand-amber mb-3" />
+              <h3 class="text-lg font-semibold mb-2">Social Events</h3>
+              <p class="text-white/80 text-sm">Birthdays, reunions & more</p>
+            </div>
+          </div>
+
+          <!-- Wide Card -->
+          <div class="md:col-span-2 group">
+            <div class="h-full bg-white border-2 border-brand-indigo/10 rounded-3xl p-6 hover:border-brand-amber/50 hover:shadow-xl transition-all duration-500">
+              <div class="flex items-center space-x-6">
+                <div class="w-16 h-16 bg-brand-amber/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Icon name="mdi:truck-fast" class="w-8 h-8 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold text-brand-indigo mb-2">Express Catering</h3>
+                  <p class="text-brand-indigo/70 text-sm">Quick turnaround for last-minute events with same quality</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Style 5: Sliding Cards Carousel -->
+    <section class="py-20 bg-gradient-to-r from-brand-cream to-white overflow-hidden">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Style 5: Horizontal Scroll Cards
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Swipeable service cards with smooth scrolling
+          </p>
+        </div>
+
+        <div class="relative">
+          <!-- Navigation Buttons -->
+          <button class="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center">
+            <Icon name="mdi:chevron-left" class="w-6 h-6 text-brand-indigo" />
+          </button>
+          <button class="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 w-12 h-12 bg-white shadow-lg rounded-full flex items-center justify-center">
+            <Icon name="mdi:chevron-right" class="w-6 h-6 text-brand-indigo" />
+          </button>
+
+          <!-- Scrollable Container -->
+          <div class="overflow-x-auto scrollbar-hide">
+            <div class="flex space-x-6 pb-4">
+              {[
+                { title: 'Wedding Package', price: 'From $2,500', features: ['Full service', 'Custom menu', 'Staff included'] },
+                { title: 'Corporate Lunch', price: 'From $500', features: ['Buffet setup', 'Professional', 'Quick service'] },
+                { title: 'Social Gathering', price: 'From $800', features: ['Family style', 'Flexible menu', 'Casual service'] },
+                { title: 'Holiday Party', price: 'From $1,200', features: ['Festive menu', 'Decorations', 'Bar service'] },
+                { title: 'Private Chef', price: 'From $600', features: ['Intimate dining', 'Personalized', 'Premium ingredients'] }
+              ].map((service, index) => (
+                <div class="flex-shrink-0 w-80">
+                  <div class="bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all duration-500">
+                    <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-2">{service.title}</h3>
+                    <p class="text-3xl font-bold text-brand-amber mb-6">{service.price}</p>
+                    <ul class="space-y-3 mb-6">
+                      {service.features.map(feature => (
+                        <li class="flex items-center text-brand-indigo/70">
+                          <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-2" />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                    <button class="w-full bg-brand-indigo text-white py-3 rounded-lg font-semibold hover:bg-brand-indigo/90 transition-colors">
+                      Get Quote
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <style>
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideInUp {
+      from {
+        opacity: 0;
+        transform: translateY(50px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .service-card-animated {
+      animation: fadeInUp 0.6s ease-out both;
+    }
+
+    /* 3D Transform */
+    .service-card-3d {
+      transform-style: preserve-3d;
+      perspective: 1000px;
+    }
+
+    /* Hide scrollbar */
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Tab transitions */
+    .tab-content-style1 {
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+
+  <script>
+    // Tab functionality for Style 1
+    document.addEventListener('DOMContentLoaded', () => {
+      const tabBtns = document.querySelectorAll('.tab-btn-style1');
+      
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Update button states
+          tabBtns.forEach(b => {
+            b.classList.remove('bg-brand-amber', 'text-white', 'active');
+            b.classList.add('text-brand-indigo');
+          });
+          btn.classList.add('bg-brand-amber', 'text-white', 'active');
+          btn.classList.remove('text-brand-indigo');
+        });
+      });
+    });
+  </script>
+</Layout>

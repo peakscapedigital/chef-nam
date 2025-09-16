@@ -1,0 +1,47 @@
+---
+export interface Props {
+  headline?: string;
+  subheading?: string;
+  buttonText?: string;
+  buttonLink?: string;
+  backgroundImage?: string;
+}
+
+const {
+  headline = "Plan Your Perfect Event",
+  subheading = "Get in touch today to discuss your catering needs and receive a personalized quote.",
+  buttonText = "Start Planning",
+  buttonLink = "/start-planning",
+  backgroundImage = "/images/cta-background.jpg"
+} = Astro.props;
+---
+
+<section class="relative py-24 md:py-32 overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <img 
+      src={backgroundImage} 
+      alt="Delicious Thai fusion dishes from Chef Nam Catering" 
+      class="w-full h-full object-cover"
+      loading="lazy"
+    />
+    <!-- Indigo gradient overlay matching hero section -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+  </div>
+  
+  <!-- Content -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
+      {headline}
+    </h2>
+    <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
+      {subheading}
+    </p>
+    <a 
+      href={buttonLink}
+      class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold text-lg rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg"
+    >
+      {buttonText}
+    </a>
+  </div>
+</section>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="200" height="180" viewBox="0 0 200 180">
+  <!-- Main circular emblem -->
+  <circle cx="100" cy="70" r="45" fill="#2C3E50" stroke="#1a252f" stroke-width="2"/>
+  
+  <!-- Figure in center -->
+  <ellipse cx="100" cy="55" rx="8" ry="12" fill="#ECF0F1"/>
+  
+  <!-- Wheat/grain design -->
+  <path d="M75 70 Q85 65 95 70 Q105 65 115 70 Q125 65 135 70" stroke="#ECF0F1" stroke-width="2" fill="none"/>
+  <path d="M70 80 Q80 75 90 80 Q100 75 110 80 Q120 75 130 80" stroke="#ECF0F1" stroke-width="2" fill="none"/>
+  
+  <!-- Decorative elements -->
+  <path d="M60 45 Q70 40 80 50 Q85 55 75 65 Q65 60 60 45" fill="#ECF0F1"/>
+  <path d="M140 45 Q130 40 120 50 Q115 55 125 65 Q135 60 140 45" fill="#ECF0F1"/>
+  
+  <!-- Horn-like curves -->
+  <path d="M45 25 Q55 15 70 25 Q75 30 65 40" stroke="#2C3E50" stroke-width="4" fill="none"/>
+  <path d="M155 25 Q145 15 130 25 Q125 30 135 40" stroke="#2C3E50" stroke-width="4" fill="none"/>
+  
+  <!-- Banner with text -->
+  <path d="M30 130 L170 130 Q175 135 170 140 L30 140 Q25 135 30 130" fill="#2C3E50"/>
+  
+  <!-- TANTRE FARM text -->
+  <text x="100" y="137" font-family="serif" font-size="12" font-weight="bold" fill="#ECF0F1" text-anchor="middle">TANTRE FARM</text>
+</svg>

@@ -1,0 +1,85 @@
+---
+import { Image } from 'astro:assets';
+import Button from '../ui/Button.astro';
+
+export interface Props {
+  headline?: string;
+  subheading?: string;
+  primaryCTA?: string;
+  secondaryCTA?: string;
+  backgroundImage?: string;
+  height?: 'full' | 'compact';
+}
+
+const {
+  headline,
+  subheading,
+  backgroundImage = "/images/hero/hero-catering-800.jpg", // Default to mobile-first image
+  height = 'full'
+} = Astro.props;
+
+// Create responsive srcset for local hero images - prioritize smaller sizes
+const heroSrcset = [
+  "/images/hero/hero-catering-800.jpg 800w",
+  "/images/hero/hero-catering-1200.jpg 1200w"
+].join(", ");
+
+const heroSizes = "(max-width: 768px) 800px, 1200px";
+
+// Determine height classes based on prop
+const heightClasses = height === 'compact' 
+  ? 'min-h-[80vh] md:min-h-[85vh]' 
+  : 'min-h-screen';
+---
+
+<section class={`relative ${heightClasses} flex items-center justify-center overflow-hidden`}>
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <!-- Optimized responsive hero image -->
+    <img 
+      src={backgroundImage} 
+      srcset={heroSrcset}
+      sizes={heroSizes}
+      alt="Chef Nam Catering - Beautiful food presentation" 
+      class="w-full h-full object-cover"
+      loading="eager"
+      fetchpriority="high"
+      width="1920"
+      height="1280"
+    />
+    <!-- Clean overlay for text readability with brand indigo tint -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+  </div>
+  
+  <!-- Content - Centered -->
+  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    {headline ? (
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-serif font-bold text-white leading-none mb-8">
+        {(() => {
+          // Split headline into lines and apply styling
+          const lines = headline.split('<br>').length > 1 ? headline.split('<br>') : headline.split('\n');
+          if (lines.length > 1) {
+            return (
+              <>
+                <span class="text-white font-serif">{lines[0]}</span><br />
+                <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">{lines.slice(1).join(' ')}</span>
+              </>
+            );
+          } else {
+            return <span class="text-white font-serif">{headline}</span>;
+          }
+        })()}
+      </h1>
+    ) : (
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-none mb-8">
+        <span class="text-white font-serif">Catering With Care</span><br>
+        <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">For Moments That Matter</span>
+      </h1>
+    )}
+    {subheading && (
+      <p class="text-xl md:text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed">
+        {subheading}
+      </p>
+    )}
+  </div>
+</section>

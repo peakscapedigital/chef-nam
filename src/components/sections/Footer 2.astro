@@ -1,0 +1,79 @@
+---
+export interface Props {
+  logoUrl?: string;
+  logoAlt?: string;
+}
+
+const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
+---
+
+<footer class="bg-brand-indigo text-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+      <!-- Brand -->
+      <div class="col-span-1">
+        {logoUrl ? (
+          <img 
+            src={logoUrl}
+            alt={logoAlt}
+            class="h-16 w-auto mb-4"
+            loading="lazy"
+          />
+        ) : (
+          <h3 class="text-2xl font-serif font-bold mb-4">Chef Nam Catering</h3>
+        )}
+        <p class="text-white/80 mb-4 max-w-xs">
+          Full service catering for weddings, corporate events, and special occasions throughout Ann Arbor and Michigan.
+        </p>
+        <div class="flex space-x-4">
+          <a href="#" class="text-white/80 hover:text-white transition-colors">
+            <span class="sr-only">Facebook</span>
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+            </svg>
+          </a>
+          <a href="#" class="text-white/80 hover:text-white transition-colors">
+            <span class="sr-only">Instagram</span>
+            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 6.621 5.367 11.988 11.988 11.988s11.987-5.367 11.987-11.988C24.004 5.367 18.637.001 12.017.001zM8.449 16.988c-2.458 0-4.467-2.01-4.467-4.468s2.009-4.467 4.467-4.467c2.459 0 4.468 2.009 4.468 4.467s-2.009 4.468-4.468 4.468zm7.519 0c-2.458 0-4.467-2.01-4.467-4.468s2.009-4.467 4.467-4.467c2.459 0 4.468 2.009 4.468 4.467s-2.009 4.468-4.468 4.468z"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Quick Links -->
+      <div>
+        <h4 class="font-semibold mb-4">Quick Links</h4>
+        <ul class="space-y-2">
+          <li><a href="/services" class="text-white/80 hover:text-white transition-colors">Services</a></li>
+          <li><a href="/gallery" class="text-white/80 hover:text-white transition-colors">Gallery</a></li>
+          <li><a href="/about" class="text-white/80 hover:text-white transition-colors">About</a></li>
+          <li><a href="/blog" class="text-white/80 hover:text-white transition-colors">Blog</a></li>
+          <li><a href="/contact" class="text-white/80 hover:text-white transition-colors">Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Contact Info -->
+      <div>
+        <h4 class="font-semibold mb-4">Contact</h4>
+        <ul class="space-y-2 text-white/80">
+          <li>Ann Arbor, Michigan</li>
+          <li>
+            <a href="tel:+1234567890" class="hover:text-white transition-colors">
+              (123) 456-7890
+            </a>
+          </li>
+          <li>
+            <a href="mailto:hello@chefnamcatering.com" class="hover:text-white transition-colors">
+              hello@chefnamcatering.com
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-white/20 mt-8 pt-8 text-center text-white/60">
+      <p>&copy; 2024 Chef Nam Catering. All rights reserved.</p>
+    </div>
+  </div>
+</footer>

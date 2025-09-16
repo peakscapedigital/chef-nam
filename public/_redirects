@@ -1,0 +1,5 @@
+# Redirect www to non-www
+https://www.chefnamcatering.com/* https://chefnamcatering.com/:splat 301!
+
+# Force redirect for all www requests
+www.chefnamcatering.com/* chefnamcatering.com/:splat 301!

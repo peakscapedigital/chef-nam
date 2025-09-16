@@ -1,0 +1,352 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Contact Us | Chef Nam Catering - Ann Arbor Michigan"
+  description="Have questions about our catering services? Contact Chef Nam Catering for general inquiries, feedback, or partnership opportunities. Serving Ann Arbor and surrounding areas."
+>
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
+          Get In Touch
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Have questions about our catering services? We're here to help you find the perfect solution for your event.
+        </p>
+      </div>
+    </section>
+
+    <!-- Main Contact Section -->
+    <section class="py-16 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Contact Form -->
+          <div class="bg-white rounded-xl shadow-xl border border-gray-100 p-8">
+            <h2 class="text-2xl font-serif font-semibold text-brand-indigo mb-6">Send Us A Message</h2>
+            <p class="text-brand-indigo/70 mb-8">We're always open to questions, feedback, and opportunities.</p>
+            
+            <form id="contact-form" action="#" method="POST" class="space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-2">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="firstName" 
+                    name="firstName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-2">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="lastName" 
+                    name="lastName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="message" class="block text-sm font-medium text-brand-indigo mb-2">How Can We Help</label>
+                <textarea 
+                  id="message" 
+                  name="message" 
+                  rows="5"
+                  placeholder="Ask about our services, share feedback, inquire about availability, or tell us about partnership opportunities..."
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit"
+                class="w-full bg-brand-amber text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors"
+              >
+                Submit
+              </button>
+              <p class="text-brand-indigo/60 text-sm text-center">
+                Response within 24 hours • Free consultation • No obligations
+              </p>
+            </form>
+          </div>
+
+          <!-- Contact Information -->
+          <div class="space-y-8">
+            
+            <!-- Map -->
+            <div>
+              <div class="rounded-xl overflow-hidden shadow-lg">
+                <iframe 
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2949.458744457327!2d-83.7518071!3d42.3327419!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x883cadebcf3d5bd3%3A0x86a76f69af535ffd!2sChef%20Nam%20Catering!5e0!3m2!1sen!2sus!4v1755179714713!5m2!1sen!2sus" 
+                  width="100%" 
+                  height="400" 
+                  style="border:0;" 
+                  allowfullscreen="" 
+                  loading="lazy" 
+                  referrerpolicy="no-referrer-when-downgrade"
+                  title="Chef Nam Catering Location"
+                ></iframe>
+              </div>
+            </div>
+
+            <!-- Contact Details -->
+            <div class="bg-brand-indigo rounded-xl shadow-lg p-8">
+              <h2 class="text-2xl font-serif font-semibold text-white mb-6">Reach Out</h2>
+              
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="w-6 h-6 text-brand-amber mt-1">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                      <path d="m18 8.118-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-semibold text-white">Email</h3>
+                    <a href="mailto:nam@chefnamcatering.com" class="text-white/80 hover:text-brand-amber">
+                      nam@chefnamcatering.com
+                    </a>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="w-6 h-6 text-brand-amber mt-1">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/>
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-semibold text-white">Phone</h3>
+                    <a href="tel:+17346239799" class="text-white/80 hover:text-brand-amber">
+                      (734) 623-9799
+                    </a>
+                  </div>
+                </div>
+
+                <div class="flex items-start">
+                  <div class="w-6 h-6 text-brand-amber mt-1">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M11.54 22.351l.07.04.028.016a.76.76 0 00.723 0l.028-.015.071-.041a16.975 16.975 0 001.144-.742 19.58 19.58 0 002.683-2.282c1.944-1.99 3.963-4.98 3.963-8.827a8.25 8.25 0 00-16.5 0c0 3.846 2.02 6.837 3.963 8.827a19.58 19.58 0 002.682 2.282 16.975 16.975 0 001.145.742zM12 13.5a3 3 0 100-6 3 3 0 000 6z"/>
+                    </svg>
+                  </div>
+                  <div class="ml-4">
+                    <h3 class="font-semibold text-white">Service Areas</h3>
+                    <p class="text-white/80">
+                      Ann Arbor, Ypsilanti, Dexter, Saline,<br>
+                      and surrounding Washtenaw County areas
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-brand-cream">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Frequently Asked Questions
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Everything you need to know about our catering services
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">How far in advance should I book?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">We recommend booking 4-6 weeks in advance for most events, and 2-3 months for weddings and large corporate events during peak season.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">Do you accommodate dietary restrictions?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">Absolutely! We work with vegetarian, vegan, gluten-free, and other dietary needs. Just let us know your requirements when you contact us.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">What's included in your catering service?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">Our full-service catering includes menu planning, food preparation, setup, service staff, and cleanup. We handle everything so you can enjoy your event.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">Do you provide tastings?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">Yes! We offer tastings for weddings and events over 50 guests. This helps ensure your menu is exactly what you envision.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">What areas do you serve?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">We serve Ann Arbor, Ypsilanti, Dexter, Saline, and all of Washtenaw County. Contact us for events in surrounding areas.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-card-hover bg-white/95 backdrop-blur-sm rounded-2xl p-6 transform transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl">
+            <div class="flex items-start space-x-4">
+              <div class="w-10 h-10 bg-brand-amber rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
+                <span class="text-white font-bold">?</span>
+              </div>
+              <div>
+                <h3 class="font-semibold text-brand-indigo mb-3">What's your minimum order?</h3>
+                <p class="text-brand-indigo/70 text-sm leading-relaxed">Our minimum order is 10 people for drop-off catering and 25 people for full-service events with staff.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<script>
+// Short form submission for contact page
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('contact-form');
+  
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const message = document.getElementById('message').value;
+      
+      // Validate required fields
+      if (!firstName || !lastName || !email || !phone) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalText = submitButton.textContent;
+      submitButton.textContent = 'Sending...';
+      submitButton.disabled = true;
+      
+      try {
+        // Submit to API
+        const response = await fetch('/api/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            message: message,
+            source: 'contact'
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // Push form submission event to GTM dataLayer for GA4 & Google Ads
+          if (typeof window !== 'undefined' && window.dataLayer) {
+            window.dataLayer.push({
+              'event': 'form_submit',
+              'form_name': 'contact',
+              'form_destination': '/api/submit-form',
+              'form_type': 'contact_inquiry',
+              'event_category': 'engagement',
+              'event_label': 'Contact Form',
+              // Enhanced conversions data for Google Ads
+              'user_data': {
+                'email_address': email,
+                'phone_number': phone,
+                'address': {
+                  'first_name': firstName,
+                  'last_name': lastName
+                }
+              }
+            });
+          }
+          
+          // Show success message and reset form
+          alert('Thank you for your message! We\'ll get back to you within 24 hours.');
+          form.reset();
+        } else {
+          throw new Error(result.message || 'Failed to submit form');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Sorry, there was an error. Please try again or contact us directly.');
+      } finally {
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    });
+  }
+});
+</script>

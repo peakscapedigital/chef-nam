@@ -1,0 +1,801 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Design Experiments - Chef Nam Catering"
+  description="Testing different design elements and visual treatments"
+>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <main>
+    <!-- Hero with Diagonal Cut -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Test hero background" 
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(135deg, rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.6))"></div>
+      </div>
+      
+      <!-- Diagonal Cut Bottom -->
+      <div class="absolute bottom-0 left-0 right-0 h-20 bg-white" style="clip-path: polygon(0 100%, 100% 0%, 100% 100%)"></div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Design</span><br />
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Experiments</span>
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Testing different visual elements, separators, and design treatments for enhanced user experience.
+        </p>
+      </div>
+    </section>
+
+    <!-- Glass-morphism Cards Section -->
+    <section class="py-20 bg-white relative">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Glass-morphism Cards
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Translucent cards with backdrop blur effects
+          </p>
+        </div>
+
+        <!-- Background pattern for glass effect -->
+        <div class="absolute inset-0 opacity-5">
+          <div class="w-full h-full" style="background-image: radial-gradient(circle at 25% 25%, #F39C12 0%, transparent 50%), radial-gradient(circle at 75% 75%, #2C3E50 0%, transparent 50%)"></div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+          <!-- Glass Card 1 -->
+          <div class="backdrop-blur-lg bg-white/20 border border-white/30 rounded-2xl p-8 shadow-xl hover:bg-white/30 transition-all duration-300">
+            <div class="w-16 h-16 bg-brand-amber/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Icon name="mdi:chef-hat" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4 text-center">Professional Chefs</h3>
+            <p class="text-brand-indigo/80 text-center">Expert culinary team with years of experience in creating memorable dining experiences.</p>
+          </div>
+
+          <!-- Glass Card 2 -->
+          <div class="backdrop-blur-lg bg-white/20 border border-white/30 rounded-2xl p-8 shadow-xl hover:bg-white/30 transition-all duration-300">
+            <div class="w-16 h-16 bg-brand-amber/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Icon name="mdi:leaf" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4 text-center">Fresh Ingredients</h3>
+            <p class="text-brand-indigo/80 text-center">Locally sourced, seasonal ingredients prepared with care and attention to detail.</p>
+          </div>
+
+          <!-- Glass Card 3 -->
+          <div class="backdrop-blur-lg bg-white/20 border border-white/30 rounded-2xl p-8 shadow-xl hover:bg-white/30 transition-all duration-300">
+            <div class="w-16 h-16 bg-brand-amber/20 rounded-full flex items-center justify-center mx-auto mb-6 backdrop-blur-sm">
+              <Icon name="mdi:heart" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4 text-center">Made with Love</h3>
+            <p class="text-brand-indigo/80 text-center">Every dish crafted with passion and dedication to creating special moments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Curved Section Separator -->
+    <section class="relative py-20 bg-brand-indigo overflow-hidden">
+      <!-- Top Curve -->
+      <div class="absolute top-0 left-0 right-0">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-16 fill-white">
+          <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+        </svg>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+        <h2 class="text-3xl font-serif font-bold mb-6">Curved Section with SVG</h2>
+        <p class="text-xl text-white/90 mb-8">Smooth organic curves create visual flow between sections</p>
+        
+        <!-- Feature Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <Icon name="mdi:clock" class="w-8 h-8 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold mb-2">On Time</h3>
+            <p class="text-white/80 text-sm">Reliable service</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <Icon name="mdi:star" class="w-8 h-8 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold mb-2">Quality</h3>
+            <p class="text-white/80 text-sm">Premium ingredients</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <Icon name="mdi:account-group" class="w-8 h-8 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold mb-2">Team</h3>
+            <p class="text-white/80 text-sm">Expert professionals</p>
+          </div>
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
+            <Icon name="mdi:heart" class="w-8 h-8 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold mb-2">Passion</h3>
+            <p class="text-white/80 text-sm">Love for food</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Curve -->
+      <div class="absolute bottom-0 left-0 right-0">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="w-full h-16 fill-brand-cream transform rotate-180">
+          <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Textured Background Section -->
+    <section class="py-20 bg-brand-cream/30 relative">
+      <!-- Subtle Pattern Background -->
+      <div class="absolute inset-0 opacity-5">
+        <div class="w-full h-full" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 2px, rgba(44, 62, 80, 0.1) 2px, rgba(44, 62, 80, 0.1) 4px)"></div>
+      </div>
+
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Elevated Cards with Shadows</h2>
+          <p class="text-xl text-brand-indigo/70">Different shadow depths and hover effects</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Shadow Card 1 -->
+          <div class="bg-white rounded-2xl p-8 shadow-sm hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-brand-amber/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="mdi:silverware-fork-knife" class="w-6 h-6 text-brand-amber" />
+              </div>
+              <div>
+                <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Elegant Plating</h3>
+                <p class="text-brand-indigo/70 mb-4">Beautiful presentation that impresses your guests and creates Instagram-worthy moments.</p>
+                <a href="#" class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">Learn More →</a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Shadow Card 2 -->
+          <div class="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2">
+            <div class="flex items-start space-x-4">
+              <div class="w-12 h-12 bg-brand-amber/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                <Icon name="mdi:account-tie" class="w-6 h-6 text-brand-amber" />
+              </div>
+              <div>
+                <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Professional Service</h3>
+                <p class="text-brand-indigo/70 mb-4">Experienced staff who understand the importance of seamless service at your event.</p>
+                <a href="#" class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">Learn More →</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gradient Mesh Section -->
+    <section class="relative py-20 overflow-hidden">
+      <!-- Gradient Mesh Background -->
+      <div class="absolute inset-0">
+        <div class="w-full h-full" style="background: linear-gradient(135deg, #fff 0%, #f8f9fa 25%, #e9ecef 50%, #f8f9fa 75%, #fff 100%)"></div>
+        <div class="absolute inset-0" style="background: radial-gradient(circle at 20% 80%, rgba(243, 156, 18, 0.1) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(44, 62, 80, 0.1) 0%, transparent 50%)"></div>
+      </div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Gradient Mesh Backgrounds</h2>
+        <p class="text-xl text-brand-indigo/70 mb-12">Subtle gradients and mesh patterns for visual interest</p>
+        
+        <!-- CTA Card -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-3xl p-12 shadow-xl border border-white/50">
+          <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">Ready to Experience the Difference?</h3>
+          <p class="text-brand-indigo/70 mb-8 text-lg">Let's create something beautiful together for your next event.</p>
+          <div class="flex flex-col sm:flex-row gap-4 justify-center">
+            <button class="px-8 py-4 bg-brand-amber text-white font-semibold rounded-xl hover:bg-brand-amber/90 transition-colors shadow-lg">
+              Get Started
+            </button>
+            <button class="px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-xl hover:bg-brand-indigo hover:text-white transition-colors">
+              View Gallery
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section Design 1: Accordion Style -->
+    <section class="py-20 bg-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            FAQ Design 1: Accordion Style
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Clean accordion with icons and smooth animations
+          </p>
+        </div>
+
+        <div class="space-y-4">
+          <!-- FAQ Item 1 -->
+          <div class="faq-item group">
+            <button class="w-full bg-white border border-brand-indigo/10 rounded-xl p-6 text-left hover:border-brand-amber/50 transition-all duration-300 shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-brand-amber/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icon name="mdi:calendar-clock" class="w-5 h-5 text-brand-amber" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-brand-indigo">How far in advance should I book?</h3>
+                </div>
+                <Icon name="mdi:plus" class="w-6 h-6 text-brand-indigo/50 transition-transform duration-300 group-hover:rotate-45" />
+              </div>
+              <div class="mt-4 ml-14 text-brand-indigo/70 hidden group-hover:block">
+                We recommend booking 4-6 weeks in advance for most events, and 2-3 months for weddings during peak season (May-October). For smaller gatherings, 2 weeks notice is usually sufficient.
+              </div>
+            </button>
+          </div>
+
+          <!-- FAQ Item 2 -->
+          <div class="faq-item group">
+            <button class="w-full bg-white border border-brand-indigo/10 rounded-xl p-6 text-left hover:border-brand-amber/50 transition-all duration-300 shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-brand-amber/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icon name="mdi:currency-usd" class="w-5 h-5 text-brand-amber" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-brand-indigo">What is your pricing structure?</h3>
+                </div>
+                <Icon name="mdi:plus" class="w-6 h-6 text-brand-indigo/50 transition-transform duration-300 group-hover:rotate-45" />
+              </div>
+              <div class="mt-4 ml-14 text-brand-indigo/70 hidden group-hover:block">
+                Our pricing is customized based on your event size, menu selections, and service style. We offer transparent per-person pricing starting at $18 for casual events and $28 for formal plated dinners.
+              </div>
+            </button>
+          </div>
+
+          <!-- FAQ Item 3 -->
+          <div class="faq-item group">
+            <button class="w-full bg-white border border-brand-indigo/10 rounded-xl p-6 text-left hover:border-brand-amber/50 transition-all duration-300 shadow-sm hover:shadow-md">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                  <div class="w-10 h-10 bg-brand-amber/10 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Icon name="mdi:leaf" class="w-5 h-5 text-brand-amber" />
+                  </div>
+                  <h3 class="text-lg font-semibold text-brand-indigo">Do you accommodate dietary restrictions?</h3>
+                </div>
+                <Icon name="mdi:plus" class="w-6 h-6 text-brand-indigo/50 transition-transform duration-300 group-hover:rotate-45" />
+              </div>
+              <div class="mt-4 ml-14 text-brand-indigo/70 hidden group-hover:block">
+                Absolutely! We specialize in accommodating vegetarian, vegan, gluten-free, and allergy-specific needs. Just let us know your requirements and we'll create delicious options for all your guests.
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section Design 2: Two Column Layout -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            FAQ Design 2: Two Column Grid
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Grid layout with category groupings
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <!-- Left Column -->
+          <div class="space-y-6">
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">What areas do you serve?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    We serve Ann Arbor, Ypsilanti, Dexter, Saline, and all of Washtenaw County. For special events, we also travel to surrounding areas including Novi, Canton, and Brighton.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">Do you provide tastings?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    Yes! We offer complimentary tastings for weddings and events over 50 guests. This ensures your menu is exactly what you envision for your special day.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">What's your minimum order?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    Our minimum order is 10 people for drop-off catering and 25 people for full-service events. For weddings, we typically require a minimum of 50 guests.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Column -->
+          <div class="space-y-6">
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">What's included in full-service catering?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    Full-service includes menu planning, food preparation, delivery, setup, professional service staff, and complete cleanup. We handle everything so you can enjoy your event.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">Do you provide rentals?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    We can coordinate rentals for you including tables, chairs, linens, and dinnerware. These are provided through our trusted partners and can be included in your quote.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-white rounded-xl p-6 shadow-sm">
+              <div class="flex items-start space-x-3 mb-3">
+                <Icon name="mdi:help-circle" class="w-6 h-6 text-brand-amber mt-1" />
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-2">What's your cancellation policy?</h3>
+                  <p class="text-brand-indigo/70 text-sm leading-relaxed">
+                    Cancellations made 30+ days before the event receive a full refund. Within 30 days, we retain the deposit. We understand plans change and work with clients on a case-by-case basis.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section Design 3: Modern Cards with Categories -->
+    <section class="py-20 bg-gradient-to-br from-white to-brand-cream/20">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            FAQ Design 3: Category Cards
+          </h2>
+          <p class="text-xl text-brand-indigo/70">
+            Organized by topic with visual hierarchy
+          </p>
+        </div>
+
+        <!-- Category Tabs -->
+        <div class="flex flex-wrap justify-center gap-4 mb-12">
+          <button class="px-6 py-3 bg-brand-amber text-white font-semibold rounded-full">
+            General
+          </button>
+          <button class="px-6 py-3 bg-white text-brand-indigo font-semibold rounded-full border border-brand-indigo/20 hover:bg-brand-indigo hover:text-white transition-colors">
+            Pricing
+          </button>
+          <button class="px-6 py-3 bg-white text-brand-indigo font-semibold rounded-full border border-brand-indigo/20 hover:bg-brand-indigo hover:text-white transition-colors">
+            Services
+          </button>
+          <button class="px-6 py-3 bg-white text-brand-indigo font-semibold rounded-full border border-brand-indigo/20 hover:bg-brand-indigo hover:text-white transition-colors">
+            Dietary
+          </button>
+        </div>
+
+        <!-- FAQ Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="group relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-amber to-brand-indigo rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <div class="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-amber/20 to-brand-amber/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span class="text-brand-amber font-bold text-lg">Q</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-brand-indigo mb-3">Can you work with my venue's kitchen?</h3>
+                  <p class="text-brand-indigo/70 leading-relaxed">
+                    Yes! We're experienced working in various venue kitchens throughout Ann Arbor. We'll coordinate with your venue to ensure smooth setup and service.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="group relative">
+            <div class="absolute inset-0 bg-gradient-to-r from-brand-amber to-brand-indigo rounded-2xl opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
+            <div class="relative bg-white rounded-2xl p-8 shadow-md hover:shadow-xl transition-all duration-300">
+              <div class="flex items-start space-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-brand-amber/20 to-brand-amber/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span class="text-brand-amber font-bold text-lg">Q</span>
+                </div>
+                <div>
+                  <h3 class="text-lg font-semibold text-brand-indigo mb-3">Do you offer bar service?</h3>
+                  <p class="text-brand-indigo/70 leading-relaxed">
+                    We can provide professional bartending service and coordinate with licensed beverage suppliers. We'll help you create a custom drink menu for your event.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Still Have Questions CTA -->
+        <div class="mt-16 text-center">
+          <div class="inline-flex flex-col items-center">
+            <p class="text-brand-indigo/70 mb-4">Still have questions?</p>
+            <a href="/contact" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-xl hover:bg-brand-amber/90 transition-colors shadow-lg">
+              <Icon name="mdi:message-text" class="w-5 h-5 mr-2" />
+              Contact Us Directly
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tabbed Services Section -->
+    <section class="py-20 bg-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6">
+            Our Catering Services
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            From intimate gatherings to grand celebrations, we create memorable Thai-American fusion dining experiences tailored to your vision.
+          </p>
+        </div>
+
+        <!-- Tab Navigation -->
+        <div class="flex justify-center mb-12">
+          <div class="inline-flex bg-brand-cream/50 rounded-full p-1">
+            <button 
+              id="social-tab"
+              class="tab-button px-8 py-3 rounded-full bg-brand-amber text-white font-semibold transition-all duration-300"
+              data-tab="social"
+            >
+              Social Events
+            </button>
+            <button 
+              id="corporate-tab"
+              class="tab-button px-8 py-3 rounded-full text-brand-indigo font-semibold hover:bg-white/50 transition-all duration-300"
+              data-tab="corporate"
+            >
+              Corporate
+            </button>
+            <button 
+              id="weddings-tab"
+              class="tab-button px-8 py-3 rounded-full text-brand-indigo font-semibold hover:bg-white/50 transition-all duration-300"
+              data-tab="weddings"
+            >
+              Weddings
+            </button>
+          </div>
+        </div>
+
+        <!-- Tab Content: Social Events -->
+        <div id="social-content" class="tab-content">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Birthday Celebrations -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Birthday Celebrations</h3>
+              <p class="text-brand-indigo/70 mb-6">Make your special day truly memorable with fusion flavors</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Birthday celebration catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                From milestone birthdays to intimate gatherings, our customized Thai-American fusion menus will delight your guests with vibrant flavors.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Family Reunions -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Family Reunions</h3>
+              <p class="text-brand-indigo/70 mb-6">Bring everyone together with authentic fusion cuisine</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Family reunion catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Create lasting memories with customized fusion menus that honor both Thai traditions and American favorites for all generations.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Graduation Parties -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Graduation Parties</h3>
+              <p class="text-brand-indigo/70 mb-6">Celebrate achievements with innovative fusion flavors</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1627556704302-624286467c65?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Graduation party catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Honor your graduate with a unique fusion menu that impresses guests and makes the celebration both memorable and stress-free.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Corporate -->
+        <div id="corporate-content" class="tab-content hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Business Lunches -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Business Lunches</h3>
+              <p class="text-brand-indigo/70 mb-6">Professional catering that impresses clients</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Business lunch catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Elevate your business meetings with sophisticated Thai-American fusion cuisine that shows attention to detail and cultural awareness.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Conference Events -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Conference Events</h3>
+              <p class="text-brand-indigo/70 mb-6">Seamless service for large corporate gatherings</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Conference catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                From breakfast service to networking receptions, we provide reliable, professional catering that keeps your event running smoothly.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Holiday Parties -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Holiday Parties</h3>
+              <p class="text-brand-indigo/70 mb-6">Festive celebrations with unique fusion flair</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1467810563316-b5476525c0f9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Holiday party catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Make your company holiday party memorable with creative fusion menus that bring excitement and flavor to the celebration.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab Content: Weddings -->
+        <div id="weddings-content" class="tab-content hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Intimate Ceremonies -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Intimate Ceremonies</h3>
+              <p class="text-brand-indigo/70 mb-6">Personal touches for smaller celebrations</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Intimate wedding catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Create an unforgettable dining experience for your closest family and friends with carefully crafted fusion menus and personalized service.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Grand Receptions -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Grand Receptions</h3>
+              <p class="text-brand-indigo/70 mb-6">Elegant service for large wedding celebrations</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Grand reception catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                From cocktail hours to plated dinners, we orchestrate flawless service and exceptional cuisine for weddings of any size.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Cultural Weddings -->
+            <div class="group">
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-3">Cultural Weddings</h3>
+              <p class="text-brand-indigo/70 mb-6">Honoring traditions with fusion excellence</p>
+              
+              <div class="relative overflow-hidden rounded-xl mb-6 h-64 bg-brand-cream/30">
+                <img 
+                  src="https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                  alt="Cultural wedding catering"
+                  class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
+              </div>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                We expertly blend Thai traditions with American preferences, creating menus that respect cultural heritage while delighting all guests.
+              </p>
+              
+              <a href="#" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors group">
+                Learn More 
+                <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- JavaScript for Tab Functionality -->
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+          button.addEventListener('click', () => {
+            const targetTab = button.getAttribute('data-tab');
+            
+            // Update button states
+            tabButtons.forEach(btn => {
+              btn.classList.remove('bg-brand-amber', 'text-white');
+              btn.classList.add('text-brand-indigo');
+            });
+            button.classList.add('bg-brand-amber', 'text-white');
+            button.classList.remove('text-brand-indigo');
+            
+            // Update content visibility
+            tabContents.forEach(content => {
+              content.classList.add('hidden');
+            });
+            document.getElementById(`${targetTab}-content`).classList.remove('hidden');
+          });
+        });
+      });
+    </script>
+
+    <!-- Experimental Footer -->
+    <section class="relative py-16 bg-brand-indigo">
+      <!-- Top Diagonal -->
+      <div class="absolute top-0 left-0 right-0 h-16 bg-white" style="clip-path: polygon(0 0, 100% 100%, 100% 0)"></div>
+      
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white pt-8">
+        <h3 class="text-2xl font-serif font-bold mb-4">Design Experiments Complete</h3>
+        <p class="text-white/80 mb-6">This page showcases various design elements we can incorporate into the main site.</p>
+        <a href="/" class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">
+          ← Back to Homepage
+        </a>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Custom animations */
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  .float-animation {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  /* Enhanced hover effects */
+  .hover-lift {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  }
+</style>

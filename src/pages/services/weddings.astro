@@ -1,0 +1,475 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/ui/Card.astro';
+import ServiceHero from '../../components/sections/ServiceHero.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Wedding Catering in Ann Arbor, MI | Chef Nam Catering"
+  description="Elegant wedding catering in Ann Arbor and Southeast Michigan. Customized menus, expert service, tastings, and seamless coordination for receptions, rehearsal dinners, and brunches."
+>
+  <!-- Wedding Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/services/weddings#weddingservice",
+      "serviceType": "Wedding Catering",
+      "name": "Wedding Catering Services",
+      "description": "Elegant wedding catering in Ann Arbor, Michigan. Professional catering for your special day with customizable menus, expert service, and memorable dining experiences.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/services/weddings"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Wedding Catering Packages",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Plated Wedding Dinner Service"
+            }
+          },
+          {
+            "@type": "Offer", 
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Wedding Reception Buffet"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Wedding Cocktail Reception"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/services/weddings"
+    }
+  </script>
+  
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Services",
+        "item": "https://chefnamcatering.com/services"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Wedding Catering",
+        "item": "https://chefnamcatering.com/services/weddings"
+      }
+    ]
+  }
+  </script>
+  
+  <main>
+    <!-- Hero Section -->
+    <ServiceHero 
+      title="Wedding Catering"
+      subtitle="Made Memorable"
+      description="Celebrate your love story with delicious, expertly prepared cuisine that brings warmth, flavor, and joy to your wedding day in Ann Arbor and throughout Michigan."
+      backgroundImage="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Beautiful wedding reception table setting with elegant catering setup"
+    />
+
+    <!-- Wedding Services Overview -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Complete Wedding Catering Services
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            From intimate ceremonies to grand receptions, we create unforgettable culinary experiences that reflect your unique love story and preferences.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- Wedding Reception -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:heart-multiple" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Wedding Receptions</h3>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Elegant dinner service with customized menus that honor your preferences while delighting all your guests.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Plated or family-style service</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Custom menu consultation</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Professional wait staff included</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- Rehearsal Dinners -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:silverware-fork-knife" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Rehearsal Dinners</h3>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Intimate gatherings for close family and friends with warm, family-style dining that brings everyone together.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Relaxed, family-style atmosphere</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Shareable Thai fusion dishes</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Venue coordination assistance</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- Brunch & Cocktails -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:glass-cocktail" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Brunch & Cocktail Hours</h3>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Morning-after brunches and cocktail receptions with creative appetizers and signature drinks.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Specialty brunch dishes</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Elegant appetizer stations</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Signature cocktail coordination</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us for Weddings -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Why Couples Choose Chef Nam for Their Special Day</h2>
+          <p class="text-xl text-brand-indigo/70">Personal attention and culinary artistry for your once-in-a-lifetime celebration</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="space-y-8">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:heart" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Personalized Menu Design</h3>
+                  <p class="text-brand-indigo/70 text-sm">Work directly with Chef Nam to create a menu that tells your story and accommodates all dietary needs.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:earth" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Cultural Integration</h3>
+                  <p class="text-brand-indigo/70 text-sm">Seamlessly blend Thai traditions with your family's heritage for a truly unique celebration.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:star-circle" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Flawless Execution</h3>
+                  <p class="text-brand-indigo/70 text-sm">Professional coordination with your wedding planner and venue for seamless service on your big day.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:bullseye-arrow" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Stress-Free Planning</h3>
+                  <p class="text-brand-indigo/70 text-sm">From tasting sessions to day-of coordination, we handle every detail so you can focus on each other.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center">
+              <div class="text-brand-amber mb-4 flex justify-center space-x-1">
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+              </div>
+              <p class="text-brand-indigo/80 italic text-lg mb-6">
+                "Chef Nam made our wedding perfect. The Thai fusion menu was absolutely incredible - our guests haven't stopped talking about it. She understood our vision completely and made it come to life beautifully."
+              </p>
+              <p class="text-brand-indigo font-semibold">- Emma & David</p>
+              <p class="text-brand-indigo/60 text-sm">October Wedding, 150 guests</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wedding Menu Highlights -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Wedding Menu Highlights</h2>
+          <p class="text-xl text-brand-indigo/70">Elegant Thai fusion cuisine that creates unforgettable moments</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Reception Dinner Menu -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Signature Reception Menu</h3>
+              <p class="text-brand-indigo/60">Elegant plated service for your special celebration</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">First Course</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai fusion amuse-bouche selection</li>
+                  <li>• Coconut soup with lemongrass and galangal</li>
+                  <li>• Mixed greens with Thai herb vinaigrette</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Main Courses (Choice of)</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Pineapple glazed salmon with jasmine rice</li>
+                  <li>• Thai-spiced beef tenderloin with vegetables</li>
+                  <li>• Panang curry chicken with fragrant rice</li>
+                  <li>• Vegetarian massaman with seasonal vegetables</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Wedding Dessert</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Mango sticky rice with coconut cream</li>
+                  <li>• Thai tea crème brûlée</li>
+                  <li>• Traditional wedding cake service</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $65 per person</p>
+              <p class="text-brand-indigo/50 text-xs">Full service • Professional wait staff • Custom options available</p>
+            </div>
+          </div>
+
+          <!-- Family Style Package -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Family Style Celebration</h3>
+              <p class="text-brand-indigo/60">Shared dishes that bring everyone together</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Appetizer Platters</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai spring roll station</li>
+                  <li>• Satay chicken and beef skewers</li>
+                  <li>• Fresh fruit and cheese display</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Main Dish Selection</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Pad Thai with shrimp and chicken</li>
+                  <li>• Green curry with mixed vegetables</li>
+                  <li>• Thai basil fried rice</li>
+                  <li>• Grilled vegetables with herb sauce</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Sides & Desserts</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Fresh salad bar with Thai dressings</li>
+                  <li>• Steamed jasmine and coconut rice</li>
+                  <li>• Mini dessert station</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $45 per person</p>
+              <p class="text-brand-indigo/50 text-xs">Perfect for relaxed celebrations • All ages welcome</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-brand-indigo/70 mb-6">All wedding menus are fully customizable with dietary accommodations and cultural preferences.</p>
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Start Planning Your Wedding Menu
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Wedding Planning Process -->
+    <section class="py-20 bg-brand-indigo text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold mb-6">Your Wedding Catering Journey</h2>
+          <p class="text-xl text-white/90">A personal, stress-free experience from first taste to last dance</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Initial Consultation</h3>
+            <p class="text-white/80 text-sm">Share your vision, guest count, dietary needs, and cultural preferences</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Menu Tasting</h3>
+            <p class="text-white/80 text-sm">Private tasting session with custom menu options and final selections</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Final Planning</h3>
+            <p class="text-white/80 text-sm">Coordinate with your venue and wedding planner for seamless execution</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">4</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Wedding Day Magic</h3>
+            <p class="text-white/80 text-sm">Professional service and delicious food that makes your day unforgettable</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-white/70 text-sm">Book 6-12 months in advance for peak wedding season (May-October)</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Local Wedding Venues -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Experienced with Ann Arbor's Premier Wedding Venues</h2>
+        <p class="text-xl text-brand-indigo/70 mb-12">
+          We've created beautiful weddings at locations throughout Ann Arbor and Southeast Michigan
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Historic Venues</h3>
+            <p class="text-brand-indigo/70 text-sm">Michigan League, Argus Farm Stop, Weber's Inn</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Garden Settings</h3>
+            <p class="text-brand-indigo/70 text-sm">Matthaei Botanical Gardens, private estates, country clubs</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Modern Spaces</h3>
+            <p class="text-brand-indigo/70 text-sm">Graduate Hotel, downtown lofts, art galleries</p>
+          </div>
+        </div>
+        
+        <a href="/start-planning" class="inline-flex items-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg hover:bg-brand-indigo hover:text-white transition-colors">
+          Plan Your Perfect Wedding
+        </a>
+      </div>
+    </section>
+
+  </main>
+</Layout>

@@ -1,0 +1,42 @@
+---
+export interface Props {
+  title: string;
+  subtitle: string;
+  description: string;
+  backgroundImage: string;
+  backgroundAlt: string;
+}
+
+const {
+  title,
+  subtitle,
+  description,
+  backgroundImage,
+  backgroundAlt
+} = Astro.props;
+---
+
+<section class="relative pt-32 pb-20 overflow-hidden">
+  <!-- Background Image -->
+  <div class="absolute inset-0 z-0">
+    <img 
+      src={backgroundImage}
+      alt={backgroundAlt}
+      class="w-full h-full object-cover"
+      loading="eager"
+    />
+    <!-- Blue tint overlay to match homepage -->
+    <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+  </div>
+  
+  <!-- Content -->
+  <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+      <span class="text-white font-serif">{title}</span><br />
+      <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">{subtitle}</span>
+    </h1>
+    <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+      {description}
+    </p>
+  </div>
+</section>

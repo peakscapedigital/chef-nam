@@ -1,0 +1,377 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import { Icon } from 'astro-icon/components';
+import { getVenues, urlFor, urlForOptimized } from '../utils/sanity';
+
+// Fetch venues from Sanity CMS
+const venues = await getVenues();
+
+// If no venues in Sanity, use fallback data
+const featuredVenues = venues.length > 0 ? venues : [
+  {
+    name: "The Michigan League",
+    category: "Historic",
+    capacity: "50-300",
+    image: "https://images.unsplash.com/photo-1519167758481-83f550bb49b3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Historic University of Michigan venue with elegant ballrooms and modern amenities",
+    features: ["Built-in AV", "Multiple Rooms", "Downtown Location", "Full Kitchen"],
+    eventsCount: 15,
+    preferredMenus: ["Plated Dinners", "Buffet Service", "Cocktail Receptions"],
+    website: "https://conferences.umich.edu/buildings/michigan-league/",
+    testimonial: "Chef Nam consistently delivers exceptional service at our venue. Her team is professional and the food is always outstanding.",
+    coordinator: "Sarah Mitchell, Events Manager"
+  },
+  {
+    name: "Matthaei Botanical Gardens",
+    category: "Garden",
+    capacity: "50-200",
+    image: "https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Stunning conservatory and outdoor gardens perfect for nature-inspired celebrations",
+    features: ["Indoor/Outdoor Options", "Natural Beauty", "Year-Round Availability", "Unique Photo Ops"],
+    eventsCount: 12,
+    preferredMenus: ["Garden Party Buffets", "Elegant Plated Service", "Seasonal Menus"],
+    website: "https://mbgna.umich.edu/facilities",
+    testimonial: "The Thai fusion cuisine from Chef Nam perfectly complements our garden setting.",
+    coordinator: "Michael Chen, Venue Coordinator"
+  },
+  {
+    name: "Graduate Hotel Ann Arbor",
+    category: "Modern",
+    capacity: "20-250",
+    image: "https://images.unsplash.com/photo-1564501049412-61c2a3083791?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Contemporary hotel venue with rooftop terrace and stylish event spaces",
+    features: ["Rooftop Terrace", "Modern Design", "Full Service", "Guest Rooms"],
+    eventsCount: 20,
+    preferredMenus: ["Contemporary Fusion", "Cocktail Parties", "Business Dinners"],
+    website: "https://www.hilton.com/en/hotels/arbgagu-graduate-ann-arbor/events/",
+    testimonial: "Chef Nam is our go-to caterer for special events. Always exceeds expectations.",
+    coordinator: "Jennifer Park, Director of Events"
+  },
+  {
+    name: "Weber's Inn",
+    category: "Classic",
+    capacity: "50-500",
+    image: "https://images.unsplash.com/photo-1478146896981-b80fe463b330?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Ann Arbor's premier full-service hotel and event venue with multiple ballrooms",
+    features: ["Multiple Ballrooms", "On-Site Hotel", "Full Kitchen", "Ample Parking"],
+    eventsCount: 30,
+    preferredMenus: ["Grand Buffets", "Plated Dinners", "Wedding Packages"],
+    website: "https://www.webersannarbor.com/events/",
+    testimonial: "Exceptional catering that our guests always remember. Chef Nam brings creativity and reliability.",
+    coordinator: "David Thompson, Catering Director"
+  },
+  {
+    name: "Cobblestone Farm",
+    category: "Rustic",
+    capacity: "50-150",
+    image: "https://images.unsplash.com/photo-1510076857177-7470076d4098?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Historic 1800s barn venue with rustic charm and pastoral surroundings",
+    features: ["Historic Barn", "Outdoor Ceremony Space", "Rustic Charm", "Scenic Views"],
+    eventsCount: 8,
+    preferredMenus: ["Farm-to-Table", "Family Style", "BBQ Fusion"],
+    website: "https://www.a2gov.org/cobblestone",
+    testimonial: "Perfect blend of elegance and comfort food. Chef Nam understands our rustic aesthetic.",
+    coordinator: "Amy Roberts, Venue Manager"
+  },
+  {
+    name: "Travis Pointe Country Club",
+    category: "Country Club",
+    capacity: "50-300",
+    image: "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+    description: "Elegant country club with golf course views and sophisticated ambiance",
+    features: ["Golf Course Views", "Elegant Ballroom", "Outdoor Terrace", "Valet Parking"],
+    eventsCount: 18,
+    preferredMenus: ["Upscale Plated", "Cocktail Receptions", "Brunch Service"],
+    website: "https://travispointe.com/Host_an_Event/Wedding_Events",
+    testimonial: "Chef Nam's attention to detail matches our high standards perfectly.",
+    coordinator: "Robert Anderson, Events Director"
+  }
+];
+
+// Calculate category counts dynamically from actual venue data
+const categoryCounts = featuredVenues.reduce((counts, venue) => {
+  const category = venue.category?.charAt(0).toUpperCase() + venue.category?.slice(1) || 'Other';
+  counts[category] = (counts[category] || 0) + 1;
+  return counts;
+}, {});
+
+const venueCategories = [
+  { name: "All Venues", icon: "mdi:home", count: featuredVenues.length },
+  { name: "Historic", icon: "mdi:office-building", count: categoryCounts['Historic'] || 0 },
+  { name: "Garden", icon: "mdi:leaf", count: categoryCounts['Garden'] || 0 },
+  { name: "Modern", icon: "mdi:office-building", count: categoryCounts['Modern'] || 0 },
+  { name: "Rustic", icon: "mdi:home", count: categoryCounts['Rustic'] || 0 },
+  { name: "Classic", icon: "mdi:office-building", count: categoryCounts['Classic'] || 0 },
+  { name: "Country Club", icon: "mdi:trophy", count: categoryCounts['Country-club'] || categoryCounts['Country Club'] || 0 }
+].filter(category => category.count > 0); // Only show categories that have venues
+---
+
+<Layout 
+  title="Preferred Wedding Venues Ann Arbor | Catering Partner Venues - Chef Nam"
+  description="Chef Nam Catering is a preferred caterer at Ann Arbor's premier wedding and event venues. Explore our partner venues and see our specialized menus for each location."
+>
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo relative overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+          alt="Elegant outdoor wedding venue with white tents and string lights"
+          class="w-full h-full object-cover"
+        />
+        <!-- Clean overlay for text readability with brand indigo tint -->
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-none mb-8">
+          <span class="text-white font-serif">Preferred Partner at</span><br>
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Premier Venues</span>
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          We've built trusted relationships with the area's most sought-after venues. From historic ballrooms to garden settings, we know how to make your event shine in any location.
+        </p>
+      </div>
+    </section>
+
+    <!-- Venue Categories Filter -->
+    <section class="py-12 bg-brand-white border-b">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap gap-4 justify-center">
+          {venueCategories.map(category => (
+            <button 
+              class="px-6 py-3 rounded-full border border-brand-indigo/20 text-brand-indigo hover:bg-brand-indigo hover:text-white transition-colors filter-btn flex items-center gap-2"
+              data-filter={category.name === 'All Venues' ? 'all' : category.name}
+            >
+              <Icon name={category.icon} class="w-5 h-5" />
+              <span>{category.name}</span>
+              <span class="bg-brand-amber/20 text-brand-amber px-2 py-0.5 rounded-full text-xs font-semibold">{category.count}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Venues Grid -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {featuredVenues.map(venue => (
+            <div class="venue-card bg-white rounded-xl shadow-lg overflow-hidden flex flex-col" data-category={venue.category}>
+              <div class="relative h-64 flex-shrink-0">
+                <img 
+                  src={venue.featuredImage ? urlForOptimized(venue.featuredImage.asset, 600, 300).url() : venue.image} 
+                  alt={venue.featuredImage?.alt || venue.name}
+                  class="w-full h-full object-cover"
+                />
+                <div class="absolute top-4 left-4">
+                  <span class="bg-brand-amber text-white px-3 py-1 rounded-full text-sm font-semibold">
+                    {venue.category?.charAt(0).toUpperCase() + venue.category?.slice(1) || 'Venue'}
+                  </span>
+                </div>
+                {venue.eventsCount && venue.eventsCount > 0 && (
+                  <div class="absolute top-4 right-4">
+                    <span class="bg-white/90 backdrop-blur text-brand-indigo px-3 py-1 rounded-full text-sm font-semibold">
+                      {venue.eventsCount} Events Catered
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              <div class="p-8 flex flex-col flex-grow">
+                <div class="flex-grow">
+                  <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-2">
+                    {venue.name}
+                  </h3>
+                  <p class="text-brand-indigo/60 mb-4">Capacity: {venue.capacity} guests</p>
+                  <p class="text-brand-indigo/80 mb-6">{venue.description}</p>
+                  
+                  {venue.features && venue.features.length > 0 && (
+                    <div class="mb-6">
+                      <h4 class="font-semibold text-brand-indigo mb-3">Venue Features</h4>
+                      <div class="flex flex-wrap gap-2">
+                        {venue.features.map(feature => (
+                          <span class="bg-brand-cream px-3 py-1 rounded-full text-sm text-brand-indigo">
+                            {feature}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                </div>
+                
+                <div class="flex gap-3 mt-auto">
+                  <a 
+                    href="/start-planning" 
+                    class="flex-1 text-center bg-brand-amber text-white font-semibold py-3 px-4 rounded-lg hover:bg-brand-amber/90 transition-colors"
+                  >
+                    Get Custom Menu
+                  </a>
+                  <a 
+                    href={venue.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-venue-name={venue.name}
+                    class="flex-1 text-center border-2 border-brand-indigo text-brand-indigo font-semibold py-3 px-4 rounded-lg hover:bg-brand-indigo hover:text-white transition-colors"
+                  >
+                    Visit Venue Site
+                  </a>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Venues Choose Us -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Why Venues Recommend Chef Nam</h2>
+          <p class="text-xl text-brand-indigo/70">Trusted by Ann Arbor's premier venues for exceptional service and cuisine</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:clock-check" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Always On Time</h3>
+            <p class="text-brand-indigo/70 text-sm">Reliable setup and service that venues can count on</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:account-group" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Professional Team</h3>
+            <p class="text-brand-indigo/70 text-sm">Experienced staff that knows each venue's requirements</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:broom" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Venue Respect</h3>
+            <p class="text-brand-indigo/70 text-sm">Careful handling and thorough cleanup every time</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:handshake" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Great Partnership</h3>
+            <p class="text-brand-indigo/70 text-sm">Collaborative approach that makes venues look great</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Ready to Cater at Your Chosen Venue?</h2>
+        <p class="text-xl text-brand-indigo/80 mb-8">
+          Whether you've selected a venue or still exploring options, we can help create the perfect menu for your location.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/start-planning" 
+            class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors"
+          >
+            Get Custom Venue Menu
+          </a>
+          <a 
+            href="/contact" 
+            class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden"
+          >
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Ask About a Venue
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Category Filter Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const venueCards = document.querySelectorAll('.venue-card');
+
+      filterButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const filter = button.getAttribute('data-filter');
+          
+          // Update active button
+          filterButtons.forEach(btn => {
+            btn.classList.remove('bg-brand-indigo', 'text-white');
+            btn.classList.add('text-brand-indigo');
+          });
+          button.classList.remove('text-brand-indigo');
+          button.classList.add('bg-brand-indigo', 'text-white');
+
+          // Filter venues
+          venueCards.forEach(card => {
+            const category = card.getAttribute('data-category');
+            if (filter === 'all' || category === filter) {
+              card.style.display = 'block';
+            } else {
+              card.style.display = 'none';
+            }
+          });
+        });
+      });
+
+      // Set initial active state
+      filterButtons[0]?.classList.remove('text-brand-indigo');
+      filterButtons[0]?.classList.add('bg-brand-indigo', 'text-white');
+    });
+  </script>
+
+  <!-- Local Business Schema Markup -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Caterer",
+    "name": "Chef Nam Catering",
+    "description": "Preferred caterer at Ann Arbor's premier wedding and event venues",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Ann Arbor",
+      "addressRegion": "MI",
+      "postalCode": "48104"
+    },
+    "areaServed": [
+      {
+        "@type": "Place",
+        "name": "The Michigan League"
+      },
+      {
+        "@type": "Place",
+        "name": "Matthaei Botanical Gardens"
+      },
+      {
+        "@type": "Place",
+        "name": "Graduate Hotel Ann Arbor"
+      },
+      {
+        "@type": "Place", 
+        "name": "Weber's Inn"
+      },
+      {
+        "@type": "Place",
+        "name": "Travis Pointe Country Club"
+      }
+    ]
+  }
+  </script>
+</Layout>

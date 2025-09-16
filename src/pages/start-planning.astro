@@ -1,0 +1,83 @@
+---
+import Layout from '../layouts/Layout.astro';
+import StartPlanningForm from '../components/forms/StartPlanningForm.astro';
+---
+
+<Layout 
+  title="Start Planning Your Event | Professional Catering Services - Chef Nam Catering"
+  description="Begin planning your perfect catered event with Chef Nam. Tell us about your vision and we'll create a customized proposal with menu options, service details, and transparent pricing."
+>
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Let's Plan Your</span><br />
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Perfect Event</span>
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Share your vision with us and we'll create a customized catering proposal that brings your event to life. From intimate gatherings to grand celebrations, every detail matters.
+        </p>
+      </div>
+    </section>
+
+    <!-- Start Planning Form Component -->
+    <StartPlanningForm source="start-planning" showSidebar={true} />
+
+    <!-- What to Expect & Contact -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">What You'll Receive</h2>
+          <p class="text-xl text-brand-indigo/70">Everything you need to make an informed decision</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">📋</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Custom Menu Proposal</h3>
+            <p class="text-brand-indigo/70 text-sm">Tailored dishes based on your preferences and dietary needs</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">💰</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Transparent Pricing</h3>
+            <p class="text-brand-indigo/70 text-sm">Detailed breakdown with no hidden fees</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">🎯</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Service Recommendations</h3>
+            <p class="text-brand-indigo/70 text-sm">Professional suggestions for your event style</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">📞</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Personal Consultation</h3>
+            <p class="text-brand-indigo/70 text-sm">Follow-up call to discuss and refine details</p>
+          </div>
+        </div>
+
+        <!-- Testimonial -->
+        <div class="max-w-2xl mx-auto">
+          <div class="bg-brand-cream/30 rounded-xl p-8 text-center">
+            <div class="text-brand-amber mb-4">⭐⭐⭐⭐⭐</div>
+            <p class="text-brand-indigo/80 italic text-lg mb-6">
+              "Chef Nam made our planning process so easy. The proposal was detailed, transparent, and the food exceeded all expectations. Our guests are still talking about it!"
+            </p>
+            <p class="text-brand-indigo font-semibold">- Sarah & Mike</p>
+            <p class="text-brand-indigo/60 text-sm">Wedding, 120 guests</p>
+          </div>
+        </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>

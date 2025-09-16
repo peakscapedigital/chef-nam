@@ -1,0 +1,185 @@
+---
+import '../styles/global.css';
+import TopBar from '../components/sections/TopBar.astro';
+import Header from '../components/sections/Header.astro';
+import Footer from '../components/sections/Footer.astro';
+import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
+
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+}
+
+const { title, description = 'Best catering services in Ann Arbor, Michigan. Chef Nam provides full service catering for weddings, corporate events, and special occasions with global flavors and thoughtful hospitality.', canonical } = Astro.props;
+
+// Ensure canonical URL always uses non-www domain
+const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathname}`;
+
+// Fetch homepage data to get logo
+const homepage = await getHomepage();
+// Use higher resolution for retina displays (2x the display size)
+// Logo displays at h-16 (64px) so we want 128px height for crisp display
+const logoUrl = homepage?.logo ? urlForOptimized(homepage.logo.asset, 384, 128).url() : null;
+const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content={description} />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Favicons and Icons -->
+  <link rel="icon" href="/favicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+  <link rel="shortcut icon" href="/favicon.png" />
+  <meta name="generator" content={Astro.generator} />
+  <link rel="canonical" href={canonicalUrl} />
+  
+  <!-- Preconnect to external domains -->
+  <link rel="preconnect" href="https://images.unsplash.com" />
+  <link rel="preconnect" href="https://cdn.sanity.io" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="https://chefnamcatering.com/images/logo/chef-nam-logo-square.png" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="1200" />
+  <meta property="og:image:alt" content="Chef Nam Event Catering - Ann Arbor" />
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={canonicalUrl} />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content="https://chefnamcatering.com/images/logo/chef-nam-logo-square.png" />
+  <meta property="twitter:image:alt" content="Chef Nam Event Catering - Ann Arbor" />
+  
+  
+  <!-- Site Name for Google -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Chef Nam Catering",
+      "alternateName": "Chef Nam",
+      "url": "https://chefnamcatering.com",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Chef Nam Catering",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://chefnamcatering.com/favicon.png"
+        }
+      }
+    }
+  </script>
+  
+  <title>{title}</title>
+  <meta property="og:site_name" content="Chef Nam Catering" />
+  
+  <!-- Additional head content from pages -->
+  <slot name="head" />
+  
+  <!-- Google Tag Manager - User Interaction Deferred -->
+  <script>
+  // Initialize dataLayer immediately but defer GTM script loading
+  window.dataLayer = window.dataLayer || [];
+  
+  // Load GTM only after user interaction or 3 seconds delay
+  let gtmLoaded = false;
+  function loadGTM() {
+    if (gtmLoaded) return;
+    gtmLoaded = true;
+    
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WCMPN842');
+  }
+  
+  // Load on user interaction
+  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => 
+    document.addEventListener(event, loadGTM, {once: true, passive: true})
+  );
+  
+  // Fallback: load after 3 seconds
+  setTimeout(loadGTM, 3000);
+  </script>
+  <!-- End Google Tag Manager -->
+</head>
+<body class="bg-brand-white text-brand-indigo">
+  <!-- Google Tag Manager (noscript) -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCMPN842"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+  <!-- End Google Tag Manager (noscript) -->
+  <div class="sticky top-0 z-50">
+    <TopBar />
+    <Header logoUrl={logoUrl} logoAlt={logoAlt} />
+  </div>
+  <slot />
+  <Footer logoUrl={logoUrl} logoAlt={logoAlt} />
+  
+  <!-- Phone Click Tracking for GA4 -->
+  <script>
+    // Track all phone number clicks
+    document.addEventListener('DOMContentLoaded', () => {
+      const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
+      
+      phoneLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          const phoneNumber = this.getAttribute('href').replace('tel:', '');
+          const linkText = this.textContent.trim();
+          const linkLocation = this.closest('section')?.className || 
+                             this.closest('footer') ? 'footer' : 
+                             this.closest('header') ? 'header' : 
+                             this.closest('.topbar') ? 'topbar' : 'unknown';
+          
+          // Push event to GTM dataLayer
+          if (typeof window !== 'undefined' && window.dataLayer) {
+            window.dataLayer.push({
+              'event': 'phone_click',
+              'phone_number': phoneNumber,
+              'link_text': linkText,
+              'link_location': linkLocation,
+              'event_category': 'engagement',
+              'event_label': 'Phone Click - ' + linkText
+            });
+          }
+        });
+      });
+
+      // Venue referral tracking
+      const venueLinks = document.querySelectorAll('a[data-venue-name]');
+      venueLinks.forEach(link => {
+        link.addEventListener('click', function() {
+          const venueName = this.getAttribute('data-venue-name');
+          const venueUrl = this.getAttribute('href');
+          const pageSource = window.location.pathname;
+          
+          if (typeof window !== 'undefined' && window.dataLayer) {
+            window.dataLayer.push({
+              'event': 'venue_referral',
+              'venue_name': venueName,
+              'venue_url': venueUrl,
+              'referral_source': pageSource,
+              'event_category': 'partnership',
+              'event_label': 'Venue Referral - ' + venueName
+            });
+          }
+        });
+      });
+
+    });
+  </script>
+</body>
+</html>

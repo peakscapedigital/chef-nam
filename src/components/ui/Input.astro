@@ -1,0 +1,48 @@
+---
+export interface Props {
+  type?: 'text' | 'email' | 'tel' | 'password' | 'textarea' | 'date' | 'number';
+  name: string;
+  id?: string;
+  placeholder?: string;
+  required?: boolean;
+  className?: string;
+  rows?: number;
+  value?: string;
+}
+
+const { 
+  type = 'text', 
+  name, 
+  id = name, 
+  placeholder, 
+  required = false, 
+  className = '',
+  rows = 4,
+  value = ''
+} = Astro.props;
+
+const baseClasses = 'w-full px-4 py-3 border border-brand-indigo/20 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber outline-none transition-colors';
+const inputClasses = `${baseClasses} ${className}`;
+
+---
+
+{type === 'textarea' ? (
+  <textarea 
+    name={name}
+    id={id}
+    placeholder={placeholder}
+    required={required}
+    class={inputClasses}
+    rows={rows}
+  >{value}</textarea>
+) : (
+  <input 
+    type={type}
+    name={name}
+    id={id}
+    placeholder={placeholder}
+    required={required}
+    class={inputClasses}
+    value={value}
+  />
+)}

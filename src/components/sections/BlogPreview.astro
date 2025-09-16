@@ -1,0 +1,86 @@
+---
+import { getLatestPosts } from '../../utils/api';
+import { urlFor } from '../../utils/sanity';
+import Button from '../ui/Button.astro';
+
+const posts = await getLatestPosts();
+---
+
+{posts.length > 0 && (
+  <section class="py-16 bg-brand-cream">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-4">
+          Latest From Our Kitchen
+        </h2>
+        <p class="text-lg text-brand-indigo/70 max-w-2xl mx-auto">
+          Discover recipes, tips, and stories from Chef Nam's culinary journey
+        </p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+        {posts.map((post) => (
+          <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group">
+            {post.featuredImage && (
+              <div class="aspect-video overflow-hidden">
+                <img 
+                  src={urlFor(post.featuredImage.asset).width(400).height(225).url()}
+                  alt={post.featuredImage.alt}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  loading="lazy"
+                />
+              </div>
+            )}
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                {post.categories && post.categories.map((category) => (
+                  <span class="text-xs px-2 py-1 bg-brand-amber/10 text-brand-amber rounded-full">
+                    {category.replace('-', ' ')}
+                  </span>
+                ))}
+              </div>
+              <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-3 group-hover:text-brand-amber transition-colors">
+                {post.title}
+              </h3>
+              <p class="text-brand-indigo/70 mb-4 line-clamp-3">
+                {post.excerpt}
+              </p>
+              <div class="flex items-center justify-between">
+                <span class="text-sm text-brand-indigo/60">
+                  {new Date(post.publishedAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric'
+                  })}
+                </span>
+                <a 
+                  href={`/blog/${post.slug.current}`}
+                  class="text-brand-amber hover:text-brand-amber/80 font-medium transition-colors"
+                >
+                  Read More →
+                </a>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+      
+      {posts.length >= 3 && (
+        <div class="text-center">
+          <Button href="/blog" variant="outline" size="lg">
+            View All Posts
+          </Button>
+        </div>
+      )}
+    </div>
+  </section>
+)}
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

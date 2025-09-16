@@ -1,0 +1,700 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Explore Catering Menus & Pricing Options | Chef Nam Catering"
+  description="View sample catering menus and learn about our fully customizable dishes and dietary options tailored to your budget and needs."
+>
+  <!-- Menus Page Structured Data -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage","CollectionPage"],
+    "@id": "https://chefnamcatering.com/menus#webpage",
+    "name": "Catering Menus",
+    "url": "https://chefnamcatering.com/menus",
+    "description": "Sample catering menus for weddings, corporate events, and social gatherings.",
+    "isPartOf": { "@id": "https://chefnamcatering.com/#website" },
+    "mainEntity": { "@id": "https://chefnamcatering.com/menus#menu" }
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://chefnamcatering.com" },
+      { "@type": "ListItem", "position": 2, "name": "Menus", "item": "https://chefnamcatering.com/menus" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "Menu",
+    "@id": "https://chefnamcatering.com/menus#menu",
+    "name": "Chef Nam Catering – Sample Menus",
+    "url": "https://chefnamcatering.com/menus",
+    "hasMenuSection": [
+      {
+        "@type": "MenuSection",
+        "name": "Wedding Celebration",
+        "hasMenuItem": [
+          { "@type": "MenuItem", "name": "Thai Spring Rolls" },
+          { "@type": "MenuItem", "name": "Panang Curry Beef" },
+          { "@type": "MenuItem", "name": "Mango Sticky Rice" }
+        ]
+      },
+      {
+        "@type": "MenuSection",
+        "name": "Corporate Lunch",
+        "hasMenuItem": [
+          { "@type": "MenuItem", "name": "Pad Thai (Chicken or Tofu)" },
+          { "@type": "MenuItem", "name": "Green Curry Vegetables" },
+          { "@type": "MenuItem", "name": "Thai Fried Rice" }
+        ]
+      },
+      {
+        "@type": "MenuSection",
+        "name": "Social Gathering",
+        "hasMenuItem": [
+          { "@type": "MenuItem", "name": "Thai Chicken Wings" },
+          { "@type": "MenuItem", "name": "Massaman Curry (Choice of Protein)" },
+          { "@type": "MenuItem", "name": "Thai Tea Tiramisu" }
+        ]
+      }
+    ],
+    "provider": { "@type": "Organization", "@id": "https://chefnamcatering.com/#business", "name": "Chef Nam Catering" },
+    "brand": { "@type": "Organization", "@id": "https://chefnamcatering.com/#business", "name": "Chef Nam Catering" }
+  }
+  </script>
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo relative overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+          alt="Colorful array of fresh ingredients and prepared dishes showcasing menu variety"
+          class="w-full h-full object-cover"
+        />
+        <!-- Clean overlay for text readability with brand indigo tint -->
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-none mb-8">
+          <span class="text-white font-serif">Flavors That Tell</span><br>
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Your Story</span>
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Every menu is thoughtfully crafted to match your event, dietary needs, and budget. Explore our signature dishes and let us create something special for you.
+        </p>
+      </div>
+    </section>
+
+    <!-- Menu Philosophy -->
+    <section class="py-16 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Our Menu Philosophy</h2>
+        <p class="text-lg text-brand-indigo/80 leading-relaxed mb-8">
+          We believe every event deserves a unique culinary experience. Our menus blend authentic Thai flavors with global techniques and fresh local ingredients, creating dishes that tell your story and delight your guests.
+        </p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:leaf" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Fresh & Local</h3>
+            <p class="text-brand-indigo/70 text-sm">Sourced from local farms and authentic suppliers</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:silverware-fork-knife" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Customizable</h3>
+            <p class="text-brand-indigo/70 text-sm">Every menu tailored to your preferences and budget</p>
+          </div>
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:heart" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Made with Care</h3>
+            <p class="text-brand-indigo/70 text-sm">Every dish prepared with attention to detail</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sample Menus by Event Type -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-4xl font-serif font-bold text-brand-indigo mb-6">Sample Catering Menus</h2>
+          <p class="text-xl text-brand-indigo/70">Curated examples for different event types and styles</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Wedding Menu -->
+          <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col h-full">
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:heart-multiple" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-2">Wedding Celebration</h3>
+              <p class="text-brand-indigo/60">Elegant plated dinner</p>
+            </div>
+            
+            <div class="space-y-6 flex-grow">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Appetizers</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Thai Spring Rolls with sweet chili dip</li>
+                  <li>• Coconut Chicken Skewers</li>
+                  <li>• Vegetarian Summer Rolls</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Main Course</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Panang Curry Beef with jasmine rice</li>
+                  <li>• Lemongrass Salmon with coconut rice</li>
+                  <li>• Thai Basil Eggplant (vegan option)</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Sides</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Thai-spiced roasted vegetables</li>
+                  <li>• Cucumber salad with herbs</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Dessert</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Mango sticky rice</li>
+                  <li>• Coconut panna cotta</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-auto pt-6 border-t border-brand-indigo/10">
+              <p class="text-sm text-brand-indigo/60 text-center mb-4">*Sample menu - fully customizable</p>
+              <a href="/start-planning" class="block w-full text-center bg-brand-amber text-white font-semibold py-3 rounded-lg hover:bg-brand-amber/90 transition-colors">
+                Get Custom Menu Proposal
+              </a>
+            </div>
+          </div>
+
+          <!-- Corporate Menu -->
+          <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col h-full">
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:office-building" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-2">Corporate Lunch</h3>
+              <p class="text-brand-indigo/60">Professional buffet style</p>
+            </div>
+            
+            <div class="space-y-6 flex-grow">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Salads & Starters</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Thai beef salad with herbs</li>
+                  <li>• Green papaya slaw</li>
+                  <li>• Mixed greens with peanut dressing</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Main Dishes</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Pad Thai with chicken or tofu</li>
+                  <li>• Green curry with vegetables</li>
+                  <li>• Teriyaki glazed salmon</li>
+                  <li>• Thai fried rice</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Accompaniments</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Steamed jasmine rice</li>
+                  <li>• Fresh fruit platter</li>
+                  <li>• Assorted Thai desserts</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-auto pt-6 border-t border-brand-indigo/10">
+              <p class="text-sm text-brand-indigo/60 text-center mb-4">*Includes setup, service & cleanup</p>
+              <a href="/start-planning" class="block w-full text-center bg-brand-amber text-white font-semibold py-3 rounded-lg hover:bg-brand-amber/90 transition-colors">
+                Get Custom Menu Proposal
+              </a>
+            </div>
+          </div>
+
+          <!-- Social Event Menu -->
+          <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col h-full">
+            <div class="text-center mb-6">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:party-popper" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-2">Social Gathering</h3>
+              <p class="text-brand-indigo/60">Family-style sharing</p>
+            </div>
+            
+            <div class="space-y-6 flex-grow">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Shared Plates</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Thai chicken wings</li>
+                  <li>• Vegetable spring rolls</li>
+                  <li>• Satay skewer platter</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Family Style Mains</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Massaman curry (choice of protein)</li>
+                  <li>• Stir-fried noodles with vegetables</li>
+                  <li>• Thai basil fried rice</li>
+                  <li>• Grilled fish with herbs</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-3">Dessert Station</h4>
+                <ul class="space-y-2 text-brand-indigo/80">
+                  <li>• Mango with sticky rice</li>
+                  <li>• Thai tea tiramisu</li>
+                  <li>• Coconut ice cream</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-auto pt-6 border-t border-brand-indigo/10">
+              <p class="text-sm text-brand-indigo/60 text-center mb-4">*Perfect for 10-50 guests</p>
+              <a href="/start-planning" class="block w-full text-center bg-brand-amber text-white font-semibold py-3 rounded-lg hover:bg-brand-amber/90 transition-colors">
+                Get Custom Menu Proposal
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Dietary Accommodations -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Dietary Accommodations</h2>
+          <p class="text-xl text-brand-indigo/70">We welcome all dietary needs and preferences</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="text-center p-6 bg-brand-cream/30 rounded-lg">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:sprout" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Vegan & Vegetarian</h3>
+            <p class="text-brand-indigo/70 text-sm">Plant-based options with authentic Thai flavors</p>
+          </div>
+          
+          <div class="text-center p-6 bg-brand-cream/30 rounded-lg">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:wheat" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Gluten-Free</h3>
+            <p class="text-brand-indigo/70 text-sm">Carefully prepared dishes using alternative ingredients</p>
+          </div>
+          
+          <div class="text-center p-6 bg-brand-cream/30 rounded-lg">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:peanut" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Allergy-Friendly</h3>
+            <p class="text-brand-indigo/70 text-sm">Safe preparation for common food allergies</p>
+          </div>
+          
+          <div class="text-center p-6 bg-brand-cream/30 rounded-lg">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:chili-hot" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Spice Levels</h3>
+            <p class="text-brand-indigo/70 text-sm">Customizable heat levels for every palate</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Styles -->
+    <section class="py-20 bg-brand-indigo text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold mb-6">Service Styles</h2>
+          <p class="text-xl text-white/90">Choose the service style that best fits your event</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white/10 rounded-xl p-8">
+            <h3 class="text-xl font-serif font-semibold mb-4 flex items-center"><Icon name="mdi:silverware-fork-knife" class="w-6 h-6 mr-2 text-brand-amber" /> Plated Service</h3>
+            <p class="text-white/80 mb-4">Elegant individual plates served to each guest</p>
+            <ul class="space-y-2 text-white/70 text-sm">
+              <li>• Perfect for weddings and formal events</li>
+              <li>• Professional waitstaff included</li>
+              <li>• Multiple course options available</li>
+            </ul>
+          </div>
+          
+          <div class="bg-white/10 rounded-xl p-8">
+            <h3 class="text-xl font-serif font-semibold mb-4 flex items-center"><Icon name="mdi:food" class="w-6 h-6 mr-2 text-brand-amber" /> Buffet Style</h3>
+            <p class="text-white/80 mb-4">Self-serve stations with variety and flexibility</p>
+            <ul class="space-y-2 text-white/70 text-sm">
+              <li>• Great for corporate events and parties</li>
+              <li>• Wide variety of dishes</li>
+              <li>• Cost-effective for larger groups</li>
+            </ul>
+          </div>
+          
+          <div class="bg-white/10 rounded-xl p-8">
+            <h3 class="text-xl font-serif font-semibold mb-4 flex items-center"><Icon name="mdi:account-group" class="w-6 h-6 mr-2 text-brand-amber" /> Family Style</h3>
+            <p class="text-white/80 mb-4">Shared platters that encourage conversation</p>
+            <ul class="space-y-2 text-white/70 text-sm">
+              <li>• Creates intimate, communal dining</li>
+              <li>• Perfect for smaller gatherings</li>
+              <li>• Authentic Thai dining experience</li>
+            </ul>
+          </div>
+          
+          <div class="bg-white/10 rounded-xl p-8">
+            <h3 class="text-xl font-serif font-semibold mb-4 flex items-center"><Icon name="mdi:glass-cocktail" class="w-6 h-6 mr-2 text-brand-amber" /> Cocktail Reception</h3>
+            <p class="text-white/80 mb-4">Passed appetizers and stationed bites</p>
+            <ul class="space-y-2 text-white/70 text-sm">
+              <li>• Elegant finger foods and canapés</li>
+              <li>• Perfect for networking events</li>
+              <li>• Interactive food stations available</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Signature Dishes -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Signature Dishes</h2>
+          <p class="text-xl text-brand-indigo/70">Favorites that guests always remember</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Chef Nam's Pad Thai</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Our signature take on the classic, with fresh ingredients and perfectly balanced flavors</p>
+            <span class="text-xs text-brand-amber font-medium">Most Popular</span>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Panang Curry</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Rich, creamy curry with your choice of protein and authentic Thai spices</p>
+            <span class="text-xs text-brand-amber font-medium">Guest Favorite</span>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Coconut Chicken Skewers</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Tender marinated chicken with coconut curry dipping sauce</p>
+            <span class="text-xs text-brand-amber font-medium">Perfect Appetizer</span>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Thai Basil Fried Rice</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Aromatic jasmine rice with fresh basil and traditional seasonings</p>
+            <span class="text-xs text-brand-amber font-medium">Vegetarian Friendly</span>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Mango Sticky Rice</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Traditional Thai dessert with sweet coconut milk and ripe mango</p>
+            <span class="text-xs text-brand-amber font-medium">Crowd Pleaser</span>
+          </div>
+          
+          <div class="bg-white rounded-xl p-6 shadow-sm">
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Lemongrass Salmon</h3>
+            <p class="text-brand-indigo/70 text-sm mb-3">Fresh salmon with aromatic lemongrass and herbs</p>
+            <span class="text-xs text-brand-amber font-medium">Signature Entrée</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Start Form -->    
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Ready to Create Your Custom Menu?</h2>
+          <p class="text-xl text-brand-indigo/70">
+            Tell us about your event and we'll create a personalized menu proposal with pricing details.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Contact Form -->
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-serif font-semibold text-brand-indigo mb-6">Get Your Custom Menu Quote</h3>
+            
+            <form id="menus-contact-form" action="#" method="POST" class="space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-2">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="firstName" 
+                    name="firstName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-2">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="lastName" 
+                    name="lastName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="message" class="block text-sm font-medium text-brand-indigo mb-2">Tell us about your event & menu interests</label>
+                <textarea 
+                  id="message" 
+                  name="message" 
+                  rows="4"
+                  placeholder="Share details about your event, favorite dishes from our menu samples, dietary needs, guest count, or any questions..."
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit"
+                class="w-full bg-brand-amber text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors"
+              >
+                Get My Custom Menu Proposal
+              </button>
+              <p class="text-brand-indigo/60 text-sm text-center">
+                Response within 24 hours • Free consultation • No obligations
+              </p>
+            </form>
+          </div>
+
+          <!-- What to Expect & Quick Contact -->
+          <div class="space-y-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+              <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-6">What to Expect</h3>
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <Icon name="mdi:message-text" class="w-6 h-6 text-brand-amber" />
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Personal Consultation</h4>
+                    <p class="text-brand-indigo/70 text-sm">We'll discuss your event details, menu preferences, dietary needs, and budget to create the perfect culinary experience.</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <Icon name="mdi:clipboard-text" class="w-6 h-6 text-brand-amber" />
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Custom Menu Proposal</h4>
+                    <p class="text-brand-indigo/70 text-sm">Receive a personalized menu with detailed pricing, service options, and recommendations within 24-48 hours.</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <Icon name="mdi:chef-hat" class="w-6 h-6 text-brand-amber" />
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Menu Tasting</h4>
+                    <p class="text-brand-indigo/70 text-sm">For larger events, we offer tastings so you can experience our dishes before your special day.</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <Icon name="mdi:silverware-fork-knife" class="w-6 h-6 text-brand-amber" />
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Flawless Execution</h4>
+                    <p class="text-brand-indigo/70 text-sm">Our experienced team handles every detail from setup to cleanup, ensuring your event runs seamlessly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-brand-indigo rounded-xl p-8 text-white">
+              <h3 class="text-xl font-serif font-semibold mb-4">Prefer to Talk Directly?</h3>
+              <div class="space-y-3 mb-6">
+                <div class="flex items-center">
+                  <Icon name="mdi:email" class="w-5 h-5 text-brand-amber mr-3" />
+                  <a href="mailto:nam@chefnamcatering.com" class="text-white/90 hover:text-white">
+                    nam@chefnamcatering.com
+                  </a>
+                </div>
+                <div class="flex items-center">
+                  <Icon name="mdi:phone" class="w-5 h-5 text-brand-amber mr-3" />
+                  <a href="tel:+17346239799" class="text-white/90 hover:text-white">
+                    (734) 623-9799
+                  </a>
+                </div>
+              </div>
+              <p class="text-white/80 text-sm mb-4">
+                We usually respond within 2-4 hours during business hours (Mon-Fri 9am-6pm)
+              </p>
+              <div class="flex flex-col sm:flex-row gap-3">
+                <a href="/services" class="inline-flex items-center px-4 py-2 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors text-sm">
+                  View Services
+                </a>
+                <a href="/start-planning" class="inline-flex items-center px-4 py-2 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm">
+                  Start Planning
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<script>
+// Short form submission for /menus page
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('menus-contact-form');
+  
+  if (form) {
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const message = document.getElementById('message').value;
+      
+      // Validate required fields
+      if (!firstName || !lastName || !email || !phone) {
+        alert('Please fill in all required fields');
+        return;
+      }
+      
+      const submitButton = form.querySelector('button[type="submit"]');
+      const originalText = submitButton.textContent;
+      submitButton.textContent = 'Sending...';
+      submitButton.disabled = true;
+      
+      try {
+        // Submit to API
+        const response = await fetch('/api/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            message: message,
+            source: 'menus'
+          })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          // PII-free dataLayer push
+          if (typeof window !== 'undefined' && window.dataLayer) {
+            window.dataLayer.push({
+              event: 'form_submit',
+              form_name: 'menus_contact',
+              form_destination: '/api/submit-form',
+              form_type: 'lead_capture',
+              event_category: 'engagement',
+              event_label: 'Menus Contact Form'
+            });
+          }
+          // Persist identity for Enhanced Conversions on thank-you
+          try {
+            sessionStorage.setItem('sp_lead_email', email || '');
+            sessionStorage.setItem('sp_lead_phone', phone || '');
+            sessionStorage.setItem('sp_lead_first', firstName || '');
+            sessionStorage.setItem('sp_lead_last', lastName || '');
+          } catch (e) {
+            console.warn('Session storage unavailable', e);
+          }
+          // Redirect to planning form with pre-populated data
+          const params = new URLSearchParams({
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: phone,
+            message: message,
+            source: 'menus',
+            submissionId: result.id // Pass the ID so we can update this submission
+          });
+          
+          window.location.href = `/start-planning?${params.toString()}`;
+        } else {
+          throw new Error(result.message || 'Failed to submit form');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Sorry, there was an error. Please try again or contact us directly.');
+        submitButton.textContent = originalText;
+        submitButton.disabled = false;
+      }
+    });
+  }
+});
+</script>

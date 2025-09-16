@@ -1,0 +1,523 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/ui/Card.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Corporate & Office Catering in Ann Arbor | Chef Nam Catering"
+  description="Professional corporate, business, and office catering in Ann Arbor, Michigan. Executive lunches, team lunches, holiday parties, conferences, and meetings with reliable service and transparent pricing."
+>
+  <!-- Corporate Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/services/corporate#corporateservice",
+      "serviceType": "Corporate Catering",
+      "name": "Corporate Catering Services",
+      "description": "Professional corporate, business, and office catering in Ann Arbor, Michigan. Executive lunches, team lunches, holiday parties, conferences, and meetings with reliable service and transparent pricing.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/services/corporate"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Corporate Catering Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Business Meeting Catering"
+            }
+          },
+          {
+            "@type": "Offer", 
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Corporate Holiday Party Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Conference and Workshop Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Executive Lunch Catering"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/services/corporate"
+    }
+  </script>
+  
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Services",
+        "item": "https://chefnamcatering.com/services"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Corporate Catering",
+        "item": "https://chefnamcatering.com/services/corporate"
+      }
+    ]
+  }
+  </script>
+  
+  <main>
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Professional corporate catering buffet setup"
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <!-- Blue tint overlay to match homepage -->
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Corporate & Office Catering in Ann Arbor</span><br />
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">That Delivers</span>
+        </h2>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Reliable, professional catering for Ann Arbor businesses. From executive lunches to company celebrations, we make your corporate events seamless and memorable.
+        </p>
+      </div>
+    </section>
+
+    <!-- Corporate Services Overview -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Professional Catering for Every Business Need
+          </h1>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            From small team meetings to large corporate events, we understand the unique requirements of business catering and deliver consistent, professional service every time.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- Executive Meetings -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:tie" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Executive Meetings & Business Catering</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Professional presentation and service for C-suite meetings, board discussions, and client presentations.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Boardroom-style plated service</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Quiet, professional service staff</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Flexible timing around agendas</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- Team Lunches -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:account-group" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Office Lunch Catering & Team Events</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Build team morale with delicious catered meals for staff meetings, training sessions, and team building events.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Buffet-style for easy serving</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Dietary accommodations included</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Setup in conference or break rooms</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- Corporate Events -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:party-popper" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Corporate Events & Holiday Parties</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Celebrate company achievements, holidays, and special occasions with memorable catered experiences.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Festive presentations & decorations</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Cocktail reception options</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Full-service event coordination</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Local Business Focus -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Serving Ann Arbor's Business Community</h2>
+        <p class="text-xl text-brand-indigo/70 mb-12">
+          From downtown offices to research facilities, we understand the unique needs of Ann Arbor's diverse business landscape
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Downtown Core</h3>
+            <p class="text-brand-indigo/70 text-sm">Law firms, financial services, and professional offices</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Research Triangle</h3>
+            <p class="text-brand-indigo/70 text-sm">University partnerships, research facilities, and tech companies</p>
+          </div>
+          <div>
+            <h3 class="font-semibold text-brand-indigo mb-2">Business Parks</h3>
+            <p class="text-brand-indigo/70 text-sm">Corporate headquarters and manufacturing facilities</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Corporate Process -->
+    <section class="relative py-20 text-white overflow-hidden">
+      <!-- Background Image with Gradient -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Corporate business meeting"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.7))"></div>
+      </div>
+      
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold mb-6">How Corporate Catering Works</h2>
+          <p class="text-xl text-white/90">Streamlined process designed for business efficiency</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Quick Consultation</h3>
+            <p class="text-white/80 text-sm">15-minute call or email to understand your needs, headcount, budget, and timeline</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Proposal & Booking</h3>
+            <p class="text-white/80 text-sm">Detailed proposal with pricing, timeline, and service details. Easy online booking confirmation</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Professional Delivery</h3>
+            <p class="text-white/80 text-sm">On-time setup, professional service, and complete cleanup so you can focus on your event</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-white/70 text-sm mb-6">Need recurring catering? Ask about our corporate partnership program for preferred pricing and priority booking.</p>
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg">
+            Get Custom Quote
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Corporate Menu Highlights -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Corporate Menu Highlights</h2>
+          <p class="text-xl text-brand-indigo/70">Professional favorites that work well in business settings</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Executive Lunch Menu -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Executive Lunch Package</h3>
+              <p class="text-brand-indigo/60">Perfect for client meetings and board lunches</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Appetizers</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai spring rolls with sweet chili sauce</li>
+                  <li>• Coconut chicken skewers</li>
+                  <li>• Fresh vegetable crudité with herb dip</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Main Courses</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Grilled salmon with lemongrass glaze</li>
+                  <li>• Thai basil chicken with jasmine rice</li>
+                  <li>• Vegetarian green curry with tofu</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Sides & Dessert</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Mixed green salad with peanut dressing</li>
+                  <li>• Fresh fruit platter</li>
+                  <li>• Mini Thai dessert selection</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $28 per person</p>
+              <p class="text-brand-indigo/50 text-xs">Minimum 15 people • Service & cleanup included</p>
+            </div>
+          </div>
+
+          <!-- Team Meeting Package -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Team Meeting Package</h3>
+              <p class="text-brand-indigo/60">Casual, delicious options for team gatherings</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Buffet Options</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Pad Thai station (chicken or tofu)</li>
+                  <li>• Thai fried rice with vegetables</li>
+                  <li>• Green curry with choice of protein</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Salads & Sides</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai beef salad with herbs</li>
+                  <li>• Green papaya slaw</li>
+                  <li>• Steamed jasmine rice</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Beverages & Dessert</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai iced tea and coffee service</li>
+                  <li>• Fresh fruit and cookies</li>
+                  <li>• Water and soft drink selection</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $18 per person</p>
+              <p class="text-brand-indigo/50 text-xs">Minimum 10 people • Perfect for lunch meetings</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-brand-indigo/70 mb-6">All packages can be customized to your team's preferences and dietary needs.</p>
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Get Custom Corporate Quote
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Us for Corporate -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Why Ann Arbor Businesses Choose Chef Nam</h2>
+          <p class="text-xl text-brand-indigo/70">Professional service that meets corporate standards</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="space-y-8">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:clock" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Reliable & On-Time</h3>
+                  <p class="text-brand-indigo/70 text-sm">We understand business schedules. Our team arrives early, sets up efficiently, and serves exactly when promised.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:briefcase" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Professional Presentation</h3>
+                  <p class="text-brand-indigo/70 text-sm">Clean, professional appearance and discrete service that won't disrupt your meetings or events.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:chart-line" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Transparent Pricing</h3>
+                  <p class="text-brand-indigo/70 text-sm">Clear, upfront pricing with detailed invoices. No hidden fees or surprises for your accounting team.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:repeat" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Recurring Events</h3>
+                  <p class="text-brand-indigo/70 text-sm">Special rates and priority scheduling for regular clients. Perfect for weekly meetings or monthly events.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center">
+              <div class="text-brand-amber mb-4 flex justify-center space-x-1">
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+              </div>
+              <p class="text-brand-indigo/80 italic text-lg mb-6">
+                "Chef Nam has been our go-to caterer for two years. Always on time, always professional, and the food consistently impresses our clients. They make us look good."
+              </p>
+              <p class="text-brand-indigo font-semibold">- Jennifer Martinez</p>
+              <p class="text-brand-indigo/60 text-sm">Operations Manager, TechFlow Solutions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Plan Your Corporate Catering Today
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 max-w-2xl mx-auto">
+          Join hundreds of Ann Arbor businesses who trust Chef Nam for their corporate catering needs. Professional service, exceptional food, competitive pricing.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/start-planning" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Get Custom Quote
+          </a>
+          <a href="/contact" class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden">
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Call (734) 623-9799
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+        <p class="text-brand-indigo/60 text-sm mt-6">
+          Quick response time • Free consultation • No obligation quote
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Layout>

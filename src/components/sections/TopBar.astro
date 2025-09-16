@@ -1,0 +1,58 @@
+---
+import { Icon } from 'astro-icon/components';
+---
+
+<div class="bg-brand-cream text-brand-indigo text-sm py-2 border-b border-brand-indigo/10">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center relative">
+      <!-- Left side - Contact Info -->
+      <div class="flex items-center">
+        <a 
+          href="tel:+17346239799" 
+          class="flex items-center space-x-2 text-brand-indigo hover:text-brand-amber transition-colors"
+          aria-label="Call Chef Nam Catering at (734) 623-9799"
+        >
+          <Icon name="mdi:phone" class="w-4 h-4" />
+          <span class="hidden sm:inline">(734) 623-9799</span>
+        </a>
+      </div>
+      
+      <!-- Center - Blue Lemon Thai text -->
+      <div class="absolute left-1/2 transform -translate-x-1/2 hidden md:flex items-center text-brand-indigo">
+        <span>Check out our latest </span>
+        <a 
+          href="https://bluelemonthai.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-brand-amber hover:text-brand-indigo font-semibold mx-1 transition-colors"
+        >
+          Blue Lemon Thai
+        </a>
+        <span> pop ups!</span>
+      </div>
+      
+      <!-- Right side - Social Links -->
+      <div class="flex items-center space-x-4">
+        <span class="hidden sm:inline text-brand-indigo/70 text-xs">Follow us:</span>
+        <a 
+          href="https://www.facebook.com/chefnamcatering" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="text-brand-indigo/80 hover:text-brand-amber transition-colors"
+          aria-label="Follow us on Facebook"
+        >
+          <Icon name="mdi:facebook" class="w-4 h-4" />
+        </a>
+        <a 
+          href="https://www.instagram.com/chefnamcatering/" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="text-brand-indigo/80 hover:text-brand-amber transition-colors"
+          aria-label="Follow us on Instagram"
+        >
+          <Icon name="mdi:instagram" class="w-4 h-4" />
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

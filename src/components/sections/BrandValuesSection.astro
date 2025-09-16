@@ -1,0 +1,214 @@
+---
+import { Icon } from 'astro-icon/components';
+
+export interface Props {
+  values?: Array<{
+    icon: string;
+    title: string;
+    description: string;
+  }>;
+}
+
+const { values = [
+  {
+    icon: "mdi:leaf",
+    title: "Local Excellence",
+    description: "Fresh, seasonal ingredients from local Michigan farms and suppliers to support our community."
+  },
+  {
+    icon: "mdi:star",
+    title: "Uncompromising Quality", 
+    description: "From ingredient selection to final presentation, every dish meets our exacting standards."
+  },
+  {
+    icon: "mdi:bullseye-arrow",
+    title: "Seamless Service",
+    description: "Professional, attentive service that anticipates your needs so you can enjoy your event."
+  }
+] } = Astro.props;
+---
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+  
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
+</style>
+
+<section class="py-20 bg-brand-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6">
+        Chef Nam's Promise
+      </h2>
+      <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+        We bring more than just exceptional food to your events — we bring care, connection, and celebration.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+      {values.map(value => (
+        <div class="text-center">
+          <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Icon name={value.icon} class="w-8 h-8 text-brand-amber" />
+          </div>
+          <h3 class="text-2xl font-serif font-semibold text-brand-indigo mb-4">
+            {value.title}
+          </h3>
+          <p class="text-brand-indigo/70 leading-relaxed">
+            {value.description}
+          </p>
+        </div>
+      ))}
+    </div>
+
+    <!-- Partner Logos Carousel -->
+    <div class="overflow-hidden">
+      <div class="flex animate-scroll items-center gap-12 lg:gap-16">
+        <!-- First set of logos -->
+        <a 
+          href="https://www.thehungrylocavore.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/hungry-locavore.webp" 
+            alt="The Hungry Locavore" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://harvestkitchena2.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/harvest-kitchen.webp" 
+            alt="Harvest Kitchen" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://www.gingerdeli.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/ginger-deli-logo.svg" 
+            alt="Ginger Deli" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://www.tantrefarm.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/tantre-farm.svg" 
+            alt="Tantre Farm" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://annarborusa.org/about/washtenaw-county/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/spark-washtenaw.svg" 
+            alt="Spark Washtenaw" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <!-- Duplicate set for seamless loop -->
+        <a 
+          href="https://www.thehungrylocavore.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/hungry-locavore.webp" 
+            alt="The Hungry Locavore" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://harvestkitchena2.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/harvest-kitchen.webp" 
+            alt="Harvest Kitchen" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://www.gingerdeli.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/ginger-deli-logo.svg" 
+            alt="Ginger Deli" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://www.tantrefarm.com/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/tantre-farm.svg" 
+            alt="Tantre Farm" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+        
+        <a 
+          href="https://annarborusa.org/about/washtenaw-county/" 
+          target="_blank"
+          rel="noopener noreferrer"
+          class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+        >
+          <img 
+            src="/images/partners/spark-washtenaw.svg" 
+            alt="Spark Washtenaw" 
+            class="h-16 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+          />
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

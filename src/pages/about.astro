@@ -1,0 +1,283 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { getHomepage, urlFor } from '../utils/sanity';
+
+// Fetch homepage data to get chef photo and about content
+const homepage = await getHomepage();
+
+// Prepare dynamic content with fallbacks - force local image for now
+const chefImageUrl = '/images/chef/chef-nam-portrait.jpg';
+const chefImageAlt = homepage?.about?.chefImage?.alt || 'Chef Nam in professional kitchen';
+---
+
+<style>
+  @keyframes scroll {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .animate-scroll {
+    animation: scroll 30s linear infinite;
+  }
+  
+  .animate-scroll:hover {
+    animation-play-state: paused;
+  }
+</style>
+
+<Layout 
+  title="About | Chef Nam Catering Ann Arbor"
+  description="Meet Chef Nam, bringing authentic and global culinary expertise to Ann Arbor. Learn about her years of experience creating memorable catering experiences."
+>
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
+          Meet Chef Nam
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Bringing authentic Thai flavors and global culinary expertise to create unforgettable catering experiences throughout Ann Arbor and Michigan.
+        </p>
+      </div>
+    </section>
+
+    <!-- Chef's Story Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          
+          <!-- Story Content -->
+          <div>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+              Rooted in Flavor.<br>
+              <span class="text-brand-amber">Driven By Heart.</span>
+            </h2>
+            
+            <div class="space-y-6 text-brand-indigo/80 leading-relaxed">
+              <p>
+                Born in Thailand and raised with a deep appreciation for authentic flavors, Chef Nam's culinary journey began in her grandmother's kitchen, where she learned that the best meals are prepared with love, patience, and respect for tradition.
+              </p>
+              
+              <p>
+                After moving to Michigan and working in professional kitchens, Chef Nam discovered her passion for bringing people together through food. She founded Chef Nam Catering to share the warmth and hospitality of Thai culture with the Ann Arbor community.
+              </p>
+              
+              <p>
+                Today, Chef Nam blends her heritage with global culinary techniques and local Michigan ingredients, creating fusion dishes that tell a story of connection, celebration, and care. Every event is an opportunity to make people feel seen, celebrated, and well-fed.
+              </p>
+            </div>
+          </div>
+
+          <!-- Chef Image -->
+          <div class="relative">
+            <img 
+              src={chefImageUrl}
+              alt={chefImageAlt}
+              class="w-full h-[500px] lg:h-[600px] rounded-2xl object-cover shadow-xl"
+              loading="eager"
+            />
+            <div class="absolute -bottom-6 -right-6 w-32 h-32 bg-brand-amber/10 rounded-2xl -z-10"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Community Partners -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-8">
+          Proud Member of the Ann Arbor Community
+        </h2>
+        
+        <p class="text-xl text-brand-indigo/70 mb-12 leading-relaxed">
+          As a local business owner and community member, Chef Nam is committed to supporting local farmers, using sustainable practices, and giving back to the Ann Arbor community that has welcomed her with open arms.
+        </p>
+
+        <!-- Partner Logos Carousel -->
+        <div class="overflow-hidden">
+          <div class="flex animate-scroll items-center gap-12 lg:gap-16">
+            <!-- First set of logos -->
+            <a 
+              href="https://www.thehungrylocavore.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/hungry-locavore.webp" 
+                alt="The Hungry Locavore" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                loading="lazy"
+                width="160"
+                height="80"
+              />
+            </a>
+            
+            <a 
+              href="https://harvestkitchena2.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/harvest-kitchen.webp" 
+                alt="Harvest Kitchen" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                loading="lazy"
+                width="160"
+                height="80"
+              />
+            </a>
+            
+            <a 
+              href="https://www.gingerdeli.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/ginger-deli-logo.svg" 
+                alt="Ginger Deli" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+            
+            <a 
+              href="https://www.tantrefarm.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/tantre-farm.svg" 
+                alt="Tantre Farm" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+            
+            <a 
+              href="https://annarborusa.org/about/washtenaw-county/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/spark-washtenaw.svg" 
+                alt="Spark Washtenaw" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+            
+            <!-- Duplicate set for seamless loop -->
+            <a 
+              href="https://www.thehungrylocavore.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/hungry-locavore.webp" 
+                alt="The Hungry Locavore" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                loading="lazy"
+                width="160"
+                height="80"
+              />
+            </a>
+            
+            <a 
+              href="https://harvestkitchena2.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/harvest-kitchen.webp" 
+                alt="Harvest Kitchen" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+                loading="lazy"
+                width="160"
+                height="80"
+              />
+            </a>
+            
+            <a 
+              href="https://www.gingerdeli.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/ginger-deli-logo.svg" 
+                alt="Ginger Deli" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+            
+            <a 
+              href="https://www.tantrefarm.com/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/tantre-farm.svg" 
+                alt="Tantre Farm" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+            
+            <a 
+              href="https://annarborusa.org/about/washtenaw-county/" 
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center justify-center p-6 hover:scale-105 transition-transform duration-300 flex-shrink-0"
+            >
+              <img 
+                src="/images/partners/spark-washtenaw.svg" 
+                alt="Spark Washtenaw" 
+                class="h-20 w-auto object-contain filter grayscale hover:grayscale-0 transition-all duration-300"
+              />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Let's Create Something Beautiful Together
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 text-center">
+          Ready to bring Chef Nam's passion and expertise to your next event? We'd love to hear about your vision and help make it a delicious reality.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a 
+            href="/start-planning" 
+            class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors text-center"
+          >
+            Start Planning Your Event
+          </a>
+          <a 
+            href="/blog" 
+            class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden text-center"
+          >
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Read Our Stories
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>

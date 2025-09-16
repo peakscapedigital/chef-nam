@@ -1,0 +1,634 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import ServiceHero from '../components/sections/ServiceHero.astro';
+---
+
+  <!-- Structured Data for Services Overview -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage","CollectionPage"],
+    "@id": "https://chefnamcatering.com/services#webpage",
+    "name": "Catering Services",
+    "url": "https://chefnamcatering.com/services",
+    "description": "Full-service catering in Ann Arbor for weddings, corporate events, and social celebrations.",
+    "isPartOf": { "@id": "https://chefnamcatering.com/#website" },
+    "mainEntity": { "@id": "https://chefnamcatering.com/services#services-list" }
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://chefnamcatering.com" },
+      { "@type": "ListItem", "position": 2, "name": "Catering Services", "item": "https://chefnamcatering.com/services" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": "https://chefnamcatering.com/services#services-list",
+    "name": "Catering Services",
+    "itemListOrder": "https://schema.org/ItemListOrderAscending",
+    "numberOfItems": 3,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "item": {
+          "@type": "Service",
+          "@id": "https://chefnamcatering.com/services/weddings#weddingservice",
+          "name": "Wedding Catering",
+          "url": "https://chefnamcatering.com/services/weddings"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "item": {
+          "@type": "Service",
+          "@id": "https://chefnamcatering.com/services/corporate#corporate-service",
+          "name": "Corporate Catering",
+          "url": "https://chefnamcatering.com/services/corporate"
+        }
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "item": {
+          "@type": "Service",
+          "@id": "https://chefnamcatering.com/services/social#social-service",
+          "name": "Social Event Catering",
+          "url": "https://chefnamcatering.com/services/social"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "OfferCatalog",
+    "@id": "https://chefnamcatering.com/services#offer-catalog",
+    "name": "Catering Services",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@id": "https://chefnamcatering.com/services/weddings#weddingservice" } },
+      { "@type": "Offer", "itemOffered": { "@id": "https://chefnamcatering.com/services/corporate#corporate-service" } },
+      { "@type": "Offer", "itemOffered": { "@id": "https://chefnamcatering.com/services/social#social-service" } }
+    ],
+    "url": "https://chefnamcatering.com/services",
+    "inLanguage": "en-US",
+    "provider": { "@id": "https://chefnamcatering.com/#caterer" }
+  }
+  </script>
+
+<Layout 
+  title="Catering Services Ann Arbor | Weddings, Corporate & Social Events"
+  description="Full-service catering for all occasions in Ann Arbor, Michigan. Weddings, corporate events, social gatherings with authentic cuisine and professional service."
+>
+  <main>
+    <!-- Hero Section -->
+    <ServiceHero 
+      title="Catering Services"
+      subtitle="For Every Occasion"
+      description="From intimate gatherings to grand celebrations, we bring authentic Thai fusion flavors and professional service to every event throughout Ann Arbor and Michigan."
+      backgroundImage="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Beautiful catering spread with various elegant dishes and professional presentation"
+    />
+
+    <!-- Services Overview -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Full-Service Catering for Every Occasion
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            No matter the size or style of your event, we create memorable culinary experiences that reflect your taste and make your guests feel celebrated.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          <!-- Wedding Catering -->
+          <Card variant="elevated" href="/services/weddings">
+            <div class="text-center p-8">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl" role="img" aria-label="Wedding">💒</span>
+              </div>
+              
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">
+                Wedding Catering
+              </h3>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Make your special day unforgettable with elegant cuisine that tells your love story. From intimate ceremonies to grand receptions.
+              </p>
+              
+              <div class="space-y-3 text-left mb-8">
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Customized wedding menus</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Plated service & buffet options</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Professional wait staff</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Complimentary menu tastings</span>
+                </div>
+              </div>
+              
+              <div class="bg-brand-cream/30 rounded-lg p-4 mb-6">
+                <p class="text-brand-indigo/70 text-sm italic">
+                  "Chef Nam made our wedding day perfect with the most delicious food and flawless service."
+                </p>
+                <p class="text-brand-indigo text-sm font-medium mt-2">- Sarah & Mike</p>
+              </div>
+              
+              <span class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">
+                Learn More About Wedding Catering →
+              </span>
+            </div>
+          </Card>
+
+          <!-- Corporate Catering -->
+          <Card variant="elevated" href="/services/corporate">
+            <div class="text-center p-8">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl" role="img" aria-label="Corporate">🏢</span>
+              </div>
+              
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">
+                Corporate Events
+              </h3>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Impress clients and colleagues with professional catering that elevates your business gatherings and corporate meetings.
+              </p>
+              
+              <div class="space-y-3 text-left mb-8">
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Executive lunch meetings</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Company holiday parties</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Conference & seminar catering</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Professional presentation</span>
+                </div>
+              </div>
+              
+              <div class="bg-brand-cream/30 rounded-lg p-4 mb-6">
+                <p class="text-brand-indigo/70 text-sm italic">
+                  "Reliable, professional, and consistently delicious. Chef Nam is our go-to for all corporate events."
+                </p>
+                <p class="text-brand-indigo text-sm font-medium mt-2">- Tech Solutions Inc.</p>
+              </div>
+              
+              <span class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">
+                Explore Corporate Catering →
+              </span>
+            </div>
+          </Card>
+
+          <!-- Social Events -->
+          <Card variant="elevated" href="/services/social">
+            <div class="text-center p-8">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <span class="text-4xl" role="img" aria-label="Social">🎉</span>
+              </div>
+              
+              <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">
+                Social Events
+              </h3>
+              
+              <p class="text-brand-indigo/70 mb-6 leading-relaxed">
+                Celebrate life's special moments with family and friends. Perfect for birthdays, anniversaries, and intimate gatherings.
+              </p>
+              
+              <div class="space-y-3 text-left mb-8">
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Birthday & anniversary parties</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Family reunion dinners</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Graduation celebrations</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span class="text-sm">Home dinner parties</span>
+                </div>
+              </div>
+              
+              <div class="bg-brand-cream/30 rounded-lg p-4 mb-6">
+                <p class="text-brand-indigo/70 text-sm italic">
+                  "Chef Nam turned our simple birthday party into an amazing celebration everyone still talks about."
+                </p>
+                <p class="text-brand-indigo text-sm font-medium mt-2">- The Johnson Family</p>
+              </div>
+              
+              <span class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors">
+                Discover Social Event Catering →
+              </span>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- What Sets Us Apart -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">What Sets Us Apart</h2>
+          <p class="text-xl text-brand-indigo/70">More than just catering – we create experiences</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">🍴</span>
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-3">Full-Service Experience</h3>
+            <p class="text-brand-indigo/70 text-sm">From planning to cleanup, we handle every detail so you can enjoy your event</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">👨‍🍳</span>
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-3">Expert Culinary Team</h3>
+            <p class="text-brand-indigo/70 text-sm">Led by Chef Nam with 15+ years of professional experience</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">🌱</span>
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-3">Fresh Local Ingredients</h3>
+            <p class="text-brand-indigo/70 text-sm">Sourced from local farmers and authentic suppliers</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-2xl">💎</span>
+            </div>
+            <h3 class="font-semibold text-brand-indigo mb-3">Customized Approach</h3>
+            <p class="text-brand-indigo/70 text-sm">Every menu tailored to your preferences, dietary needs, and budget</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Areas -->
+    <section class="py-20 bg-brand-indigo text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold mb-6">Serving Ann Arbor & Beyond</h2>
+        <p class="text-xl text-white/90 mb-12">
+          We're proud to serve the Ann Arbor community and surrounding areas with authentic Thai fusion catering
+        </p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div>
+            <h3 class="font-semibold mb-2">Primary Areas</h3>
+            <ul class="text-white/80 text-sm space-y-1">
+              <li>Ann Arbor</li>
+              <li>Ypsilanti</li>
+              <li>Dexter</li>
+              <li>Saline</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">Extended Areas</h3>
+            <ul class="text-white/80 text-sm space-y-1">
+              <li>Chelsea</li>
+              <li>Milan</li>
+              <li>Whitmore Lake</li>
+              <li>Brighton</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">Metro Areas</h3>
+            <ul class="text-white/80 text-sm space-y-1">
+              <li>Plymouth</li>
+              <li>Canton</li>
+              <li>Novi</li>
+              <li>Livonia</li>
+            </ul>
+          </div>
+          
+          <div>
+            <h3 class="font-semibold mb-2">Special Events</h3>
+            <ul class="text-white/80 text-sm space-y-1">
+              <li>Detroit</li>
+              <li>Lansing</li>
+              <li>Grand Rapids</li>
+              <li>Custom Locations</li>
+            </ul>
+          </div>
+        </div>
+        
+        <p class="text-white/70 text-sm mt-8">
+          *Travel fees may apply for locations outside primary service area
+        </p>
+      </div>
+    </section>
+
+    <!-- Process Overview -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Our Catering Process</h2>
+          <p class="text-xl text-brand-indigo/70">Simple steps to an extraordinary event</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Initial Consultation</h3>
+            <p class="text-brand-indigo/70 text-sm">Discuss your event details, preferences, and vision</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Custom Proposal</h3>
+            <p class="text-brand-indigo/70 text-sm">Receive tailored menu and service recommendations</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Menu Finalization</h3>
+            <p class="text-brand-indigo/70 text-sm">Finalize details, timing, and special requirements</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">4</span>
+            </div>
+            <h3 class="font-serif font-semibold text-brand-indigo mb-3">Flawless Execution</h3>
+            <p class="text-brand-indigo/70 text-sm">Professional service on your special day</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Ready to Start Planning Your Event?</h2>
+          <p class="text-xl text-brand-indigo/70">
+            Let's discuss your catering needs and create an unforgettable culinary experience for your guests.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Lead Capture Form -->
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-2xl font-serif font-semibold text-brand-indigo mb-6">Get Information About Our Services</h3>
+            
+            <form id="servicesLeadForm" class="space-y-6">
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-2">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="firstName" 
+                    name="firstName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-2">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="lastName" 
+                    name="lastName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div>
+                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label for="message" class="block text-sm font-medium text-brand-indigo mb-2">What would you like to know?</label>
+                <textarea 
+                  id="message" 
+                  name="message" 
+                  rows="3"
+                  placeholder="Tell us about your upcoming event, questions about our services, or what information would be helpful..."
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                ></textarea>
+              </div>
+
+              <button 
+                type="submit"
+                class="w-full bg-brand-amber text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors"
+              >
+                Start Planning →
+              </button>
+              
+              <p class="text-brand-indigo/60 text-sm text-center">
+                We'll help you plan every detail on the next page
+              </p>
+            </form>
+          </div>
+
+          <script>
+          document.getElementById('servicesLeadForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            
+            // Validate required fields
+            if (!firstName || !email) {
+              alert('Please fill in required fields (Name and Email)');
+              return;
+            }
+            
+            const submitButton = this.querySelector('button[type="submit"]');
+            const originalText = submitButton.textContent;
+            submitButton.textContent = 'Sending...';
+            submitButton.disabled = true;
+            
+            try {
+              // Submit initial lead capture to API
+              const formData = {
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: phone,
+                hasEvent: 'no', // Services page is for general inquiries
+                message: message,
+                source: 'services'
+              };
+              
+              const response = await fetch('/api/submit-form', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData)
+              });
+              
+              const result = await response.json();
+              
+              if (result.success) {
+                // Create URL with parameters including the submission ID for updating
+                const params = new URLSearchParams({
+                  firstName: firstName,
+                  lastName: lastName,
+                  email: email,
+                  phone: phone,
+                  message: message,
+                  source: 'services',
+                  submissionId: result.id // Pass the ID so we can update this submission
+                });
+                
+                // Redirect to start-planning with pre-populated data
+                window.location.href = `/start-planning?${params.toString()}`;
+              } else {
+                throw new Error(result.message || 'Failed to submit form');
+              }
+            } catch (error) {
+              console.error('Error submitting form:', error);
+              alert('Sorry, there was an error. Please try again or contact us directly.');
+              submitButton.textContent = originalText;
+              submitButton.disabled = false;
+            }
+          });
+          </script>
+
+          <!-- What to Expect & Quick Contact -->
+          <div class="space-y-8">
+            <div class="bg-white rounded-xl shadow-lg p-8">
+              <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-6">What to Expect</h3>
+              <div class="space-y-6">
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <span class="text-2xl">💬</span>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Personal Consultation</h4>
+                    <p class="text-brand-indigo/70 text-sm">We'll discuss your event details, service needs, and vision to understand exactly what you're looking for.</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <span class="text-2xl">📋</span>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Custom Proposal</h4>
+                    <p class="text-brand-indigo/70 text-sm">Receive a detailed proposal with menu options, service recommendations, and transparent pricing within 24-48 hours.</p>
+                  </div>
+                </div>
+                
+                <div class="flex items-start">
+                  <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                    <span class="text-2xl">🍽️</span>
+                  </div>
+                  <div>
+                    <h4 class="font-semibold text-brand-indigo mb-2">Flawless Execution</h4>
+                    <p class="text-brand-indigo/70 text-sm">Our experienced team handles every detail from setup to cleanup, ensuring your event runs seamlessly.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="bg-brand-indigo rounded-xl p-8 text-white">
+              <h3 class="text-xl font-serif font-semibold mb-4">Prefer to Talk Directly?</h3>
+              <div class="space-y-3 mb-6">
+                <div class="flex items-center">
+                  <span class="text-brand-amber mr-3">📧</span>
+                  <a href="mailto:nam@chefnamcatering.com" class="text-white/90 hover:text-white">
+                    nam@chefnamcatering.com
+                  </a>
+                </div>
+                <div class="flex items-center">
+                  <span class="text-brand-amber mr-3">📞</span>
+                  <a href="tel:+17346239799" class="text-white/90 hover:text-white">
+                    (734) 623-9799
+                  </a>
+                </div>
+              </div>
+              <p class="text-white/80 text-sm mb-4">
+                Response time: Usually within 2-4 hours during business hours
+              </p>
+              <a 
+                href="/menus" 
+                class="inline-flex items-center px-6 py-3 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors"
+              >
+                View Sample Menus
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>

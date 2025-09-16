@@ -1,0 +1,95 @@
+---
+import ContactForm from '../forms/ContactForm.astro';
+
+export interface Props {
+  headline?: string;
+  description?: string;
+}
+
+const {
+  headline = "Get Your Free Quote",
+  description = "Ready to make your event extraordinary? Tell us about your vision and we'll create a customized catering experience that exceeds your expectations."
+} = Astro.props;
+---
+
+<section class="py-20 bg-brand-white">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+      <!-- Contact Form -->
+      <div>
+        <ContactForm />
+      </div>
+      
+      <!-- Contact Information -->
+      <div>
+        <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6">
+          {headline}
+        </h2>
+        <p class="text-xl text-brand-indigo/80 mb-8 leading-relaxed">
+          {description}
+        </p>
+        
+        <!-- Contact Details -->
+        <div class="space-y-6">
+          <div class="flex items-start">
+            <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 mt-1">
+              <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-brand-indigo mb-1">Phone</h3>
+              <a href="tel:+17346239799" class="text-brand-indigo/70 hover:text-brand-amber transition-colors">
+                (734) 623-9799
+              </a>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 mt-1">
+              <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-brand-indigo mb-1">Email</h3>
+              <a href="mailto:nam@chefnamcatering.com" class="text-brand-indigo/70 hover:text-brand-amber transition-colors">
+                nam@chefnamcatering.com
+              </a>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 mt-1">
+              <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <h3 class="font-semibold text-brand-indigo mb-1">Service Area</h3>
+              <p class="text-brand-indigo/70">
+                Ann Arbor, Ypsilanti, Dexter, Saline & surrounding areas
+              </p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Response Time -->
+        <div class="mt-8 p-6 bg-brand-cream rounded-lg">
+          <div class="flex items-center">
+            <div class="w-8 h-8 bg-brand-amber/20 rounded-full flex items-center justify-center mr-3">
+              <svg class="w-4 h-4 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+              </svg>
+            </div>
+            <div>
+              <p class="font-medium text-brand-indigo">Quick Response</p>
+              <p class="text-sm text-brand-indigo/70">We typically respond within 2 hours during business days</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

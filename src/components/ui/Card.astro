@@ -1,0 +1,28 @@
+---
+export interface Props {
+  variant?: 'default' | 'featured' | 'service' | 'testimonial' | 'elevated';
+  className?: string;
+  class?: string;
+  href?: string;
+}
+
+const { variant = 'default', className = '', class: classNames = '', href, ...rest } = Astro.props;
+const combinedClasses = `${className} ${classNames}`.trim();
+
+const baseClasses = 'rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200';
+const variantClasses = {
+  default: 'bg-white p-6',
+  featured: 'bg-gradient-to-br from-brand-cream to-brand-white p-8 border border-brand-amber/20',
+  service: 'bg-brand-white p-8 hover:bg-brand-white/80',
+  testimonial: 'bg-brand-cream/50 p-8',
+  elevated: 'bg-white shadow-xl border border-gray-100'
+};
+
+const cardClasses = `${baseClasses} ${variantClasses[variant]} ${combinedClasses}`;
+
+const Tag = href ? 'a' : 'div';
+---
+
+<Tag class={cardClasses} href={href} {...rest}>
+  <slot />
+</Tag>

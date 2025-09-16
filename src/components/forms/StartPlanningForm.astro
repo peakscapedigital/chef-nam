@@ -1,0 +1,618 @@
+---
+export interface Props {
+  className?: string;
+  source?: string;
+  showSidebar?: boolean;
+}
+
+const { className = '', source = 'start-planning', showSidebar = true } = Astro.props;
+---
+
+<!-- Main Planning Form with Sidebar -->
+<section class={`py-20 bg-brand-cream/30 ${className}`}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class={`grid grid-cols-1 ${showSidebar ? 'lg:grid-cols-3' : ''} gap-8`}>
+      
+      <!-- Main Form -->
+      <div class={showSidebar ? 'lg:col-span-2' : ''}>
+        <div class="bg-white rounded-xl shadow-lg p-8 md:p-12">
+          <div class="text-center mb-8">
+            <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-4">Plan Your Event</h2>
+            <p class="text-brand-indigo/70">Share your details and we'll create a custom proposal just for you</p>
+          </div>
+          
+          <form id="planning-form" action="#" method="POST" class="space-y-8">
+            
+            <!-- Personal Information -->
+            <div>
+              <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
+                <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">📝</span>
+                Your Information
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-2">First Name *</label>
+                  <input 
+                    type="text" 
+                    id="firstName" 
+                    name="firstName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-2">Last Name *</label>
+                  <input 
+                    type="text" 
+                    id="lastName" 
+                    name="lastName" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Event Planning Question -->
+            <div class="border-t border-gray-200 pt-8">
+              <h3 class="text-lg font-semibold text-brand-indigo mb-6 flex items-center">
+                <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">🤔</span>
+                How Can We Help You?
+              </h3>
+              
+              <div class="space-y-4">
+                <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-brand-amber/30 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="hasEvent" 
+                    value="yes" 
+                    class="mt-1 text-brand-amber focus:ring-brand-amber" 
+                    id="hasEventYes"
+                  />
+                  <div class="ml-3">
+                    <span class="font-medium text-brand-indigo">Yes, I have a specific event in mind</span>
+                    <p class="text-brand-indigo/60 text-sm mt-1">I'd like to share details about my upcoming event so you can create a custom proposal</p>
+                  </div>
+                </label>
+                
+                <label class="flex items-start p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-brand-amber/30 transition-colors">
+                  <input 
+                    type="radio" 
+                    name="hasEvent" 
+                    value="no" 
+                    class="mt-1 text-brand-amber focus:ring-brand-amber" 
+                    id="hasEventNo"
+                  />
+                  <div class="ml-3">
+                    <span class="font-medium text-brand-indigo">No, I'm just exploring options</span>
+                    <p class="text-brand-indigo/60 text-sm mt-1">I'd like general information about your catering services and availability</p>
+                  </div>
+                </label>
+              </div>
+            </div>
+
+            <!-- General Message (Always Visible) -->
+            <div id="generalMessage">
+              <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
+                <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">💬</span>
+                <span id="messageTitle">Tell Us About Your Needs</span>
+              </h3>
+              <textarea 
+                id="message" 
+                name="message" 
+                rows="4"
+                placeholder="Share what you're looking for, any questions you have, or details about your event..."
+                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+              ></textarea>
+            </div>
+
+            <!-- Event Details (Hidden by default) -->
+            <div id="eventDetails" class="hidden transition-all duration-500 ease-in-out">
+              <div class="border-t border-gray-200 pt-8">
+                <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
+                  <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">🎉</span>
+                  Event Details
+                </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="eventType" class="block text-sm font-medium text-brand-indigo mb-2">Event Type *</label>
+                  <select 
+                    id="eventType" 
+                    name="eventType" 
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  >
+                    <option value="">Select your event type</option>
+                    <option value="wedding">Wedding</option>
+                    <option value="corporate">Corporate Event</option>
+                    <option value="birthday">Birthday Party</option>
+                    <option value="anniversary">Anniversary</option>
+                    <option value="graduation">Graduation</option>
+                    <option value="holiday">Holiday Party</option>
+                    <option value="fundraiser">Fundraiser</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="guestCount" class="block text-sm font-medium text-brand-indigo mb-2">Number of Guests *</label>
+                  <select 
+                    id="guestCount" 
+                    name="guestCount"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  >
+                    <option value="">Select guest count</option>
+                    <option value="1-10">1-10 guests (Intimate)</option>
+                    <option value="11-25">11-25 guests (Small)</option>
+                    <option value="26-50">26-50 guests (Medium)</option>
+                    <option value="51-100">51-100 guests (Large)</option>
+                    <option value="101-200">101-200 guests (Very Large)</option>
+                    <option value="200+">200+ guests (Grand Scale)</option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                <div>
+                  <label for="eventDate" class="block text-sm font-medium text-brand-indigo mb-2">Preferred Event Date</label>
+                  <input 
+                    type="date" 
+                    id="eventDate" 
+                    name="eventDate"
+                    min={new Date().toISOString().split('T')[0]}
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+                <div>
+                  <label for="eventTime" class="block text-sm font-medium text-brand-indigo mb-2">Preferred Time</label>
+                  <select 
+                    id="eventTime" 
+                    name="eventTime"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  >
+                    <option value="">Select time of day</option>
+                    <option value="morning">Morning (8:00 AM - 12:00 PM)</option>
+                    <option value="lunch">Lunch (12:00 PM - 3:00 PM)</option>
+                    <option value="afternoon">Afternoon (3:00 PM - 6:00 PM)</option>
+                    <option value="evening">Evening (6:00 PM - 10:00 PM)</option>
+                    <option value="late">Late Evening (10:00 PM+)</option>
+                    <option value="all-day">All Day Event</option>
+                  </select>
+                </div>
+              </div>
+              <div class="mt-6">
+                <label for="location" class="block text-sm font-medium text-brand-indigo mb-2">Event Location</label>
+                <input 
+                  type="text" 
+                  id="location" 
+                  name="location"
+                  placeholder="City, venue name, or address (Ann Arbor, MI)"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                />
+              </div>
+            </div>
+
+            <!-- Catering Preferences -->
+            <div>
+              <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
+                <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">🍽️</span>
+                Catering Preferences
+              </h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label for="serviceStyle" class="block text-sm font-medium text-brand-indigo mb-2">Service Style</label>
+                  <select 
+                    id="serviceStyle" 
+                    name="serviceStyle"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  >
+                    <option value="">Select service style</option>
+                    <option value="plated">Plated Service (Formal sit-down)</option>
+                    <option value="buffet">Buffet Style (Self-serve)</option>
+                    <option value="family">Family Style (Shared platters)</option>
+                    <option value="cocktail">Cocktail Reception (Appetizers & stations)</option>
+                    <option value="drop-off">Drop-off Catering</option>
+                    <option value="not-sure">Not sure yet</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="budgetRange" class="block text-sm font-medium text-brand-indigo mb-2">Budget Range (per person)</label>
+                  <select 
+                    id="budgetRange" 
+                    name="budgetRange"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  >
+                    <option value="">Select budget range</option>
+                    <option value="15-25">$15-25 per person</option>
+                    <option value="25-40">$25-40 per person</option>
+                    <option value="40-60">$40-60 per person</option>
+                    <option value="60-80">$60-80 per person</option>
+                    <option value="80+">$80+ per person</option>
+                    <option value="flexible">Flexible - recommend options</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Special Requests -->
+            <div>
+              <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
+                <span class="w-6 h-6 bg-brand-amber/10 rounded-full flex items-center justify-center mr-3 text-sm">✨</span>
+                Special Requests & Details
+              </h3>
+              <div class="space-y-6">
+                <div>
+                  <label class="block text-sm font-medium text-brand-indigo mb-3">Dietary Requirements (Check all that apply)</label>
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="vegetarian" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Vegetarian</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="vegan" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Vegan</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="gluten-free" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Gluten-Free</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="dairy-free" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Dairy-Free</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="nut-allergies" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Nut Allergies</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="kosher" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Kosher</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="halal" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Halal</span>
+                    </label>
+                    <label class="flex items-center">
+                      <input type="checkbox" name="dietary[]" value="other" class="rounded border-gray-300 text-brand-amber focus:ring-brand-amber">
+                      <span class="ml-2 text-sm text-brand-indigo">Other</span>
+                    </label>
+                  </div>
+                </div>
+                <div>
+                  <label for="eventDescription" class="block text-sm font-medium text-brand-indigo mb-2">Anything else we should know?</label>
+                  <textarea 
+                    id="eventDescription" 
+                    name="eventDescription" 
+                    rows="3"
+                    placeholder="Share your event vision, favorite dishes, special traditions, dietary considerations, or any other details that will help us create the perfect experience..."
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center pt-4">
+              <button 
+                type="submit"
+                class="w-full md:w-auto bg-brand-amber text-white font-semibold py-4 px-12 rounded-lg hover:bg-brand-amber/90 transition-colors text-lg"
+              >
+                Create My Custom Proposal
+              </button>
+              <p class="text-brand-indigo/60 text-sm mt-4">
+                Response within 24 hours • Free consultation • No obligations
+              </p>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <!-- Sidebar - Planning Process -->
+      {showSidebar && (
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-6">Our Planning Process</h3>
+            <div class="space-y-6">
+              <div class="flex items-start">
+                <div class="w-10 h-10 bg-brand-amber rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <span class="text-white font-bold text-sm">1</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-brand-indigo mb-2">Tell Us Your Vision</h4>
+                  <p class="text-brand-indigo/70 text-sm">Share your event details and preferences</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-10 h-10 bg-brand-amber rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <span class="text-white font-bold text-sm">2</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-brand-indigo mb-2">Custom Proposal</h4>
+                  <p class="text-brand-indigo/70 text-sm">Receive tailored menu & service recommendations</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-10 h-10 bg-brand-amber rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <span class="text-white font-bold text-sm">3</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-brand-indigo mb-2">Menu Finalization</h4>
+                  <p class="text-brand-indigo/70 text-sm">Finalize details, timing, and special requirements</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-10 h-10 bg-brand-amber rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <span class="text-white font-bold text-sm">4</span>
+                </div>
+                <div>
+                  <h4 class="font-semibold text-brand-indigo mb-2">Flawless Execution</h4>
+                  <p class="text-brand-indigo/70 text-sm">Professional service on your special day</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+          
+          <!-- Prefer to Talk Directly Card -->
+          <div class="bg-brand-indigo rounded-xl p-8 text-white mt-6">
+            <h3 class="text-xl font-serif font-semibold mb-6">Prefer to Talk Directly?</h3>
+            <div class="space-y-4 mb-6">
+              <div class="flex items-center">
+                <span class="text-brand-amber mr-4 text-xl">📧</span>
+                <a href="mailto:nam@chefnamcatering.com" class="text-white/90 hover:text-white">
+                  nam@chefnamcatering.com
+                </a>
+              </div>
+              <div class="flex items-center">
+                <span class="text-brand-amber mr-4 text-xl">📞</span>
+                <a href="tel:+17346239799" class="text-white/90 hover:text-white">
+                  (734) 623-9799
+                </a>
+              </div>
+            </div>
+            <p class="text-white/80 text-sm mb-4">
+              We usually respond within 2-4 hours during business hours (Mon-Fri 9am-6pm)
+            </p>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <a href="/services" class="inline-flex items-center px-4 py-2 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors text-sm">
+                View Services
+              </a>
+              <a href="/menus" class="inline-flex items-center px-4 py-2 border border-white/30 text-white font-semibold rounded-lg hover:bg-white/10 transition-colors text-sm">
+                Sample Menus
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
+      
+    </div>
+  </div>
+</section>
+
+<script define:vars={{ source }}>
+// Progressive form enhancement
+document.addEventListener('DOMContentLoaded', function() {
+  const form = document.getElementById('planning-form');
+  const eventDetails = document.getElementById('eventDetails');
+  const messageTitle = document.getElementById('messageTitle');
+  const messageField = document.getElementById('message');
+  const hasEventRadios = document.querySelectorAll('input[name="hasEvent"]');
+  
+  // Handle progressive disclosure
+  hasEventRadios.forEach(radio => {
+    radio.addEventListener('change', function() {
+      if (this.value === 'yes') {
+        // Show detailed event fields
+        eventDetails.classList.remove('hidden');
+        eventDetails.classList.add('block');
+        
+        // Keep main message field as is for general context
+        
+        // Make event fields required
+        const requiredFields = eventDetails.querySelectorAll('select[name="eventType"], select[name="guestCount"]');
+        requiredFields.forEach(field => field.required = true);
+        
+        // Update radio label styling
+        document.querySelectorAll('label:has(input[name="hasEvent"])').forEach(label => {
+          label.classList.remove('border-brand-amber', 'bg-brand-amber/5');
+        });
+        this.closest('label').classList.add('border-brand-amber', 'bg-brand-amber/5');
+        
+      } else if (this.value === 'no') {
+        // Hide detailed event fields
+        eventDetails.classList.add('hidden');
+        eventDetails.classList.remove('block');
+        
+        // Update message section for general inquiry
+        messageTitle.textContent = 'What Would You Like to Know?';
+        messageField.placeholder = 'Ask us about our services, availability, pricing, or anything else you\'d like to know about Chef Nam Catering...';
+        messageField.rows = 4;
+        
+        // Remove required from event fields
+        const requiredFields = eventDetails.querySelectorAll('select[required]');
+        requiredFields.forEach(field => field.required = false);
+        
+        // Update radio label styling
+        document.querySelectorAll('label:has(input[name="hasEvent"])').forEach(label => {
+          label.classList.remove('border-brand-amber', 'bg-brand-amber/5');
+        });
+        this.closest('label').classList.add('border-brand-amber', 'bg-brand-amber/5');
+      }
+    });
+  });
+  
+  // Pre-populate from URL parameters
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('firstName')) document.getElementById('firstName').value = urlParams.get('firstName');
+  if (urlParams.get('lastName')) document.getElementById('lastName').value = urlParams.get('lastName');
+  if (urlParams.get('email')) document.getElementById('email').value = urlParams.get('email');
+  if (urlParams.get('phone')) document.getElementById('phone').value = urlParams.get('phone');
+  if (urlParams.get('message')) document.getElementById('message').value = urlParams.get('message');
+  
+  // Store the original message and submission ID for updates
+  const originalMessage = urlParams.get('message');
+  const submissionId = urlParams.get('submissionId');
+  
+  // Show source page context
+  if (urlParams.get('source')) {
+    const sourcePages = {
+      'services': 'Services',
+      'menus': 'Menus', 
+      'contact': 'Contact',
+      'corporate': 'Corporate Catering'
+    };
+    const sourcePage = sourcePages[urlParams.get('source')];
+    if (sourcePage) {
+      const contextNote = document.createElement('div');
+      contextNote.className = 'bg-brand-amber/10 border border-brand-amber/20 rounded-lg p-3 mb-4';
+      contextNote.innerHTML = `<p class="text-sm text-brand-indigo"><span class="font-medium">Continuing from ${sourcePage}:</span> We've saved your contact information to make this easier.</p>`;
+      form.insertBefore(contextNote, form.firstChild);
+    }
+  }
+  
+  // Add click handler to button directly as backup
+  const submitButton = document.querySelector('button[type="submit"]');
+  if (submitButton) {
+    submitButton.addEventListener('click', async function(e) {
+      e.preventDefault();
+      
+      // Check if required fields are filled
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const phone = document.getElementById('phone').value;
+      const hasEventSelected = document.querySelector('input[name="hasEvent"]:checked');
+      
+      if (!firstName || !email) {
+        alert('Please fill in required fields (Name and Email)');
+        return;
+      }
+      
+      if (!hasEventSelected) {
+        alert('Please select whether you have an event in mind');
+        return;
+      }
+      
+      // Collect all form data
+      const formData = {
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        hasEvent: hasEventSelected.value,
+        message: document.getElementById('message').value || '',
+        originalMessage: originalMessage,
+        source: source || urlParams.get('source') || 'start-planning',
+        submissionId: submissionId // Include submission ID for updates
+      };
+      
+      // If they have an event, collect event details
+      if (hasEventSelected.value === 'yes') {
+        formData.eventType = document.getElementById('eventType').value || undefined;
+        formData.eventDate = document.getElementById('eventDate').value || undefined;
+        formData.eventTime = document.getElementById('eventTime').value || undefined;
+        formData.guestCount = document.getElementById('guestCount').value || undefined;
+        formData.location = document.getElementById('location').value || undefined;
+        formData.serviceStyle = document.getElementById('serviceStyle').value || undefined;
+        formData.budgetRange = document.getElementById('budgetRange').value || undefined;
+        formData.eventDescription = document.getElementById('eventDescription').value || undefined;
+        
+        // Collect dietary requirements
+        const dietaryCheckboxes = document.querySelectorAll('input[name="dietary[]"]:checked');
+        formData.dietaryRequirements = Array.from(dietaryCheckboxes).map(cb => cb.value);
+      }
+      
+      // Success - show it's working
+      this.textContent = 'Sending...';
+      this.disabled = true;
+      
+      try {
+        // Submit to API
+        const response = await fetch('/api/submit-form', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+          const hasEvent = hasEventSelected?.value;
+          
+          // Push form submission event to GTM dataLayer for GA4 & Google Ads
+          if (typeof window !== 'undefined' && window.dataLayer) {
+            window.dataLayer.push({
+              event: 'form_submit',
+              form_name: 'start_planning',
+              form_destination: '/api/submit-form',
+              form_type: hasEvent === 'yes' ? 'event_inquiry' : 'general_inquiry',
+              event_category: 'engagement',
+              event_label: 'Start Planning Form'
+            });
+          }
+
+          // Persist identity fields for Enhanced Conversions (read on /thank-you)
+          try {
+            sessionStorage.setItem('sp_lead_email', formData.email || '');
+            sessionStorage.setItem('sp_lead_phone', formData.phone || '');
+            sessionStorage.setItem('sp_lead_first', formData.firstName || '');
+            sessionStorage.setItem('sp_lead_last', formData.lastName || '');
+          } catch (e) {
+            console.warn('Session storage unavailable', e);
+          }
+
+          // Redirect to thank you page for conversion tracking (optionally carry submissionId)
+          const sid = (result.submissionId || result.id || formData.submissionId || '');
+          const thankYouUrl = sid ? `/thank-you?submissionId=${encodeURIComponent(sid)}` : '/thank-you';
+          window.location.href = thankYouUrl;
+        } else {
+          throw new Error(result.message || 'Failed to submit form');
+        }
+      } catch (error) {
+        console.error('Error submitting form:', error);
+        alert('Sorry, there was an error submitting your form. Please try again or contact us directly.');
+        this.textContent = 'Create My Custom Proposal';
+        this.disabled = false;
+      }
+    });
+  }
+  
+  // Form submission handling (backup)
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      // The submit button click handler will handle the actual submission
+      // This is just a backup to prevent default form submission
+    });
+  }
+});
+</script>

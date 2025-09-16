@@ -1,0 +1,96 @@
+---
+import { urlFor, urlForOptimized } from '../../utils/sanity';
+
+export interface Props {
+  images?: Array<{
+    image: {
+      asset: any;
+      alt: string;
+    };
+    caption?: string;
+  }>;
+}
+
+const { images = [] } = Astro.props;
+
+// Fallback images if no Sanity data
+const fallbackImages = [
+  {
+    src: "/images/gallery/food-1.jpg",
+    alt: "Elegant plated dish with garnish",
+    caption: "Signature Appetizer"
+  },
+  {
+    src: "/images/gallery/food-2.jpg", 
+    alt: "Beautifully arranged buffet spread",
+    caption: "Corporate Lunch Setup"
+  },
+  {
+    src: "/images/gallery/food-3.jpg",
+    alt: "Wedding cake and dessert display",
+    caption: "Wedding Dessert Station"
+  },
+  {
+    src: "/images/gallery/food-4.jpg",
+    alt: "Colorful salad presentation",
+    caption: "Fresh Garden Salad"
+  },
+  {
+    src: "/images/gallery/food-5.jpg",
+    alt: "Chef Nam preparing food in kitchen",
+    caption: "Chef Nam at Work"
+  },
+  {
+    src: "/images/gallery/food-6.jpg",
+    alt: "Group dining at outdoor event",
+    caption: "Outdoor Event Catering"
+  }
+];
+
+const displayImages = images.length > 0 ? images : fallbackImages;
+---
+
+<section class="py-20 bg-brand-white">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6">
+        A Taste of Our Work
+      </h2>
+      <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+        Every event tells a story through food. Here's a glimpse of the memorable experiences we've crafted for our clients.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      {displayImages.map((item, index) => {
+        const isFromSanity = 'image' in item;
+        const imageSrc = isFromSanity ? urlForOptimized(item.image.asset, 384, 256).url() : item.src;
+        const imageAlt = isFromSanity ? item.image.alt : item.alt;
+        const caption = item.caption;
+        
+        return (
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            {imageSrc ? (
+              <img 
+                src={imageSrc}
+                alt={imageAlt}
+                class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                loading={index < 3 ? "eager" : "lazy"}
+              />
+            ) : (
+              <div class="w-full h-64 bg-brand-indigo/10 flex items-center justify-center">
+                <span class="text-brand-indigo/40 text-sm">{imageAlt}</span>
+              </div>
+            )}
+            {caption && (
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
+                <p class="text-white text-sm font-medium p-4">{caption}</p>
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+    
+  </div>
+</section>

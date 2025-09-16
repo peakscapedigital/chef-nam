@@ -1,0 +1,45 @@
+---
+import Button from '../ui/Button.astro';
+
+export interface Props {
+  headline?: string;
+  description?: string;
+  primaryCTA?: string;
+  phone?: string;
+}
+
+const {
+  headline = "Ready to Create Something Special?",
+  description = "Let's discuss how we can make your next event unforgettable with exceptional food and thoughtful service.",
+  primaryCTA = "Get Your Free Quote", 
+  phone = "(123) 456-7890"
+} = Astro.props;
+---
+
+<section class="py-20 bg-brand-indigo text-white">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <h2 class="text-4xl md:text-5xl font-serif font-bold mb-6">
+      {headline}
+    </h2>
+    <p class="text-xl text-white/80 mb-10 leading-relaxed">
+      {description}
+    </p>
+    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+      <Button 
+        variant="primary"
+        size="lg"
+        href="/contact"
+      >
+        {primaryCTA}
+      </Button>
+      <Button 
+        variant="outline"
+        size="lg"
+        href={`tel:${phone.replace(/\D/g, '')}`}
+        class="border-white text-white hover:bg-white hover:text-brand-indigo"
+      >
+        Call {phone}
+      </Button>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,165 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Thank You | Custom Catering Proposal Request Received - Chef Nam Catering"
+  description="Thank you for your catering inquiry! Chef Nam will personally review your request and send you a custom proposal within 24 hours."
+>
+  <meta slot="head" name="robots" content="noindex, nofollow" />
+  <!-- Google Ads Conversion Tracking -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      "@id": "https://chefnamcatering.com/thank-you",
+      "name": "Thank You",
+      "mainEntity": {
+        "@type": "Service",
+        "name": "Catering Consultation Request",
+        "provider": {
+          "@type": "Caterer",
+          "name": "Chef Nam Catering"
+        }
+      }
+    }
+  </script>
+
+  <main>
+    <!-- Thank You Hero -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <!-- Background Image with Gradient -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Celebration and party setup"
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.6))"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="text-brand-amber text-6xl mb-6">✓</div>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Thank You!</span><br />
+          <span class="text-4xl md:text-5xl lg:text-6xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">We've Got Your Request</span>
+        </h1>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          Your catering inquiry has been received and Chef Nam will personally review your request. You'll hear from us within 24 hours with your custom proposal.
+        </p>
+      </div>
+    </section>
+
+    <!-- What Happens Next -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">What Happens Next</h2>
+          <p class="text-xl text-brand-indigo/70">Here's what you can expect from Chef Nam Catering</p>
+        </div>
+
+        <div class="space-y-8">
+          <div class="flex items-start bg-brand-cream/20 rounded-xl p-8">
+            <div class="w-12 h-12 bg-brand-amber rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+              <Icon name="mdi:chef-hat" class="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Personal Review by Chef Nam (Within 24 hours)</h3>
+              <p class="text-brand-indigo/70">Chef Nam personally reviews every request to understand your vision and create the perfect menu recommendations.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start bg-brand-cream/20 rounded-xl p-8">
+            <div class="w-12 h-12 bg-brand-amber rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+              <Icon name="mdi:clipboard-text" class="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Custom Proposal Delivery</h3>
+              <p class="text-brand-indigo/70">You'll receive a detailed proposal with menu options, service recommendations, transparent pricing, and next steps.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start bg-brand-cream/20 rounded-xl p-8">
+            <div class="w-12 h-12 bg-brand-amber rounded-full flex items-center justify-center mr-6 flex-shrink-0">
+              <Icon name="mdi:phone" class="w-6 h-6 text-white" />
+            </div>
+            <div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Follow-up Consultation</h3>
+              <p class="text-brand-indigo/70">We'll schedule a call to discuss your proposal, answer questions, and finalize all the details for your perfect event.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Information -->
+    <section class="py-20 bg-brand-indigo text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold mb-6">Questions? We're Here to Help</h2>
+        <p class="text-xl text-white/90 mb-8">
+          Need to add something to your request or have urgent questions? Contact us directly.
+        </p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+          <div class="flex items-center justify-center">
+            <Icon name="mdi:phone" class="w-6 h-6 text-brand-amber mr-3" />
+            <a href="tel:+17346239799" class="text-xl text-white hover:text-brand-amber transition-colors">
+              (734) 623-9799
+            </a>
+          </div>
+          <div class="flex items-center justify-center">
+            <Icon name="mdi:email" class="w-6 h-6 text-brand-amber mr-3" />
+            <a href="mailto:nam@chefnamcatering.com" class="text-xl text-white hover:text-brand-amber transition-colors">
+              nam@chefnamcatering.com
+            </a>
+          </div>
+        </div>
+        
+        <p class="text-white/80 text-sm">
+          Business Hours: Monday-Friday 9:00 AM - 6:00 PM<br />
+          We usually respond within 2-4 hours during business hours
+        </p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- DataLayer push for form parameters + enhanced conversions fields -->
+  <script>
+    (function () {
+      // Try to read user-provided fields stored during form submission
+      var email, phone, firstName, lastName;
+      try {
+        email = sessionStorage.getItem('sp_lead_email') || undefined;
+        phone = sessionStorage.getItem('sp_lead_phone') || undefined;
+        firstName = sessionStorage.getItem('sp_lead_first') || undefined;
+        lastName = sessionStorage.getItem('sp_lead_last') || undefined;
+      } catch (e) {}
+
+      // Push page + form context and (optionally) user-provided data
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        event: 'thank_you_loaded',
+        form_type: 'start_planning',
+        form_name: 'Start Planning',
+        form_destination: '/thank-you',
+        email: email,
+        phone_number: phone,
+        first_name: firstName,
+        last_name: lastName,
+        page_location: window.location.href
+      });
+
+      // Clear values so refresh/back doesn't resend PII
+      try {
+        sessionStorage.removeItem('sp_lead_email');
+        sessionStorage.removeItem('sp_lead_phone');
+        sessionStorage.removeItem('sp_lead_first');
+        sessionStorage.removeItem('sp_lead_last');
+      } catch (e) {}
+    })();
+  </script>
+</Layout>

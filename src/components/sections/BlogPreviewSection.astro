@@ -1,0 +1,107 @@
+---
+import Card from '../ui/Card.astro';
+
+export interface Props {
+  posts?: Array<{
+    title: string;
+    excerpt: string;
+    category: string;
+    date: string;
+    slug: string;
+    featuredImage?: string;
+  }>;
+}
+
+const { posts = [
+  {
+    title: "Creating Memorable Wedding Menus: A Guide to Personalized Catering",
+    excerpt: "Learn how to work with your caterer to design a wedding menu that reflects your story and delights your guests with thoughtful choices.",
+    category: "Wedding",
+    date: "2024-12-15",
+    slug: "memorable-wedding-menus",
+    featuredImage: "https://images.unsplash.com/photo-1464207687429-7505649dae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Corporate Event Catering: Making Business Gatherings Extraordinary",
+    excerpt: "Discover how exceptional catering can elevate your corporate events and leave lasting impressions on clients and colleagues.",
+    category: "Corporate",
+    date: "2024-12-10",
+    slug: "corporate-event-catering",
+    featuredImage: "https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  },
+  {
+    title: "Seasonal Ingredients: Bringing Global Flavors to Michigan Tables",
+    excerpt: "Explore how we incorporate fresh, local Michigan ingredients with global cooking techniques to create unique and memorable dishes.",
+    category: "Culinary",
+    date: "2024-12-05",
+    slug: "seasonal-global-flavors",
+    featuredImage: "https://images.unsplash.com/photo-1540420773420-3366772f4999?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+  }
+] } = Astro.props;
+
+const formatDate = (dateString: string) => {
+  return new Date(dateString).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long', 
+    day: 'numeric'
+  });
+};
+---
+
+<section class="py-20 bg-brand-cream">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="text-center mb-16">
+      <h2 class="text-4xl md:text-5xl font-serif font-bold text-brand-indigo mb-6">
+        Latest From Our Kitchen
+      </h2>
+      <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+        Tips, stories, and insights from Chef Nam about creating exceptional catering experiences and celebrating through food.
+      </p>
+    </div>
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+      {posts.map(post => (
+        <Card variant="default" href={`/blog/${post.slug}`} class="flex flex-col h-full shadow-xl border border-gray-100 bg-brand-white">
+          {post.featuredImage ? (
+            <img 
+              src={post.featuredImage}
+              alt={post.title}
+              class="w-full h-48 object-cover rounded-lg mb-6 flex-shrink-0"
+              loading="lazy"
+            />
+          ) : (
+            <div class="w-full h-48 bg-brand-cream rounded-lg mb-6 flex items-center justify-center flex-shrink-0">
+              <span class="text-brand-indigo/40 text-sm">Blog Post Image</span>
+            </div>
+          )}
+          
+          <div class="flex flex-col flex-grow">
+            <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-3 leading-tight">
+              {post.title}
+            </h3>
+            
+            <p class="text-brand-indigo/70 mb-4 leading-relaxed flex-grow">
+              {post.excerpt}
+            </p>
+            
+            <span class="text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors mt-auto">
+              Read More →
+            </span>
+          </div>
+        </Card>
+      ))}
+    </div>
+    
+    <div class="text-center">
+      <a 
+        href="/blog" 
+        class="inline-flex items-center text-brand-amber font-semibold hover:text-brand-amber/80 transition-colors text-lg"
+      >
+        View All Posts
+        <svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+        </svg>
+      </a>
+    </div>
+  </div>
+</section>

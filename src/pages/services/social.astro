@@ -1,0 +1,535 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/ui/Card.astro';
+import ServiceHero from '../../components/sections/ServiceHero.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout 
+  title="Social Parties & Event Catering Ann Arbor | Chef Nam Catering"
+  description="Celebrate life's special moments with professional event catering in Ann Arbor, Michigan. Birthday parties, anniversaries, graduations, and social gatherings made memorable."
+>
+  <!-- Social Events Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/services/social#socialservice",
+      "serviceType": "Social Event Catering",
+      "name": "Social Event Catering Services",
+      "description": "Celebrate life's special moments with professional catering in Ann Arbor, Michigan. Birthday parties, anniversaries, graduations, and social gatherings made memorable.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/services/social"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Social Event Catering Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Graduation Party Catering"
+            }
+          },
+          {
+            "@type": "Offer", 
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Birthday Party Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Anniversary Celebration Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Family Reunion Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service", 
+              "name": "Holiday Party Catering"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/services/social"
+    }
+  </script>
+  
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Services",
+        "item": "https://chefnamcatering.com/services"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": "Social Event Catering",
+        "item": "https://chefnamcatering.com/services/social"
+      }
+    ]
+  }
+  </script>
+  
+  <main>
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-20 overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img 
+          src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Elegant social event dinner party setup with beautiful food presentation"
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <!-- Blue tint overlay to match homepage -->
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
+      </div>
+      
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Social Event Catering</span><br />
+          <span class="text-white font-serif">In Ann Arbor</span><br />
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Worth Celebrating</span>
+        </h2>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
+          From intimate dinner parties to milestone celebrations, bring people together with delicious, expertly prepared cuisine that creates lasting memories in Ann Arbor.
+        </p>
+      </div>
+    </section>
+
+    <!-- Social Event Services Overview -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Catering for Life's Special Moments
+          </h1>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            Whether you're celebrating milestones, hosting friends, or bringing family together, we create memorable dining experiences that match your unique style and occasion.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          
+          <!-- Birthday Parties -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:cake-variant" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Birthday Catering</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Make birthdays extra special with personalized menus that celebrate the guest of honor's favorite flavors.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Custom birthday menu planning</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Kid-friendly and adult options</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Special dessert coordination</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- Anniversary & Graduations -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:trophy" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Graduation Catering</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Honor achievements and anniversaries with elegant catering that reflects the significance of your special moment.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Elegant plated or buffet service</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Personalized menu storytelling</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Multi-generational menu options</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+
+          <!-- House Parties -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:home" class="w-10 h-10 text-brand-amber" />
+              </div>
+              
+              <h2 class="text-xl font-serif font-bold text-brand-indigo mb-4">Social Events & Parties</h2>
+              
+              <p class="text-brand-indigo/70 mb-6">
+                Transform your home into a culinary destination with intimate dinner parties and casual social gatherings.
+              </p>
+              
+              <div class="space-y-2 text-left mb-6">
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>In-home service & setup</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Interactive cooking demonstrations</span>
+                </div>
+                <div class="flex items-center text-brand-indigo/80 text-sm">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  <span>Complete cleanup included</span>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Event Types & Occasions -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Perfect for Every Celebration</h2>
+        <p class="text-xl text-brand-indigo/70 mb-12">
+          No matter what you're celebrating, we make it delicious and memorable
+        </p>
+        
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:cake-variant" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Birthday Parties</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:school" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Graduations</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:heart-multiple" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Anniversaries</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:home-heart" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Housewarming</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:baby" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Baby Showers</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:party-popper" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Holiday Parties</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:account-multiple" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Family Reunions</h3>
+          </div>
+          <div class="text-center">
+            <div class="flex justify-center mb-2">
+              <Icon name="mdi:star-circle" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-semibold text-brand-indigo text-sm">Just Because</h3>
+          </div>
+        </div>
+        
+        <a href="/start-planning" class="inline-flex items-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg hover:bg-brand-indigo hover:text-white transition-colors">
+          Start Planning Your Celebration
+        </a>
+      </div>
+    </section>
+
+    <!-- Why Choose Us for Social Events -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">What Makes Our Social Catering Special</h2>
+          <p class="text-xl text-brand-indigo/70">Personal attention and authentic flavors that make every gathering memorable</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="space-y-8">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:palette" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Creative Menu Design</h3>
+                  <p class="text-brand-indigo/70 text-sm">Collaborate with Chef Nam to create unique menus that reflect your personality and the occasion's spirit.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:account-group" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">All Ages Welcome</h3>
+                  <p class="text-brand-indigo/70 text-sm">From toddlers to grandparents, we create diverse menus that please every palate and dietary need.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:map-marker" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Flexible Locations</h3>
+                  <p class="text-brand-indigo/70 text-sm">Your home, private venues, parks, or community centers - we adapt our service to any setting.</p>
+                </div>
+              </div>
+              
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:gift" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Personal Touch</h3>
+                  <p class="text-brand-indigo/70 text-sm">Every event gets Chef Nam's personal attention, from menu planning to day-of coordination.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center">
+              <div class="text-brand-amber mb-4 flex justify-center space-x-1">
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+                <Icon name="mdi:star" class="w-5 h-5" />
+              </div>
+              <p class="text-brand-indigo/80 italic text-lg mb-6">
+                "Chef Nam catered my parents' 50th anniversary party and it was absolutely perfect. The food was incredible, but more than that, she made the whole day feel special and stress-free for our family."
+              </p>
+              <p class="text-brand-indigo font-semibold">- Lisa Chen</p>
+              <p class="text-brand-indigo/60 text-sm">Anniversary celebration, 45 guests</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Event Menu Options -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Popular Social Event Menus</h2>
+          <p class="text-xl text-brand-indigo/70">Delicious options that work perfectly for casual and formal celebrations</p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+          
+          <!-- Family Style Party Menu -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Family Style Celebration</h3>
+              <p class="text-brand-indigo/60">Perfect for birthdays, graduations, and casual gatherings</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Appetizers to Share</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Fresh spring rolls with dipping sauces</li>
+                  <li>• Thai chicken wings with sweet chili glaze</li>
+                  <li>• Vegetable tempura with herb salt</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Main Dishes</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Pad Thai with choice of proteins</li>
+                  <li>• Thai basil fried rice (mild to medium spice)</li>
+                  <li>• Sweet and sour chicken or tofu</li>
+                  <li>• Stir-fried vegetables with garlic sauce</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Desserts & Sides</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Fresh tropical fruit platter</li>
+                  <li>• Coconut rice and steamed jasmine rice</li>
+                  <li>• Mango sticky rice or Thai donuts</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $22 per person</p>
+              <p class="text-brand-indigo/50 text-xs">Minimum 12 people • Perfect for all ages</p>
+            </div>
+          </div>
+
+          <!-- Cocktail Party Menu -->
+          <div class="bg-brand-cream/20 rounded-xl p-8">
+            <div class="text-center mb-6">
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-2">Cocktail Reception Style</h3>
+              <p class="text-brand-indigo/60">Elegant appetizers and stations for mingling</p>
+            </div>
+            
+            <div class="space-y-4">
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Passed Appetizers</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Coconut shrimp with pineapple salsa</li>
+                  <li>• Thai beef skewers with peanut sauce</li>
+                  <li>• Vegetarian summer rolls</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Food Stations</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Build-your-own lettuce wrap station</li>
+                  <li>• Thai noodle soup bar</li>
+                  <li>• Fresh fruit and cheese display</li>
+                  <li>• Mini dessert station</li>
+                </ul>
+              </div>
+              
+              <div>
+                <h4 class="font-semibold text-brand-indigo mb-2">Beverages</h4>
+                <ul class="space-y-1 text-brand-indigo/80 text-sm">
+                  <li>• Thai iced tea and coffee service</li>
+                  <li>• Fresh juices and infused waters</li>
+                  <li>• Coordination with your bar service</li>
+                </ul>
+              </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-brand-indigo/10 text-center">
+              <p class="text-brand-indigo/60 text-sm mb-2">Starting at $32 per person</p>
+              <p class="text-brand-indigo/50 text-xs">2-3 hours service • Professional wait staff</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-brand-indigo/70 mb-6">All menus can be customized for dietary restrictions, cultural preferences, and budget considerations.</p>
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Plan Your Social Event
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Event Planning Process -->
+    <section class="py-20 bg-brand-indigo text-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold mb-6">Simple Planning for Stress-Free Celebrations</h2>
+          <p class="text-xl text-white/90">From idea to celebration in just a few easy steps</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Tell Us Your Vision</h3>
+            <p class="text-white/80 text-sm">Share your celebration details, guest preferences, and any special requests or traditions</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Custom Menu Creation</h3>
+            <p class="text-white/80 text-sm">We design a personalized menu and provide clear pricing with no hidden costs</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Celebrate Together</h3>
+            <p class="text-white/80 text-sm">We handle all the details so you can focus on enjoying time with your loved ones</p>
+          </div>
+        </div>
+        
+        <div class="text-center mt-12">
+          <p class="text-white/70 text-sm">Most social events can be planned with 2-4 weeks notice • Rush orders welcome with availability</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</Layout>
