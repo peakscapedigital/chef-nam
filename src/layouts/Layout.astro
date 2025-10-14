@@ -89,29 +89,92 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <!-- Additional head content from pages -->
   <slot name="head" />
   
+  <!-- UTM & Attribution Capture Script -->
+  <script is:inline>
+  // Capture UTM parameters and attribution data on page load
+  (function() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const storage = window.localStorage;
+
+      // Determine if this is the first visit (no UTM data stored yet)
+      const isFirstVisit = !storage.getItem('utm_source') && !storage.getItem('_attribution_captured');
+
+      // Only capture if this is the first visit with parameters OR if new UTM params exist
+      if (isFirstVisit && (urlParams.has('utm_source') || urlParams.has('gclid') || urlParams.has('fbclid'))) {
+
+        // Capture UTM parameters
+        const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+        utmParams.forEach(param => {
+          const value = urlParams.get(param);
+          if (value) storage.setItem(param, value);
+        });
+
+        // Capture referrer (where they came from)
+        if (document.referrer) {
+          storage.setItem('referrer', document.referrer);
+        }
+
+        // Capture landing page (first page visited)
+        storage.setItem('landing_page', window.location.pathname + window.location.search);
+
+        // Generate friendly lead source name
+        let leadSource = 'Direct';
+        const source = urlParams.get('utm_source');
+        const medium = urlParams.get('utm_medium');
+
+        if (urlParams.get('gclid')) {
+          leadSource = 'Google Ads';
+        } else if (urlParams.get('fbclid')) {
+          leadSource = 'Facebook Ads';
+        } else if (source && medium) {
+          if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
+          else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
+          else if (medium === 'social') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Social';
+          else if (medium === 'email') leadSource = 'Email Campaign';
+          else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
+        } else if (document.referrer) {
+          try {
+            const refDomain = new URL(document.referrer).hostname.replace('www.', '');
+            leadSource = 'Referral - ' + refDomain;
+          } catch (e) {
+            leadSource = 'Referral';
+          }
+        }
+
+        storage.setItem('lead_source', leadSource);
+        storage.setItem('_attribution_captured', 'true');
+      }
+    } catch (e) {
+      console.warn('Attribution capture error:', e);
+    }
+  })();
+  </script>
+  <!-- End UTM Capture -->
+
   <!-- Google Tag Manager - User Interaction Deferred -->
   <script>
   // Initialize dataLayer immediately but defer GTM script loading
   window.dataLayer = window.dataLayer || [];
-  
+
   // Load GTM only after user interaction or 3 seconds delay
   let gtmLoaded = false;
   function loadGTM() {
     if (gtmLoaded) return;
     gtmLoaded = true;
-    
+
     (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-WCMPN842');
   }
-  
+
   // Load on user interaction
-  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event => 
+  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event =>
     document.addEventListener(event, loadGTM, {once: true, passive: true})
   );
-  
+
   // Fallback: load after 3 seconds
   setTimeout(loadGTM, 3000);
   </script>

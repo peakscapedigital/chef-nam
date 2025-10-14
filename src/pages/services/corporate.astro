@@ -1,6 +1,7 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import Card from '../../components/ui/Card.astro';
+import ServiceHero from '../../components/sections/ServiceHero.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
@@ -106,30 +107,18 @@ import { Icon } from 'astro-icon/components';
   
   <main>
     <!-- Hero Section -->
-    <section class="relative pt-32 pb-20 overflow-hidden">
-      <!-- Background Image -->
-      <div class="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
-          alt="Professional corporate catering buffet setup"
-          class="w-full h-full object-cover"
-          loading="eager"
-        />
-        <!-- Blue tint overlay to match homepage -->
-        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
-      </div>
-      
-      <!-- Content -->
-      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <h2 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
-          <span class="text-white font-serif">Corporate & Office Catering in Ann Arbor</span><br />
-          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">That Delivers</span>
-        </h2>
-        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed">
-          Reliable, professional catering for Ann Arbor businesses. From executive lunches to company celebrations, we make your corporate events seamless and memorable.
-        </p>
-      </div>
-    </section>
+    <ServiceHero
+      title="Corporate & Office Catering"
+      subtitle="That Delivers"
+      description="Reliable, professional catering for Ann Arbor businesses. From executive lunches to company celebrations, we make your corporate events seamless and memorable."
+      backgroundImage="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Professional corporate catering buffet setup"
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Services", href: "/services" },
+        { label: "Corporate Catering" }
+      ]}
+    />
 
     <!-- Corporate Services Overview -->
     <section class="py-20 bg-brand-white">

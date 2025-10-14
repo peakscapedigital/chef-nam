@@ -100,12 +100,17 @@ import { Icon } from 'astro-icon/components';
   
   <main>
     <!-- Hero Section -->
-    <ServiceHero 
+    <ServiceHero
       title="Wedding Catering"
       subtitle="Made Memorable"
       description="Celebrate your love story with delicious, expertly prepared cuisine that brings warmth, flavor, and joy to your wedding day in Ann Arbor and throughout Michigan."
       backgroundImage="https://images.unsplash.com/photo-1469371670807-013ccf25f16a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
       backgroundAlt="Beautiful wedding reception table setting with elegant catering setup"
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Services", href: "/services" },
+        { label: "Wedding Catering" }
+      ]}
     />
 
     <!-- Wedding Services Overview -->

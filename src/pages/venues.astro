@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import Card from '../components/ui/Card.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { Icon } from 'astro-icon/components';
 import { getVenues, urlFor, urlForOptimized } from '../utils/sanity';
 
@@ -127,6 +128,11 @@ const venueCategories = [
       
       <!-- Content -->
       <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Breadcrumb items={[
+          { label: "Home", href: "/" },
+          { label: "Venues" }
+        ]} />
+
         <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold leading-none mb-8">
           <span class="text-white font-serif">Preferred Partner at</span><br>
           <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Premier Venues</span>

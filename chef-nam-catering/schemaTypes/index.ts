@@ -506,6 +506,20 @@ export const formSubmission = {
       validation: (Rule: any) => Rule.required()
     },
     {
+      name: 'preferredContact',
+      title: 'Preferred Contact Method',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Email', value: 'email' },
+          { title: 'Phone Call', value: 'phone' },
+          { title: 'Text Message', value: 'text' }
+        ],
+        layout: 'radio'
+      },
+      validation: (Rule: any) => Rule.required()
+    },
+    {
       name: 'hasEvent',
       title: 'Has Specific Event',
       type: 'boolean',
@@ -590,6 +604,67 @@ export const formSubmission = {
       title: 'Source Page',
       type: 'string',
       description: 'Which page the lead came from'
+    },
+    // Attribution fields for lead source tracking
+    {
+      name: 'utm_source',
+      title: 'UTM Source',
+      type: 'string',
+      description: 'Traffic source (e.g., google, facebook)'
+    },
+    {
+      name: 'utm_medium',
+      title: 'UTM Medium',
+      type: 'string',
+      description: 'Marketing medium (e.g., cpc, organic, social)'
+    },
+    {
+      name: 'utm_campaign',
+      title: 'UTM Campaign',
+      type: 'string',
+      description: 'Campaign name'
+    },
+    {
+      name: 'utm_term',
+      title: 'UTM Term',
+      type: 'string',
+      description: 'Paid search keyword'
+    },
+    {
+      name: 'utm_content',
+      title: 'UTM Content',
+      type: 'string',
+      description: 'Ad variation or content identifier'
+    },
+    {
+      name: 'gclid',
+      title: 'Google Click ID',
+      type: 'string',
+      description: 'Google Ads click identifier'
+    },
+    {
+      name: 'fbclid',
+      title: 'Facebook Click ID',
+      type: 'string',
+      description: 'Facebook Ads click identifier'
+    },
+    {
+      name: 'lead_source',
+      title: 'Lead Source',
+      type: 'string',
+      description: 'Friendly name for lead source (e.g., "Google Ads", "Direct")'
+    },
+    {
+      name: 'referrer',
+      title: 'Referrer',
+      type: 'string',
+      description: 'URL of the referring page'
+    },
+    {
+      name: 'landing_page',
+      title: 'Landing Page',
+      type: 'string',
+      description: 'First page visited on the website'
     },
     {
       name: 'status',

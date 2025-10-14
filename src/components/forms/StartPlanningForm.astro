@@ -54,24 +54,38 @@ const { className = '', source = 'start-planning', showSidebar = true } = Astro.
               <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
                 <div>
                   <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
                     required
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
                   />
                 </div>
                 <div>
                   <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
-                  <input 
-                    type="tel" 
-                    id="phone" 
-                    name="phone" 
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
                     required
                     class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
                   />
                 </div>
+              </div>
+              <div class="mt-6">
+                <label for="preferredContact" class="block text-sm font-medium text-brand-indigo mb-2">Preferred Contact Method *</label>
+                <select
+                  id="preferredContact"
+                  name="preferredContact"
+                  required
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                >
+                  <option value="">How would you like us to reach you?</option>
+                  <option value="email">Email</option>
+                  <option value="phone">Phone Call</option>
+                  <option value="text">Text Message</option>
+                </select>
               </div>
             </div>
 
@@ -520,17 +534,35 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
+      // Read attribution data from localStorage
+      const attribution = {
+        utm_source: localStorage.getItem('utm_source') || undefined,
+        utm_medium: localStorage.getItem('utm_medium') || undefined,
+        utm_campaign: localStorage.getItem('utm_campaign') || undefined,
+        utm_term: localStorage.getItem('utm_term') || undefined,
+        utm_content: localStorage.getItem('utm_content') || undefined,
+        gclid: localStorage.getItem('gclid') || undefined,
+        fbclid: localStorage.getItem('fbclid') || undefined,
+        lead_source: localStorage.getItem('lead_source') || 'Direct',
+        referrer: localStorage.getItem('referrer') || undefined,
+        landing_page: localStorage.getItem('landing_page') || undefined
+      };
+
       // Collect all form data
       const formData = {
         firstName: firstName,
         lastName: lastName,
         email: email,
         phone: phone,
+        preferredContact: document.getElementById('preferredContact').value || undefined,
         hasEvent: hasEventSelected.value,
         message: document.getElementById('message').value || '',
         originalMessage: originalMessage,
         source: source || urlParams.get('source') || 'start-planning',
-        submissionId: submissionId // Include submission ID for updates
+        submissionId: submissionId, // Include submission ID for updates
+
+        // Attribution data
+        ...attribution
       };
       
       // If they have an event, collect event details
@@ -576,7 +608,19 @@ document.addEventListener('DOMContentLoaded', function() {
               form_destination: '/api/submit-form',
               form_type: hasEvent === 'yes' ? 'event_inquiry' : 'general_inquiry',
               event_category: 'engagement',
-              event_label: 'Start Planning Form'
+              event_label: 'Start Planning Form',
+
+              // Attribution data
+              utm_source: attribution.utm_source,
+              utm_medium: attribution.utm_medium,
+              utm_campaign: attribution.utm_campaign,
+              utm_term: attribution.utm_term,
+              utm_content: attribution.utm_content,
+              gclid: attribution.gclid,
+              fbclid: attribution.fbclid,
+              lead_source: attribution.lead_source,
+              referrer: attribution.referrer,
+              landing_page: attribution.landing_page
             });
           }
 

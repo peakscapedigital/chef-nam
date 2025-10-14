@@ -48,17 +48,49 @@ When a form is submitted, the following enhanced data is pushed to GTM dataLayer
 - Google Tag Manager container (GTM-WCMPN842)
 - Enhanced conversions enabled in Google Ads
 - Customer Match eligibility (requires policy compliance and account history)
+- **Auto-tagging enabled** (captures GCLID automatically)
+- **UTM tracking implemented** (see conversion-tracking.md)
 
-### Step 1: Enable Enhanced Conversions
+### Step 1: Enable Auto-Tagging & Enhanced Conversions
 
-1. **Google Ads Console**
+1. **Enable Auto-Tagging** (Required for GCLID capture)
+   - Navigate to Settings → Account Settings
+   - Under "Auto-tagging", toggle ON
+   - This automatically appends `gclid` parameter to all ad URLs
+   - Example: `chefnamcatering.com?gclid=CjwKCA...`
+
+2. **Enable Enhanced Conversions**
    - Navigate to Tools & Settings → Conversions
    - Select your conversion action
    - Click "Settings"
    - Enable "Enhanced conversions"
    - Choose "Google Tag Manager" as implementation method
 
-### Step 2: Create Google Ads Conversion Tag in GTM
+### Step 2: Configure UTM Parameters in Google Ads
+
+**Important**: Use UTM parameters in addition to auto-tagging for complete attribution.
+
+1. **Campaign-Level UTM Setup**
+   - Campaign URL options → Tracking template (optional)
+   - Or use ValueTrack parameters in Final URL suffix
+
+2. **Recommended UTM Structure**:
+   ```
+   utm_source=google
+   utm_medium=cpc
+   utm_campaign={campaignid}
+   utm_term={keyword}
+   utm_content={creative}
+   ```
+
+3. **Example Final URL**:
+   ```
+   https://chefnamcatering.com/services/weddings?utm_source=google&utm_medium=cpc&utm_campaign=summer-wedding-promo&utm_term={keyword}&utm_content={creative}
+   ```
+
+**Note**: GCLID (auto-tagging) provides Google Ads-specific tracking, while UTMs work across all platforms and are readable in Sanity CMS.
+
+### Step 3: Create Google Ads Conversion Tag in GTM
 
 1. **Create Conversion Tag**
    - GTM → Tags → New
@@ -72,7 +104,11 @@ When a form is submitted, the following enhanced data is pushed to GTM dataLayer
    - User-provided data: From variable
    - Create new variable for user data
 
-### Step 3: Create User Data Variable in GTM
+3. **Add GCLID Parameter** (Optional but recommended)
+   - Google Click ID: {{dlv - gclid}}
+   - This reinforces attribution even if cookies are blocked
+
+### Step 4: Create User Data Variable in GTM
 
 1. **Create Data Layer Variable**
    - Name: "Enhanced Conversion Data"
@@ -86,7 +122,7 @@ When a form is submitted, the following enhanced data is pushed to GTM dataLayer
    - Last Name: `{{Enhanced Conversion Data.address.last_name}}`
    - City: `{{Enhanced Conversion Data.address.city}}`
 
-### Step 4: Set Conversion Values
+### Step 5: Set Conversion Values
 
 For value-based bidding, configure dynamic conversion values:
 
@@ -263,6 +299,12 @@ Ensure compliance with privacy regulations:
    - Cross-device conversion paths
    - Phone vs. form conversion performance
 
+4. **UTM-Based Attribution** (NEW)
+   - See exactly which keywords convert in Sanity CMS
+   - Match email notifications to specific campaigns
+   - Calculate ROI by campaign using utm_campaign field
+   - Track landing page performance by source
+
 ### Optimization Strategies
 
 1. **Bid Adjustments**
@@ -290,6 +332,9 @@ Ensure compliance with privacy regulations:
 | Poor Customer Match rates | Improve data formatting and hash consistency |
 | Missing conversion data | Verify GTM tag firing and Google Ads integration |
 | Audience not populating | Check data format and minimum audience requirements |
+| **GCLID not captured** | **Verify auto-tagging is enabled in Google Ads settings** |
+| **UTM parameters missing** | **Check URL structure in campaigns, ensure UTMs are appended** |
+| **Attribution data not in emails** | **Verify localStorage capture script is running (see conversion-tracking.md)** |
 
 ### Debug Steps
 
@@ -317,10 +362,45 @@ Ensure compliance with privacy regulations:
 - **GTM Integration**: `/src/layouts/Layout.astro`
 
 ### Related Documentation
-- [Conversion Tracking Implementation](./conversion-tracking.md)
+- [Conversion Tracking Implementation](./conversion-tracking.md) - **See Section 1 for UTM tracking setup**
 - [Multi-Environment GA4 Setup](./multi-environment-ga4-setup.md)
+
+## Lead Source Visibility
+
+### Where You'll See Attribution Data
+
+1. **Email Notifications** (Immediate)
+   - Every form submission email includes "Lead Source Information"
+   - Shows: Source, Campaign, Medium, Keyword, Landing Page
+   - Example: "Source: Google Ads | Campaign: summer-wedding-promo | Keyword: thai catering ann arbor"
+
+2. **Sanity CMS** (Permanent Record)
+   - All submissions stored with full attribution
+   - Filter by utm_source, utm_campaign, etc.
+   - Export to CSV for ROI analysis
+   - Query leads: "Show all leads from Google Ads in July"
+
+3. **Google Ads Console** (Conversion Tracking)
+   - See conversions by keyword
+   - Enhanced conversion data with user info
+   - ROAS and cost per conversion by campaign
+
+4. **GA4 Reports** (Analytics)
+   - Campaign performance dashboard
+   - Keyword-level conversion data
+   - Landing page conversion rates by source
+
+### Matching Leads to Campaigns
+
+**Question**: "Which leads came from my Google Ads summer wedding campaign?"
+
+**Answer Options**:
+1. **In Email**: Search inbox for "Campaign: summer-wedding-promo"
+2. **In Sanity**: Filter formSubmissions where utm_campaign = "summer-wedding-promo"
+3. **In GA4**: Create exploration with filter campaign_name = "summer-wedding-promo"
+4. **In Google Ads**: View conversions for that specific campaign
 
 ---
 
-*Last Updated: August 19, 2025*  
-*Version: 1.0*
+*Last Updated: January 14, 2025*
+*Version: 2.0* - Added UTM tracking integration and lead source visibility

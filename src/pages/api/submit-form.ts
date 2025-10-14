@@ -92,6 +92,7 @@ export const POST: APIRoute = async ({ request }) => {
       console.log('Updating existing submission:', data.submissionId);
       
       const updateData = {
+        preferredContact: data.preferredContact || null,
         hasEvent: data.hasEvent === 'yes',
         eventType: data.eventType || null,
         eventDate: data.eventDate || null,
@@ -102,6 +103,19 @@ export const POST: APIRoute = async ({ request }) => {
         budgetRange: data.budgetRange || null,
         dietaryRequirements: data.dietaryRequirements || [],
         eventDescription: data.eventDescription || null,
+
+        // Attribution data
+        utm_source: data.utm_source || null,
+        utm_medium: data.utm_medium || null,
+        utm_campaign: data.utm_campaign || null,
+        utm_term: data.utm_term || null,
+        utm_content: data.utm_content || null,
+        gclid: data.gclid || null,
+        fbclid: data.fbclid || null,
+        lead_source: data.lead_source || 'Direct',
+        referrer: data.referrer || null,
+        landing_page: data.landing_page || null,
+
         status: 'detailed',
         updatedAt: new Date().toISOString()
       };
@@ -127,6 +141,7 @@ export const POST: APIRoute = async ({ request }) => {
         lastName: data.lastName || '',
         email: data.email || '',
         phone: data.phone || '',
+        preferredContact: data.preferredContact || null,
         hasEvent: data.hasEvent === 'yes',
         eventType: data.eventType || null,
         eventDate: data.eventDate || null,
@@ -139,6 +154,19 @@ export const POST: APIRoute = async ({ request }) => {
         message: data.message || null,
         eventDescription: data.eventDescription || null,
         source: data.source || 'direct',
+
+        // Attribution data
+        utm_source: data.utm_source || null,
+        utm_medium: data.utm_medium || null,
+        utm_campaign: data.utm_campaign || null,
+        utm_term: data.utm_term || null,
+        utm_content: data.utm_content || null,
+        gclid: data.gclid || null,
+        fbclid: data.fbclid || null,
+        lead_source: data.lead_source || 'Direct',
+        referrer: data.referrer || null,
+        landing_page: data.landing_page || null,
+
         status: 'new',
         submittedAt: new Date().toISOString()
       };

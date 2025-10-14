@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { getHomepage, urlFor } from '../utils/sanity';
 
 // Fetch homepage data to get chef photo and about content
@@ -35,8 +36,13 @@ const chefImageAlt = homepage?.about?.chefImage?.alt || 'Chef Nam in professiona
 >
   <main>
     <!-- Hero Section -->
-    <section class="pt-32 pb-20 bg-brand-indigo">
-      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section class="relative pt-32 pb-20 bg-brand-indigo overflow-hidden">
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Breadcrumb items={[
+          { label: "Home", href: "/" },
+          { label: "About" }
+        ]} />
+
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white mb-6">
           Meet Chef Nam
         </h1>

@@ -9,7 +9,58 @@ This document outlines the conversion tracking implementation for Chef Nam Cater
 - Access to GTM workspace
 - Access to GA4 property
 
-## 1. Form Submission Tracking
+## 1. Lead Source & Attribution Tracking
+
+### Overview
+To properly attribute leads to their marketing source, the website captures UTM parameters, Google Click IDs (GCLID), and referral information. This allows you to match specific form submissions to their exact traffic source (e.g., "Google Ads - Wedding Catering Campaign - Keyword: thai catering ann arbor").
+
+### UTM Parameters Captured
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `utm_source` | Traffic source | google, facebook, email |
+| `utm_medium` | Marketing medium | cpc, organic, social, email |
+| `utm_campaign` | Campaign name | summer-wedding-promo |
+| `utm_term` | Paid search keyword | thai catering ann arbor |
+| `utm_content` | Ad variation | text-ad-1, banner-a |
+| `gclid` | Google Click ID | CjwKCAiA... (auto-captured) |
+| `fbclid` | Facebook Click ID | IwAR0... (auto-captured) |
+
+### Additional Attribution Data
+
+| Field | Description | Use Case |
+|-------|-------------|----------|
+| `referrer` | Previous page URL | Understand traffic source |
+| `landing_page` | First page visited | See which pages convert |
+| `lead_source` | Friendly source name | "Google Ads", "Organic Search" |
+
+### Implementation (Client-Side)
+A client-side script captures UTM parameters and attribution data on page load and stores them in localStorage for persistence across page navigation.
+
+**Location**: `/src/layouts/Layout.astro` (Global tracking script)
+
+```javascript
+// Capture UTM parameters and attribution on page load
+(function() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const storage = window.localStorage;
+
+  // Only capture if not already stored (first visit takes precedence)
+  if (!storage.getItem('utm_source') && urlParams.toString()) {
+    // Capture UTM parameters
+    ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'].forEach(param => {
+      const value = urlParams.get(param);
+      if (value) storage.setItem(param, value);
+    });
+
+    // Capture referrer and landing page
+    if (document.referrer) storage.setItem('referrer', document.referrer);
+    storage.setItem('landing_page', window.location.pathname);
+  }
+})();
+```
+
+## 2. Form Submission Tracking
 
 ### Implementation (Code Side)
 Form submission tracking is implemented in two key forms:
@@ -17,7 +68,7 @@ Form submission tracking is implemented in two key forms:
 - **Contact Form** (`/contact`)
 
 #### DataLayer Push Events
-When a form is successfully submitted, the following event is pushed to the dataLayer:
+When a form is successfully submitted, the following event is pushed to the dataLayer **including attribution data**:
 
 ```javascript
 window.dataLayer.push({
@@ -27,7 +78,19 @@ window.dataLayer.push({
   'form_type': 'event_inquiry' | 'general_inquiry' | 'contact_inquiry',
   'event_category': 'engagement',
   'event_label': 'Start Planning Form' | 'Contact Form',
-  'value': guestCount || 0  // For event forms only
+  'value': guestCount || 0,  // For event forms only
+
+  // Attribution data
+  'utm_source': 'google',
+  'utm_medium': 'cpc',
+  'utm_campaign': 'summer-wedding-promo',
+  'utm_term': 'thai catering ann arbor',
+  'utm_content': 'text-ad-1',
+  'gclid': 'CjwKCAiA...',
+  'fbclid': null,
+  'lead_source': 'Google Ads',
+  'referrer': 'https://google.com',
+  'landing_page': '/services/weddings'
 });
 ```
 
@@ -42,12 +105,29 @@ window.dataLayer.push({
 #### 2. Create Data Layer Variables
 Navigate to Variables → User-Defined Variables → New:
 
+**Form Variables:**
+
 | Variable Name | Type | Data Layer Variable Name |
 |--------------|------|-------------------------|
 | dlv - form_name | Data Layer Variable | form_name |
 | dlv - form_type | Data Layer Variable | form_type |
 | dlv - form_destination | Data Layer Variable | form_destination |
 | dlv - event_label | Data Layer Variable | event_label |
+
+**Attribution Variables (NEW):**
+
+| Variable Name | Type | Data Layer Variable Name |
+|--------------|------|-------------------------|
+| dlv - utm_source | Data Layer Variable | utm_source |
+| dlv - utm_medium | Data Layer Variable | utm_medium |
+| dlv - utm_campaign | Data Layer Variable | utm_campaign |
+| dlv - utm_term | Data Layer Variable | utm_term |
+| dlv - utm_content | Data Layer Variable | utm_content |
+| dlv - gclid | Data Layer Variable | gclid |
+| dlv - fbclid | Data Layer Variable | fbclid |
+| dlv - lead_source | Data Layer Variable | lead_source |
+| dlv - referrer | Data Layer Variable | referrer |
+| dlv - landing_page | Data Layer Variable | landing_page |
 
 #### 3. Create GA4 Event Tag
 - **Tag Type**: Google Analytics: GA4 Event
@@ -58,7 +138,18 @@ Navigate to Variables → User-Defined Variables → New:
   - form_type: {{dlv - form_type}}
   - form_destination: {{dlv - form_destination}}
   - event_label: {{dlv - event_label}}
+  - **campaign_source**: {{dlv - utm_source}}
+  - **campaign_medium**: {{dlv - utm_medium}}
+  - **campaign_name**: {{dlv - utm_campaign}}
+  - **campaign_term**: {{dlv - utm_term}}
+  - **campaign_content**: {{dlv - utm_content}}
+  - **gclid**: {{dlv - gclid}}
+  - **lead_source**: {{dlv - lead_source}}
+  - **referrer**: {{dlv - referrer}}
+  - **landing_page**: {{dlv - landing_page}}
 - **Triggering**: Form Submit Event
+
+**Important**: These attribution parameters allow you to see in GA4 exactly which campaign/keyword generated each lead.
 
 ### Form Types Reference
 | Form Name | Form Type | Description |
@@ -202,11 +293,111 @@ Form submissions trigger email notifications via Cloudflare Worker:
 - **Worker URL**: https://chefnam-email-worker.dspjson.workers.dev
 - **Recipients**: nam@chefnamcatering.com, dspjson@gmail.com
 
+### Lead Source in Email Notifications
+
+**NEW**: Email notifications now include full lead attribution data so you can immediately see where each lead came from.
+
+#### Email Format Example
+```
+New Event Inquiry - Chef Nam Catering
+
+Contact Information:
+Name: John Smith
+Email: john@example.com
+Phone: (734) 555-0123
+
+Lead Source Information:
+Source: Google Ads
+Campaign: summer-wedding-promo-2025
+Medium: CPC (Pay-Per-Click)
+Keyword: "thai catering ann arbor"
+Ad Content: text-ad-variation-a
+Landing Page: /services/weddings
+Referrer: https://www.google.com
+
+Event Details:
+Event Type: Wedding
+Guest Count: 75
+Date: June 15, 2025
+...
+```
+
+#### Implementation
+The form API (`/src/pages/api/submit-form.ts`) passes attribution data to the email worker:
+
+```javascript
+const emailData = {
+  ...formData,
+  attribution: {
+    utm_source: data.utm_source,
+    utm_medium: data.utm_medium,
+    utm_campaign: data.utm_campaign,
+    utm_term: data.utm_term,
+    utm_content: data.utm_content,
+    gclid: data.gclid,
+    lead_source: data.lead_source,
+    referrer: data.referrer,
+    landing_page: data.landing_page
+  }
+};
+```
+
 ### Email Events (Future Enhancement)
 Consider tracking:
 - Email sent confirmations
 - Email delivery status
 - Email open rates (if using tracking pixels)
+
+### Sanity CMS Storage
+All form submissions, including attribution data, are stored in Sanity CMS for future reference and analysis.
+
+#### Schema Fields (formSubmission)
+The Sanity schema includes these attribution fields:
+
+```javascript
+{
+  name: 'formSubmission',
+  type: 'document',
+  fields: [
+    // Contact info...
+    {name: 'firstName', type: 'string'},
+    {name: 'email', type: 'string'},
+
+    // Attribution fields
+    {name: 'utm_source', type: 'string', title: 'UTM Source'},
+    {name: 'utm_medium', type: 'string', title: 'UTM Medium'},
+    {name: 'utm_campaign', type: 'string', title: 'UTM Campaign'},
+    {name: 'utm_term', type: 'string', title: 'UTM Term'},
+    {name: 'utm_content', type: 'string', title: 'UTM Content'},
+    {name: 'gclid', type: 'string', title: 'Google Click ID'},
+    {name: 'fbclid', type: 'string', title: 'Facebook Click ID'},
+    {name: 'lead_source', type: 'string', title: 'Lead Source'},
+    {name: 'referrer', type: 'string', title: 'Referrer'},
+    {name: 'landing_page', type: 'string', title: 'Landing Page'},
+
+    // Event info...
+  ]
+}
+```
+
+#### Querying Lead Source Data
+In Sanity Studio, you can:
+- Filter submissions by `utm_source` or `utm_campaign`
+- Export data for ROI analysis
+- Build custom dashboards showing lead distribution
+
+**Example GROQ Query** (for API/reporting):
+```groq
+*[_type == "formSubmission" && utm_source == "google"] {
+  firstName,
+  lastName,
+  email,
+  utm_campaign,
+  utm_term,
+  eventType,
+  submittedAt
+}
+```
 
 ## 7. Maintenance & Updates
 
@@ -215,7 +406,37 @@ When adding new forms to the site:
 1. Include the dataLayer.push code on successful submission
 2. Use consistent event naming (`form_submit`)
 3. Add appropriate form_name and form_type values
-4. Update this documentation
+4. **Include attribution data from localStorage** in the submission
+5. Update this documentation
+
+**Code template for new forms:**
+```javascript
+// Read attribution data from localStorage
+const attribution = {
+  utm_source: localStorage.getItem('utm_source'),
+  utm_medium: localStorage.getItem('utm_medium'),
+  utm_campaign: localStorage.getItem('utm_campaign'),
+  utm_term: localStorage.getItem('utm_term'),
+  utm_content: localStorage.getItem('utm_content'),
+  gclid: localStorage.getItem('gclid'),
+  fbclid: localStorage.getItem('fbclid'),
+  referrer: localStorage.getItem('referrer'),
+  landing_page: localStorage.getItem('landing_page')
+};
+
+// Push to dataLayer
+window.dataLayer.push({
+  event: 'form_submit',
+  form_name: 'your_form_name',
+  ...attribution
+});
+
+// Include in API submission
+const formData = {
+  ...contactInfo,
+  ...attribution
+};
+```
 
 ### Adding New Phone Numbers
 The tracking automatically captures all `tel:` links, so new phone numbers will be tracked automatically.
@@ -247,21 +468,76 @@ Monthly checks:
 ## Implementation Files Reference
 
 ### Code Locations
-- **Form Tracking**: 
-  - `/src/pages/start-planning.astro` (lines 639-650)
-  - `/src/pages/contact.astro` (lines 315-325)
-- **Phone Tracking**: 
-  - `/src/layouts/Layout.astro` (lines 96-125)
-- **Email Worker**: 
-  - `/email-worker/src/index.js`
-  - `/src/pages/api/submit-form.ts`
+- **UTM Capture Script**:
+  - `/src/layouts/Layout.astro` (Global head script - captures on all pages)
+- **Form Tracking with Attribution**:
+  - `/src/components/forms/StartPlanningForm.astro` (lines 433-632)
+  - `/src/pages/contact.astro` (Contact form with attribution)
+- **Phone Tracking**:
+  - `/src/layouts/Layout.astro` (lines 132-183)
+- **Form API with Attribution Storage**:
+  - `/src/pages/api/submit-form.ts` (Stores attribution in Sanity)
+- **Email Worker**:
+  - `/email-worker/src/index.js` (Includes attribution in emails)
+- **Sanity Schema**:
+  - `/chef-nam-catering/schemas/formSubmission.ts` (Attribution fields)
 
 ### Environment Variables
 - `RESEND_API_KEY`: Email service API key (set in Cloudflare Worker)
 - `SANITY_API_TOKEN`: CMS write access token
 - `SANITY_PROJECT_ID`: yojbqnd7
 
+## 9. Lead Attribution Reporting
+
+### GA4 Custom Reports
+Create explorations to analyze lead sources:
+
+1. **Campaign Performance Report**:
+   - Dimensions: campaign_source, campaign_medium, campaign_name
+   - Metrics: form_submit events, Users, Conversions
+   - Filter: event_name = form_submit
+
+2. **Keyword Performance** (for paid search):
+   - Dimensions: campaign_term, campaign_source
+   - Metrics: form_submit events, Cost per conversion
+   - Filter: campaign_medium = cpc
+
+3. **Landing Page Analysis**:
+   - Dimensions: landing_page, campaign_source
+   - Metrics: form_submit events, Conversion rate
+   - Shows which pages convert best by source
+
+### Matching Leads to Sources
+
+#### In Email Notifications
+Every email you receive shows the full lead source in a dedicated "Lead Source Information" section.
+
+#### In Sanity CMS
+1. Open Sanity Studio
+2. Navigate to Form Submissions
+3. Each submission shows attribution fields
+4. Filter by utm_source to see all Google Ads leads
+5. Export to CSV for ROI analysis
+
+#### In Google Ads
+1. Navigate to Conversions → Conversion Actions
+2. View conversion details with enhanced data
+3. See which keywords/campaigns drove form submissions
+4. Use for bid optimization
+
+### ROI Calculation Example
+```
+Google Ads Campaign: "Summer Wedding Promo"
+Ad Spend: $500
+Leads from this campaign (via utm_campaign): 15
+Cost per Lead: $33.33
+Conversion to booking: 20% = 3 bookings
+Average booking value: $5,000
+Revenue: $15,000
+ROI: 2,900%
+```
+
 ---
 
-*Last Updated: August 19, 2025*
-*Version: 1.0*
+*Last Updated: January 14, 2025*
+*Version: 2.0* - Added UTM tracking and lead attribution

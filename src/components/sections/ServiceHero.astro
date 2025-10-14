@@ -1,10 +1,13 @@
 ---
+import Breadcrumb, { type BreadcrumbItem } from '../ui/Breadcrumb.astro';
+
 export interface Props {
   title: string;
   subtitle: string;
   description: string;
   backgroundImage: string;
   backgroundAlt: string;
+  breadcrumbs?: BreadcrumbItem[];
 }
 
 const {
@@ -12,7 +15,8 @@ const {
   subtitle,
   description,
   backgroundImage,
-  backgroundAlt
+  backgroundAlt,
+  breadcrumbs
 } = Astro.props;
 ---
 
@@ -31,6 +35,8 @@ const {
   
   <!-- Content -->
   <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    {breadcrumbs && <Breadcrumb items={breadcrumbs} />}
+
     <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
       <span class="text-white font-serif">{title}</span><br />
       <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">{subtitle}</span>
