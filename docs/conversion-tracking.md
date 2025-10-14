@@ -97,10 +97,12 @@ window.dataLayer.push({
 ### GTM Configuration
 
 #### 1. Create Custom Event Trigger
-- **Name**: Form Submit Event
+- **Name**: Generate Lead Event
 - **Trigger Type**: Custom Event
-- **Event name**: `form_submit`
+- **Event name**: `generate_lead`
 - **This trigger fires on**: All Custom Events
+
+**Note**: We use `generate_lead` instead of `form_submit` because it's a GA4 Recommended Event that populates the Business Objectives > Generate Leads reports.
 
 #### 2. Create Data Layer Variables
 Navigate to Variables → User-Defined Variables → New:
@@ -132,7 +134,7 @@ Navigate to Variables → User-Defined Variables → New:
 #### 3. Create GA4 Event Tag
 - **Tag Type**: Google Analytics: GA4 Event
 - **Configuration Tag**: [Select your GA4 Configuration]
-- **Event Name**: `form_submit`
+- **Event Name**: `generate_lead`
 - **Event Parameters**:
   - form_name: {{dlv - form_name}}
   - form_type: {{dlv - form_type}}
@@ -147,9 +149,23 @@ Navigate to Variables → User-Defined Variables → New:
   - **lead_source**: {{dlv - lead_source}}
   - **referrer**: {{dlv - referrer}}
   - **landing_page**: {{dlv - landing_page}}
-- **Triggering**: Form Submit Event
+- **Triggering**: Generate Lead Event
 
 **Important**: These attribution parameters allow you to see in GA4 exactly which campaign/keyword generated each lead.
+
+#### 4. Mark as Key Event in GA4
+After creating the tag:
+1. Navigate to GA4 → Admin → Events
+2. Find `generate_lead` event
+3. Toggle **"Mark as key event"** to ON
+4. This makes the event appear in Business Objectives reports and conversion tracking
+
+#### 5. Enable Business Objectives Collection (if not already enabled)
+1. Navigate to GA4 → Reports → Library
+2. Click **"Create new collection"**
+3. Select **"Business Objectives"** template
+4. Add the collection
+5. You'll now see **"Generate Leads"** section with Lead Acquisition report
 
 ### Form Types Reference
 | Form Name | Form Type | Description |
@@ -157,8 +173,23 @@ Navigate to Variables → User-Defined Variables → New:
 | start_planning | event_inquiry | User has a specific event |
 | start_planning | general_inquiry | User doesn't have event yet |
 | contact | contact_inquiry | General contact form |
+| menus_contact | lead_capture | Menu inquiry form |
 
-## 2. Phone Click Tracking
+### Why `generate_lead` Instead of `form_submit`?
+
+**GA4 Best Practice Change (2024-2025):**
+- `generate_lead` is a **GA4 Recommended Event** that integrates with Business Objectives reporting
+- `form_submit` is a generic event that doesn't populate Lead Generation reports
+- Using `generate_lead` enables:
+  - ✅ Lead Acquisition Report
+  - ✅ Business Objectives > Generate Leads section
+  - ✅ Lead audience templates
+  - ✅ Google Ads enhanced conversion tracking for leads
+  - ✅ Full lead lifecycle tracking (qualify_lead, working_lead, close_convert_lead)
+
+**Migration Date**: January 14, 2025 - All forms updated from `form_submit` to `generate_lead`
+
+## 3. Phone Click Tracking
 
 ### Implementation (Code Side)
 Automatic tracking for all phone links (`tel:`) is implemented globally in `/src/layouts/Layout.astro`.
@@ -540,4 +571,4 @@ ROI: 2,900%
 ---
 
 *Last Updated: January 14, 2025*
-*Version: 2.0* - Added UTM tracking and lead attribution
+*Version: 2.1* - Added UTM tracking, lead attribution, and migrated to `generate_lead` event

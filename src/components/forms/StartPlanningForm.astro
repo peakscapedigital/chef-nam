@@ -600,10 +600,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success) {
           const hasEvent = hasEventSelected?.value;
           
-          // Push form submission event to GTM dataLayer for GA4 & Google Ads
+          // Push lead generation event to GTM dataLayer for GA4 & Google Ads
+          // Using 'generate_lead' (GA4 recommended event) for Business Objectives reporting
           if (typeof window !== 'undefined' && window.dataLayer) {
             window.dataLayer.push({
-              event: 'form_submit',
+              event: 'generate_lead',
               form_name: 'start_planning',
               form_destination: '/api/submit-form',
               form_type: hasEvent === 'yes' ? 'event_inquiry' : 'general_inquiry',

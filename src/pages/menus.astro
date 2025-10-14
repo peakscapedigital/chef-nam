@@ -659,10 +659,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = await response.json();
         
         if (result.success) {
-          // PII-free dataLayer push
+          // Push lead generation event to GTM dataLayer for GA4 & Google Ads
+          // Using 'generate_lead' (GA4 recommended event) for Business Objectives reporting
           if (typeof window !== 'undefined' && window.dataLayer) {
             window.dataLayer.push({
-              event: 'form_submit',
+              event: 'generate_lead',
               form_name: 'menus_contact',
               form_destination: '/api/submit-form',
               form_type: 'lead_capture',

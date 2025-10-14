@@ -4,12 +4,13 @@
 Building a high-performance website for Chef Nam Catering, a women-owned Thai fusion catering business serving Ann Arbor, Michigan and surrounding areas. The business differentiates through authentic Thai heritage combined with American catering expertise.
 
 ## Architecture Decision
-**Tech Stack**: Astro 4.0 + Sanity CMS + Vercel/Cloudflare Pages
+**Tech Stack**: Astro 4.0 + Sanity CMS + Cloudflare Pages
 - **Frontend**: Astro (static site generation, islands architecture)
 - **CMS**: Sanity (headless, real-time collaboration)
 - **Styling**: Tailwind CSS with custom brand theme
-- **Hosting**: TBD between Vercel and Cloudflare Pages
+- **Hosting**: Cloudflare Pages (LIVE - chef-nam-website project)
 - **Language**: TypeScript throughout
+- **Adapter**: @astrojs/cloudflare (SSR mode)
 
 ## Business Context
 
@@ -165,9 +166,10 @@ Building a high-performance website for Chef Nam Catering, a women-owned Thai fu
 ## Important Notes
 
 ### Domain & DNS
-- **Current Domain**: chefnamcatering.com (Bluehost)
-- **Future Hosting**: TBD - testing Vercel vs Cloudflare Pages
-- **Migration Strategy**: Gradual with 301 redirects
+- **Live Domain**: chefnamcatering.com (Cloudflare)
+- **Custom Domain**: www.chefnamcatering.com (Cloudflare)
+- **Hosting**: Cloudflare Pages (LIVE)
+- **Old Hosting**: Migrated from Bluehost
 
 ### Content Migration
 - **Existing Content**: Minimal, mostly recreating from scratch
@@ -177,10 +179,11 @@ Building a high-performance website for Chef Nam Catering, a women-owned Thai fu
 ### Environment Setup
 ```bash
 # Required environment variables
-SANITY_PROJECT_ID=your_project_id
-SANITY_DATASET=production  
-SANITY_API_TOKEN=your_api_token
+SANITY_PROJECT_ID=yojbqnd7
+SANITY_DATASET=production
+SANITY_API_TOKEN=skM6lGZRUGdMrX7gF2ouLCf1gNUJpv6IDiPOAjTJmjuqkzqcVp57cKfE74svy07jsZfMaEM1JX0d4WNXOvaBVH96k5UbcnlEg5TfOfOEmFMFAx2vQtbGCEKvyqzCFrPpkrs5SK4mEdlR57PWcsZTwheUK2snuB7SVE8USgo6x99h787Nq97O
 PUBLIC_SITE_URL=https://chefnamcatering.com
+RESEND_API_KEY=re_... (set in Cloudflare Worker env)
 ```
 
 ## Commands & Workflows
@@ -194,10 +197,49 @@ npm run type-check   # TypeScript validation
 npm run lint         # Code linting
 ```
 
+### Deployment Commands
+
+**IMPORTANT: Use exact project names - do not guess!**
+
+#### Deploy Website (Cloudflare Pages)
+```bash
+# ALWAYS use this exact command:
+npx wrangler pages deploy dist --project-name=chef-nam-website
+
+# Project details:
+# - Project Name: chef-nam-website (NOT chefnamcatering)
+# - Live URL: https://chefnamcatering.com
+# - Preview: https://chef-nam-website.pages.dev
+# - Account: 7facb60658190425ab4758a2f4de8cc5
+```
+
+#### Deploy Email Worker (Cloudflare Workers)
+```bash
+cd email-worker
+npm run deploy
+
+# Worker details:
+# - Worker Name: chefnam-email-worker
+# - Live URL: https://chefnam-email-worker.dspjson.workers.dev
+# - Purpose: Sends form notification emails via Resend
+```
+
+#### Deploy Sanity Studio (If Needed)
+```bash
+# Schema changes are deployed with main site
+# Studio is accessed locally at /admin
+# No separate deployment needed for schema updates
+```
+
+#### Check Cloudflare Projects
+```bash
+npx wrangler pages project list  # See all Cloudflare Pages projects
+```
+
 ### Content Management
-- **Sanity Studio**: Access at `/admin` once configured
+- **Sanity Studio**: Access at `https://chefnamcatering.com/admin`
 - **Preview Mode**: Real-time content preview
-- **Publishing**: Webhook triggers automatic rebuilds
+- **Schema Changes**: Deploy with main site (no separate step)
 
 ## Documentation Domains Complete
 
@@ -225,6 +267,32 @@ npm run lint         # Code linting
 
 ---
 
+## Deployment Configuration Summary
+
+### Live Infrastructure
+- **Website**: Cloudflare Pages (chef-nam-website)
+- **Email Worker**: Cloudflare Workers (chefnam-email-worker)
+- **CMS**: Sanity.io (Project ID: yojbqnd7)
+- **Domain**: chefnamcatering.com + www.chefnamcatering.com
+- **Analytics**: Google Tag Manager (GTM-WCMPN842)
+
+### Key Integrations
+- **Email**: Resend API via Cloudflare Worker
+- **Forms**: API route at `/api/submit-form` → Sanity + Email
+- **Tracking**: GTM + GA4 + Google Ads conversion tracking
+- **Attribution**: UTM tracking + GCLID capture for lead source
+
+### Deployment Workflow
+1. Make code changes
+2. Test locally: `npm run dev`
+3. Build: `npm run build`
+4. Deploy: `npx wrangler pages deploy dist --project-name=chef-nam-website`
+5. Verify at: https://chefnamcatering.com
+
+**CRITICAL**: Always use exact project name `chef-nam-website` - never guess or abbreviate!
+
+---
+
 *Last Updated: 2025-01-14*
-*Project Status: Complete documentation system ready for implementation*
+*Project Status: LIVE in production with full UTM tracking*
 - I would prefer to not use mock setups and simple tests - let's work on production grade solutions
