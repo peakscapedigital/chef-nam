@@ -1,8 +1,7 @@
 import type { APIRoute } from 'astro';
 
-// Supabase configuration (PUBLIC vars can use import.meta.env)
+// Supabase configuration
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://yrhimzyqasnftlcyehhj.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 const CHEF_NAM_TENANT_ID = 1; // Chef Nam's tenant ID
 
 // Helper function to auto-fix common email typos
@@ -108,9 +107,13 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
+
+    // Get SUPABASE_SERVICE_KEY from plaintext env var (server-side only, still secure)
+    const SUPABASE_SERVICE_KEY = import.meta.env.SUPABASE_SERVICE_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+
     console.log('SUPABASE_URL:', SUPABASE_URL);
-    console.log('SUPABASE_ANON_KEY present:', !!SUPABASE_ANON_KEY);
-    console.log('SUPABASE_ANON_KEY value:', SUPABASE_ANON_KEY ? 'exists' : 'MISSING');
+    console.log('Using key type:', import.meta.env.SUPABASE_SERVICE_KEY ? 'SERVICE_KEY' : 'ANON_KEY');
+    console.log('Key present:', !!SUPABASE_SERVICE_KEY);
 
     let data;
     try {
@@ -198,12 +201,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     console.log('Creating lead in Supabase...');
 
-    // Insert lead into Supabase using anon key (RLS policies handle permissions)
+    // Insert lead into Supabase
     const response = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation' // Return the created record
       },
@@ -225,8 +228,8 @@ export const POST: APIRoute = async ({ request }) => {
     const processResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/process_lead`, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'apikey': SUPABASE_SERVICE_KEY,
+        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ p_lead_id: leadId })
