@@ -108,6 +108,9 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
+    console.log('SUPABASE_URL:', SUPABASE_URL);
+    console.log('SUPABASE_ANON_KEY present:', !!SUPABASE_ANON_KEY);
+    console.log('SUPABASE_ANON_KEY value:', SUPABASE_ANON_KEY ? 'exists' : 'MISSING');
 
     let data;
     try {
