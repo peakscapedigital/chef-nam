@@ -534,7 +534,24 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      // Read attribution data from localStorage
+      // Helper function to get GA4 client_id from cookie
+      function getGA4ClientId() {
+        try {
+          const gaCookie = document.cookie.split('; ').find(row => row.startsWith('_ga='));
+          if (gaCookie) {
+            // Format: GA1.1.xxxxxxxx.yyyyyyyy - we want the last two parts
+            const parts = gaCookie.split('.');
+            if (parts.length >= 4) {
+              return parts.slice(-2).join('.');
+            }
+          }
+        } catch (e) {
+          console.warn('Could not read GA4 client_id:', e);
+        }
+        return undefined;
+      }
+
+      // Read attribution data from localStorage and GA4 cookie
       const attribution = {
         utm_source: localStorage.getItem('utm_source') || undefined,
         utm_medium: localStorage.getItem('utm_medium') || undefined,
@@ -545,7 +562,8 @@ document.addEventListener('DOMContentLoaded', function() {
         fbclid: localStorage.getItem('fbclid') || undefined,
         lead_source: localStorage.getItem('lead_source') || 'Direct',
         referrer: localStorage.getItem('referrer') || undefined,
-        landing_page: localStorage.getItem('landing_page') || undefined
+        landing_page: localStorage.getItem('landing_page') || undefined,
+        ga_client_id: getGA4ClientId()
       };
 
       // Collect all form data

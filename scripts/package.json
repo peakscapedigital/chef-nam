@@ -1,0 +1,11 @@
+{
+  "name": "chef-nam-scripts",
+  "version": "1.0.0",
+  "description": "Utility scripts for Chef Nam Catering",
+  "scripts": {
+    "get-refresh-token": "node get-google-ads-refresh-token.js"
+  },
+  "dependencies": {
+    "googleapis": "^140.0.0"
+  }
+}

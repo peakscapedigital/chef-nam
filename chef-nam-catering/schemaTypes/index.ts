@@ -735,6 +735,338 @@ export const formSubmission = {
   ]
 }
 
+// Lead schema - business object for CRM functionality
+export const lead = {
+  name: 'lead',
+  title: 'Leads',
+  type: 'document',
+  fields: [
+    // Basic Contact Info
+    {
+      name: 'firstName',
+      title: 'First Name',
+      type: 'string',
+      validation: (Rule: any) => Rule.required()
+    },
+    {
+      name: 'lastName',
+      title: 'Last Name',
+      type: 'string',
+      validation: (Rule: any) => Rule.required()
+    },
+    {
+      name: 'email',
+      title: 'Email',
+      type: 'string',
+      validation: (Rule: any) => Rule.required().email()
+    },
+    {
+      name: 'phone',
+      title: 'Phone',
+      type: 'string',
+      validation: (Rule: any) => Rule.required()
+    },
+    {
+      name: 'preferredContact',
+      title: 'Preferred Contact Method',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Email', value: 'email' },
+          { title: 'Phone Call', value: 'phone' },
+          { title: 'Text Message', value: 'text' }
+        ]
+      }
+    },
+
+    // Event Details
+    {
+      name: 'eventType',
+      title: 'Event Type',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'Wedding', value: 'wedding' },
+          { title: 'Corporate Event', value: 'corporate' },
+          { title: 'Birthday Party', value: 'birthday' },
+          { title: 'Anniversary', value: 'anniversary' },
+          { title: 'Graduation', value: 'graduation' },
+          { title: 'Holiday Party', value: 'holiday' },
+          { title: 'Fundraiser', value: 'fundraiser' },
+          { title: 'Other', value: 'other' }
+        ]
+      }
+    },
+    {
+      name: 'eventDate',
+      title: 'Event Date',
+      type: 'date'
+    },
+    {
+      name: 'guestCount',
+      title: 'Guest Count',
+      type: 'string'
+    },
+    {
+      name: 'location',
+      title: 'Event Location',
+      type: 'string'
+    },
+    {
+      name: 'serviceStyle',
+      title: 'Service Style',
+      type: 'string'
+    },
+    {
+      name: 'budgetRange',
+      title: 'Budget Range',
+      type: 'string'
+    },
+
+    // Lead Management (CRM)
+    {
+      name: 'leadStatus',
+      title: 'Lead Status',
+      type: 'string',
+      options: {
+        list: [
+          { title: '🆕 New', value: 'new' },
+          { title: '✅ Qualified', value: 'qualified' },
+          { title: '💼 Working', value: 'working' },
+          { title: '🎉 Converted', value: 'converted' },
+          { title: '❌ Lost', value: 'lost' }
+        ],
+        layout: 'radio'
+      },
+      initialValue: 'new',
+      validation: (Rule: any) => Rule.required()
+    },
+    {
+      name: 'bookingValue',
+      title: 'Booking Value',
+      type: 'number',
+      description: 'Final booking value (for converted leads)'
+    },
+    {
+      name: 'notes',
+      title: 'Internal Notes',
+      type: 'array',
+      of: [
+        {
+          type: 'object',
+          fields: [
+            {
+              name: 'note',
+              title: 'Note',
+              type: 'text'
+            },
+            {
+              name: 'createdAt',
+              title: 'Created At',
+              type: 'datetime',
+              initialValue: () => new Date().toISOString()
+            }
+          ],
+          preview: {
+            select: {
+              title: 'note',
+              subtitle: 'createdAt'
+            },
+            prepare(selection: any) {
+              const { title, subtitle } = selection;
+              const dateStr = subtitle ? new Date(subtitle).toLocaleDateString() : '';
+              return {
+                title: title?.substring(0, 60) + '...' || 'Note',
+                subtitle: dateStr
+              };
+            }
+          }
+        }
+      ]
+    },
+
+    // Attribution Data
+    {
+      name: 'attribution',
+      title: '📊 Attribution Data',
+      type: 'object',
+      options: {
+        collapsible: true,
+        collapsed: false
+      },
+      fields: [
+        {
+          name: 'utm_source',
+          title: 'UTM Source',
+          type: 'string',
+          description: 'Traffic source (e.g., google, facebook)'
+        },
+        {
+          name: 'utm_medium',
+          title: 'UTM Medium',
+          type: 'string',
+          description: 'Marketing medium (e.g., cpc, organic, social)'
+        },
+        {
+          name: 'utm_campaign',
+          title: 'UTM Campaign',
+          type: 'string',
+          description: 'Campaign name'
+        },
+        {
+          name: 'utm_term',
+          title: 'UTM Term',
+          type: 'string',
+          description: 'Paid search keyword'
+        },
+        {
+          name: 'utm_content',
+          title: 'UTM Content',
+          type: 'string',
+          description: 'Ad variation or content identifier'
+        },
+        {
+          name: 'gclid',
+          title: 'Google Click ID (GCLID)',
+          type: 'string',
+          description: 'Required to send conversions back to Google Ads'
+        },
+        {
+          name: 'fbclid',
+          title: 'Facebook Click ID',
+          type: 'string'
+        },
+        {
+          name: 'lead_source',
+          title: 'Lead Source',
+          type: 'string',
+          description: 'Friendly name (e.g., "Google Ads", "Direct")'
+        },
+        {
+          name: 'referrer',
+          title: 'Referrer',
+          type: 'string'
+        },
+        {
+          name: 'landing_page',
+          title: 'Landing Page',
+          type: 'string'
+        }
+      ]
+    },
+
+    // Analytics Integration
+    {
+      name: 'analytics',
+      title: '📈 Analytics Integration',
+      type: 'object',
+      options: {
+        collapsible: true,
+        collapsed: true
+      },
+      fields: [
+        {
+          name: 'ga_client_id',
+          title: 'GA4 Client ID',
+          type: 'string',
+          description: 'Used to send lifecycle events back to GA4'
+        },
+        {
+          name: 'conversionSentToGA4',
+          title: 'Conversion Sent to GA4',
+          type: 'boolean',
+          initialValue: false,
+          readOnly: true
+        },
+        {
+          name: 'conversionSentToAds',
+          title: 'Conversion Sent to Google Ads',
+          type: 'boolean',
+          initialValue: false,
+          readOnly: true
+        },
+        {
+          name: 'lastGA4EventType',
+          title: 'Last GA4 Event Type',
+          type: 'string',
+          description: 'Last lifecycle event sent (qualify_lead, working_lead, convert_lead)',
+          readOnly: true
+        },
+        {
+          name: 'lastGA4EventSentAt',
+          title: 'Last GA4 Event Sent At',
+          type: 'datetime',
+          readOnly: true
+        }
+      ]
+    },
+
+    // Reference to original form submission
+    {
+      name: 'originalSubmission',
+      title: 'Original Form Submission',
+      type: 'reference',
+      to: [{ type: 'formSubmission' }],
+      description: 'Link to the original form submission record'
+    },
+
+    // Timestamps
+    {
+      name: 'createdAt',
+      title: 'Created At',
+      type: 'datetime',
+      initialValue: () => new Date().toISOString(),
+      readOnly: true
+    },
+    {
+      name: 'updatedAt',
+      title: 'Last Updated',
+      type: 'datetime',
+      readOnly: true
+    }
+  ],
+  preview: {
+    select: {
+      firstName: 'firstName',
+      lastName: 'lastName',
+      email: 'email',
+      status: 'leadStatus',
+      eventType: 'eventType',
+      source: 'attribution.lead_source',
+      date: 'createdAt'
+    },
+    prepare(selection: any) {
+      const { firstName, lastName, email, status, eventType, source, date } = selection;
+      const dateStr = date ? new Date(date).toLocaleDateString() : '';
+      const statusEmoji = {
+        'new': '🆕',
+        'qualified': '✅',
+        'working': '💼',
+        'converted': '🎉',
+        'lost': '❌'
+      }[status] || '';
+
+      return {
+        title: `${statusEmoji} ${firstName} ${lastName}`,
+        subtitle: `${eventType || 'No event'} | ${source || 'Direct'} | ${dateStr}`,
+        description: email
+      };
+    }
+  },
+  orderings: [
+    {
+      title: 'Newest First',
+      name: 'newestFirst',
+      by: [{ field: 'createdAt', direction: 'desc' }]
+    },
+    {
+      title: 'Status (New → Converted)',
+      name: 'byStatus',
+      by: [{ field: 'leadStatus', direction: 'asc' }]
+    }
+  ]
+}
+
 import venue from './venue'
 
-export const schemaTypes = [post, service, homepage, gallery, formSubmission, venue]
+export const schemaTypes = [post, service, homepage, gallery, formSubmission, lead, venue]
