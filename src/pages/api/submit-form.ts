@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 
 // Supabase configuration (PUBLIC vars can use import.meta.env)
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://yrhimzyqasnftlcyehhj.supabase.co';
+const SUPABASE_ANON_KEY = import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 const CHEF_NAM_TENANT_ID = 1; // Chef Nam's tenant ID
 
 // Helper function to auto-fix common email typos
@@ -108,16 +109,6 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
 
-    // Access SUPABASE_SERVICE_KEY from environment (Cloudflare Pages injects this at build/runtime)
-    const SUPABASE_SERVICE_KEY = import.meta.env.SUPABASE_SERVICE_KEY;
-
-    if (!SUPABASE_SERVICE_KEY) {
-      console.error('CRITICAL: SUPABASE_SERVICE_KEY not found in environment');
-      throw new Error('Server configuration error: Missing SUPABASE_SERVICE_KEY');
-    }
-
-    console.log('SUPABASE_SERVICE_KEY present:', !!SUPABASE_SERVICE_KEY);
-
     let data;
     try {
       data = await request.json();
@@ -204,12 +195,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     console.log('Creating lead in Supabase...');
 
-    // Insert lead into Supabase using service role key (server-side only, bypasses RLS)
+    // Insert lead into Supabase using anon key (RLS policies handle permissions)
     const response = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
         'Prefer': 'return=representation' // Return the created record
       },
@@ -231,8 +222,8 @@ export const POST: APIRoute = async ({ request }) => {
     const processResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/process_lead`, {
       method: 'POST',
       headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+        'apikey': SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({ p_lead_id: leadId })
