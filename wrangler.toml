@@ -1,0 +1,6 @@
+name = "chef-nam"
+compatibility_date = "2024-01-01"
+
+[env.production]
+# Environment variables are set in Cloudflare Pages dashboard
+# This file tells Cloudflare to make them available via runtime.env
