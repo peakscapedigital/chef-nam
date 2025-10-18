@@ -104,16 +104,15 @@ async function sendEmailNotification(data: any, isUpdate: boolean = false) {
 
 export const prerender = false;
 
-export const POST: APIRoute = async (context) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
 
-    // Access SUPABASE_SERVICE_KEY from Cloudflare runtime environment
-    const { env } = context.locals.runtime;
-    const SUPABASE_SERVICE_KEY = env.SUPABASE_SERVICE_KEY;
+    // Access SUPABASE_SERVICE_KEY from environment (Cloudflare Pages injects this at build/runtime)
+    const SUPABASE_SERVICE_KEY = import.meta.env.SUPABASE_SERVICE_KEY;
 
     if (!SUPABASE_SERVICE_KEY) {
-      console.error('CRITICAL: SUPABASE_SERVICE_KEY not found in runtime env');
+      console.error('CRITICAL: SUPABASE_SERVICE_KEY not found in environment');
       throw new Error('Server configuration error: Missing SUPABASE_SERVICE_KEY');
     }
 
@@ -121,10 +120,10 @@ export const POST: APIRoute = async (context) => {
 
     let data;
     try {
-      data = await context.request.json();
+      data = await request.json();
     } catch (jsonError) {
       console.error('JSON parse error:', jsonError);
-      const body = await context.request.text();
+      const body = await request.text();
       console.log('Raw body as text:', body);
 
       return new Response(
