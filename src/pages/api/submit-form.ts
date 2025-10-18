@@ -1,15 +1,8 @@
 import type { APIRoute } from 'astro';
 
-// Supabase configuration
+// Supabase configuration (PUBLIC vars can use import.meta.env)
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://yrhimzyqasnftlcyehhj.supabase.co';
-const SUPABASE_SERVICE_KEY = import.meta.env.SUPABASE_SERVICE_KEY;
 const CHEF_NAM_TENANT_ID = 1; // Chef Nam's tenant ID
-
-// Debug: Log if service key is missing (will show in Cloudflare logs)
-if (!SUPABASE_SERVICE_KEY) {
-  console.error('CRITICAL: SUPABASE_SERVICE_KEY is not set!');
-  console.error('Available env vars:', Object.keys(import.meta.env));
-}
 
 // Helper function to auto-fix common email typos
 function fixCommonEmailTypos(email: string): string {
@@ -111,9 +104,18 @@ async function sendEmailNotification(data: any, isUpdate: boolean = false) {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('Form submission API called');
+
+    // Access SUPABASE_SERVICE_KEY from Cloudflare runtime environment
+    const SUPABASE_SERVICE_KEY = locals.runtime?.env?.SUPABASE_SERVICE_KEY;
+
+    if (!SUPABASE_SERVICE_KEY) {
+      console.error('CRITICAL: SUPABASE_SERVICE_KEY not found in runtime env');
+      throw new Error('Server configuration error: Missing SUPABASE_SERVICE_KEY');
+    }
+
     console.log('SUPABASE_SERVICE_KEY present:', !!SUPABASE_SERVICE_KEY);
 
     let data;
