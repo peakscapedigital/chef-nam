@@ -108,12 +108,11 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
 
-    // Get SUPABASE_SERVICE_KEY from plaintext env var (server-side only, still secure)
-    const SUPABASE_SERVICE_KEY = import.meta.env.SUPABASE_SERVICE_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
+    // Get SUPABASE_SERVICE_KEY from PUBLIC_ prefixed env var
+    const SUPABASE_SERVICE_KEY = import.meta.env.PUBLIC_SUPABASE_SERVICE_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
 
     console.log('SUPABASE_URL:', SUPABASE_URL);
-    console.log('Using key type:', import.meta.env.SUPABASE_SERVICE_KEY ? 'SERVICE_KEY' : 'ANON_KEY');
-    console.log('Key present:', !!SUPABASE_SERVICE_KEY);
+    console.log('Using key type:', import.meta.env.PUBLIC_SUPABASE_SERVICE_KEY ? 'SERVICE_KEY' : 'ANON_KEY');
 
     let data;
     try {
