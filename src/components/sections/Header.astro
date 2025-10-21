@@ -54,8 +54,28 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
             </div>
           </div>
         </div>
-        
-        <a href="/menus" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Menus</a>
+
+        <!-- Menus Dropdown -->
+        <div class="relative group">
+          <div class="flex items-center">
+            <a href="/menus" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">
+              Menus
+            </a>
+            <button class="ml-1 text-white hover:text-brand-amber transition-colors" aria-label="Toggle menus menu">
+              <svg class="w-4 h-4 transition-transform group-hover:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Dropdown Menu -->
+          <div class="absolute top-full left-0 mt-2 w-48 bg-white rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+            <div class="py-2">
+              <a href="/menus/charcuterie" class="block px-4 py-2 font-serif text-brand-indigo hover:bg-brand-cream/50 hover:text-brand-amber transition-colors">Charcuterie Boards</a>
+            </div>
+          </div>
+        </div>
+
         <a href="/venues" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Venues</a>
         <a href="/about" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">About</a>
         <a href="/blog" class="text-xl font-serif text-white hover:text-brand-amber transition-colors">Blog</a>
@@ -114,8 +134,20 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
               <a href="/services/social" class="block text-white/80 hover:text-brand-amber transition-colors">Social Events</a>
             </div>
           </div>
-          
-          <a href="/menus" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Menus</a>
+
+          <!-- Menus -->
+          <div>
+            <button class="flex items-center justify-between w-full text-left text-white font-serif text-lg" id="mobile-menus-toggle">
+              <span>Menus</span>
+              <svg class="w-5 h-5 transition-transform" id="mobile-menus-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </button>
+            <div class="mt-3 ml-4 space-y-3 hidden" id="mobile-menus-menu">
+              <a href="/menus/charcuterie" class="block text-white/80 hover:text-brand-amber transition-colors">Charcuterie Boards</a>
+            </div>
+          </div>
+
           <a href="/venues" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Venues</a>
           <a href="/about" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">About</a>
           <a href="/blog" class="block text-white font-serif text-lg hover:text-brand-amber transition-colors">Blog</a>
@@ -145,6 +177,9 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
     const servicesToggle = document.getElementById('mobile-services-toggle');
     const servicesMenu = document.getElementById('mobile-services-menu');
     const servicesArrow = document.getElementById('mobile-services-arrow');
+    const menusToggle = document.getElementById('mobile-menus-toggle');
+    const menusMenu = document.getElementById('mobile-menus-menu');
+    const menusArrow = document.getElementById('mobile-menus-arrow');
 
     function openMenu() {
       if (!mobileMenu || !mobileMenuPanel) return;
@@ -186,6 +221,17 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
       }
     }
 
+    function toggleMenus() {
+      const isOpen = !menusMenu.classList.contains('hidden');
+      if (isOpen) {
+        menusMenu.classList.add('hidden');
+        menusArrow.style.transform = 'rotate(0deg)';
+      } else {
+        menusMenu.classList.remove('hidden');
+        menusArrow.style.transform = 'rotate(180deg)';
+      }
+    }
+
     // Event listeners - check if elements exist before adding listeners
     if (mobileMenuButton) {
       mobileMenuButton.addEventListener('click', function(e) {
@@ -208,6 +254,10 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
     
     if (servicesToggle) {
       servicesToggle.addEventListener('click', toggleServices);
+    }
+
+    if (menusToggle) {
+      menusToggle.addEventListener('click', toggleMenus);
     }
 
     // Close menu when clicking on navigation links
