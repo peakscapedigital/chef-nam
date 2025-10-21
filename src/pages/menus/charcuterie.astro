@@ -1,0 +1,601 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Breadcrumb from '../../components/ui/Breadcrumb.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout
+  title="Charcuterie Board Catering Ann Arbor | Artisan Grazing Tables | Chef Nam"
+  description="Premium charcuterie board catering in Ann Arbor. Artisan cheese boards and grazing tables perfect for weddings, corporate events, and parties. Custom designs available."
+>
+  <!-- Charcuterie Page Structured Data -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": ["WebPage", "Menu"],
+    "@id": "https://chefnamcatering.com/menus/charcuterie#webpage",
+    "name": "Charcuterie Board Catering",
+    "url": "https://chefnamcatering.com/menus/charcuterie",
+    "description": "Artisan charcuterie boards and grazing tables featuring premium cheeses, cured meats, seasonal fruits, and gourmet accompaniments for Ann Arbor events.",
+    "isPartOf": { "@id": "https://chefnamcatering.com/#website" },
+    "mainEntity": { "@id": "https://chefnamcatering.com/menus/charcuterie#menu" }
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://chefnamcatering.com" },
+      { "@type": "ListItem", "position": 2, "name": "Menus", "item": "https://chefnamcatering.com/menus" },
+      { "@type": "ListItem", "position": 3, "name": "Charcuterie Boards", "item": "https://chefnamcatering.com/menus/charcuterie" }
+    ]
+  }
+  </script>
+
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "MenuItem",
+    "@id": "https://chefnamcatering.com/menus/charcuterie#menu",
+    "name": "Charcuterie Board Catering",
+    "description": "Artisan charcuterie boards and grazing tables featuring premium cheeses, cured meats, seasonal fruits, and gourmet accompaniments",
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Ann Arbor",
+          "containedIn": "Michigan"
+        },
+        {
+          "@type": "City",
+          "name": "Ypsilanti",
+          "containedIn": "Michigan"
+        },
+        {
+          "@type": "City",
+          "name": "Saline",
+          "containedIn": "Michigan"
+        },
+        {
+          "@type": "City",
+          "name": "Dexter",
+          "containedIn": "Michigan"
+        }
+      ]
+    },
+    "provider": {
+      "@type": "FoodEstablishment",
+      "name": "Chef Nam Catering",
+      "@id": "https://chefnamcatering.com"
+    },
+    "suitableForDiet": [
+      "https://schema.org/VegetarianDiet",
+      "https://schema.org/GlutenFreeDiet",
+      "https://schema.org/VeganDiet"
+    ]
+  }
+  </script>
+
+  <!-- FAQ Schema -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How much does charcuterie board catering cost in Ann Arbor?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Charcuterie board pricing varies based on guest count, ingredients, and customization. Our boards are designed to serve groups of various sizes, from intimate gatherings to large events. Contact us for a custom quote tailored to your specific event needs and budget."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How far in advance should I order charcuterie boards?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We recommend ordering 48-72 hours in advance to ensure ingredient availability and proper preparation. For large events (100+ guests) or custom grazing tables, 1-2 weeks notice is ideal. Rush orders may be accommodated—contact us to discuss your timeline."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you deliver charcuterie boards to Ypsilanti, Saline, and Dexter?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We deliver throughout Washtenaw County including Ann Arbor, Ypsilanti, Saline, Dexter, and surrounding areas. Delivery and setup are included for most orders."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you accommodate dietary restrictions?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We create vegetarian, vegan, and gluten-free charcuterie options. Let us know your requirements when requesting a quote, and we'll design a board that works for all your guests."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the difference between a charcuterie board and grazing table?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Charcuterie boards are designed for smaller gatherings (10-50 guests) and served on wooden boards or platters. Grazing tables are large-scale displays spread across entire tables, ideal for 50-100+ guests and designed as event centerpieces. Both feature similar ingredients but differ in scale and presentation style."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you provide serving utensils and display materials?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! All boards include necessary serving utensils, small plates, and napkins. For grazing tables, we provide full setup and can recommend or provide display materials if needed."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 bg-brand-indigo relative overflow-hidden">
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="/images/charcuterie.jpg"
+          alt="Artisan charcuterie board with premium cheeses, cured meats, and seasonal fruits"
+          class="w-full h-full object-cover"
+        />
+        <!-- Clean overlay for text readability with brand indigo tint -->
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.75), rgba(44, 62, 80, 0.6))"></div>
+      </div>
+
+      <!-- Content -->
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <Breadcrumb items={[
+          { label: "Home", href: "/" },
+          { label: "Menus", href: "/menus" },
+          { label: "Charcuterie Boards" }
+        ]} />
+
+        <div class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-none mb-8">
+          <span class="text-white font-serif">Artisan</span><br />
+          <span class="text-5xl md:text-7xl lg:text-8xl" style="color: var(--brand-amber); font-family: 'Caveat', cursive;">Charcuterie Boards</span>
+        </div>
+        <p class="text-xl text-white/90 max-w-3xl mx-auto leading-relaxed mb-8">
+          Beautiful grazing displays that become the centerpiece of your event. Perfect for weddings, corporate gatherings, and celebrations throughout Ann Arbor.
+        </p>
+        <a href="#board-options" class="inline-block bg-brand-amber text-white font-semibold py-4 px-8 rounded-lg hover:bg-brand-amber/90 transition-colors">
+          View Board Options
+        </a>
+      </div>
+    </section>
+
+    <!-- Introduction -->
+    <section class="py-16 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo text-center mb-8">
+          Charcuterie Board Catering in Ann Arbor
+        </h1>
+        <div class="prose prose-lg max-w-none text-brand-indigo/80">
+          <p class="text-xl leading-relaxed mb-6">
+            Looking for charcuterie board catering in Ann Arbor that stands out? Chef Nam Catering brings artisan quality and attention to detail to every board we create. Our charcuterie boards feature premium cheeses, carefully selected cured meats, seasonal fruits, and gourmet accompaniments arranged into Instagram-worthy displays.
+          </p>
+          <p class="text-lg leading-relaxed">
+            Perfect for <a href="/services/corporate" class="text-brand-amber hover:underline">corporate events</a>, <a href="/services/weddings" class="text-brand-amber hover:underline">weddings</a>, social gatherings, and celebrations, our boards are designed to accommodate groups of all sizes—from intimate gatherings of 10-15 guests to impressive grazing tables for 100+. We deliver throughout Ann Arbor, Ypsilanti, Saline, Dexter, and surrounding areas.
+          </p>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- Board Options Section -->
+    <section id="board-options" class="py-20 bg-brand-cream/30">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Our Charcuterie & Grazing Boards</h2>
+          <p class="text-lg text-brand-indigo/70">Explore our signature offerings</p>
+        </div>
+
+        <!-- 2x2 Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
+
+          <!-- Charcuterie Board Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Assorted Cheese & Charcuterie</h3>
+            <p class="text-brand-indigo/70 text-sm mb-4">
+              Artisan cheeses, premium cured meats, seasonal fruits, crackers, and gourmet accompaniments
+            </p>
+            <p class="text-brand-amber font-semibold text-sm mb-4">Perfect for: Weddings, Corporate Events, Cocktail Hours</p>
+            <a href="/start-planning?interest=charcuterie" class="inline-block text-brand-amber hover:text-brand-indigo font-semibold text-sm">
+              Request Quote →
+            </a>
+          </div>
+
+          <!-- Crudité Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Crudité Platter</h3>
+            <p class="text-brand-indigo/70 text-sm mb-4">
+              Colorful seasonal vegetables with house-made dips, artfully arranged for visual impact
+            </p>
+            <p class="text-brand-amber font-semibold text-sm mb-4">Perfect for: Wellness Events, Daytime Meetings, Summer Parties</p>
+            <a href="/start-planning?interest=crudite" class="inline-block text-brand-amber hover:text-brand-indigo font-semibold text-sm">
+              Request Quote →
+            </a>
+          </div>
+
+          <!-- Fruit Platter Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Fresh Fruit Platter</h3>
+            <p class="text-brand-indigo/70 text-sm mb-4">
+              Premium seasonal fruits beautifully arranged with fresh garnishes
+            </p>
+            <p class="text-brand-amber font-semibold text-sm mb-4">Perfect for: Breakfast Meetings, Brunch, Summer Gatherings</p>
+            <a href="/start-planning?interest=fruit-platter" class="inline-block text-brand-amber hover:text-brand-indigo font-semibold text-sm">
+              Request Quote →
+            </a>
+          </div>
+
+          <!-- Root Platter Card -->
+          <div class="bg-white rounded-xl shadow-sm p-6 hover:shadow-md transition-shadow">
+            <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Root Platter</h3>
+            <p class="text-brand-indigo/70 text-sm mb-4">
+              Rustic seasonal ingredients celebrating Michigan's harvest
+            </p>
+            <p class="text-brand-amber font-semibold text-sm mb-4">Perfect for: Fall/Winter Events, Farm-to-Table Themes</p>
+            <a href="/start-planning?interest=root-platter" class="inline-block text-brand-amber hover:text-brand-indigo font-semibold text-sm">
+              Request Quote →
+            </a>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">
+            Artisan Boards & Grazing Tables
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            From intimate gatherings to grand celebrations, our charcuterie presentations are designed to impress
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-1.jpg"
+              alt="Artisan charcuterie board with premium cheeses and cured meats"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="eager"
+            />
+          </div>
+
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-2.jpg"
+              alt="Elegant charcuterie and cheese display for events"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="eager"
+            />
+          </div>
+
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-3.jpg"
+              alt="Beautiful grazing table with artisan meats and cheeses"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-4.jpg"
+              alt="Charcuterie board with gourmet accompaniments"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-5.jpg"
+              alt="Artfully arranged charcuterie for Ann Arbor events"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+
+          <div class="group relative overflow-hidden rounded-xl bg-brand-white shadow-sm hover:shadow-md transition-shadow">
+            <img
+              src="/images/charcuterie-6.jpg"
+              alt="Custom charcuterie board for weddings and celebrations"
+              class="w-full h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="relative py-20 text-white overflow-hidden">
+      <!-- Background Image with Gradient -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="/images/cheese-optimized.jpg"
+          alt="Artisan cheese and charcuterie selection"
+          class="w-full h-full object-cover"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.9), rgba(44, 62, 80, 0.7))"></div>
+      </div>
+
+      <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold mb-6">How Charcuterie Catering Works</h2>
+          <p class="text-xl text-white/90">Simple process from order to delivery</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">1</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Share Your Vision</h3>
+            <p class="text-white/80 text-sm">Tell us about your event, guest count, dietary needs, and style preferences</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">2</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Get Custom Quote</h3>
+            <p class="text-white/80 text-sm">Receive a detailed proposal with board options, pricing, and delivery details within 24 hours</p>
+          </div>
+
+          <div class="text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <span class="text-white font-bold text-xl">3</span>
+            </div>
+            <h3 class="font-serif font-semibold mb-3">Delivery & Setup</h3>
+            <p class="text-white/80 text-sm">We arrive on time, set up your beautiful display, and provide all serving materials</p>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="/start-planning?interest=charcuterie" class="inline-block bg-brand-amber text-white font-semibold py-4 px-8 rounded-lg hover:bg-white hover:text-brand-indigo transition-colors">
+            Start Planning Your Board
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Choose Chef Nam -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Why Ann Arbor Chooses Chef Nam for Charcuterie</h2>
+          <p class="text-xl text-brand-indigo/70">Quality craftsmanship and exceptional service</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="space-y-8">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Artisan Quality Ingredients</h3>
+                  <p class="text-brand-indigo/70 text-sm">We partner with premium suppliers and local Michigan producers to source the finest cheeses, cured meats, and seasonal accompaniments for every board.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Instagram-Worthy Presentation</h3>
+                  <p class="text-brand-indigo/70 text-sm">Each board is artfully arranged with attention to color, texture, and visual impact—designed to become a stunning centerpiece that your guests will photograph and remember.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Seamless Delivery & Setup</h3>
+                  <p class="text-brand-indigo/70 text-sm">From consultation to delivery and setup, we handle every detail. Boards arrive ready to serve with all utensils and serving materials included.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <svg class="w-6 h-6 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                  </svg>
+                </div>
+                <div>
+                  <h3 class="font-serif font-semibold text-brand-indigo mb-2">Custom Design Options</h3>
+                  <p class="text-brand-indigo/70 text-sm">Whether you need individual boxes, traditional boards, or elaborate grazing tables, we customize every detail to match your event theme and dietary requirements.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center">
+              <div class="text-brand-amber mb-4 flex justify-center space-x-1">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 20 20">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              </div>
+              <p class="text-brand-indigo/80 italic text-lg mb-6">
+                "The charcuterie board from Chef Nam was the highlight of our wedding cocktail hour. Beautifully arranged, fresh ingredients, and our guests couldn't stop talking about it!"
+              </p>
+              <p class="text-brand-indigo font-semibold">- Sarah & Michael Chen</p>
+              <p class="text-brand-indigo/60 text-sm">Ann Arbor Wedding, September 2024</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Frequently Asked Questions</h2>
+          <p class="text-xl text-brand-indigo/70">Everything you need to know about our charcuterie catering</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <!-- FAQ Item 1 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>How much does charcuterie board catering cost?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Charcuterie board pricing varies based on guest count, ingredients, and customization. Our boards are designed to serve groups of various sizes, from intimate gatherings to large events. Contact us for a custom quote tailored to your specific event needs and budget.
+            </p>
+          </details>
+
+          <!-- FAQ Item 2 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>How far in advance should I order?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              We recommend ordering 48-72 hours in advance to ensure ingredient availability and proper preparation. For large events (100+ guests) or custom grazing tables, 1-2 weeks notice is ideal. Rush orders may be accommodated—contact us to discuss your timeline.
+            </p>
+          </details>
+
+          <!-- FAQ Item 3 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you deliver to Ypsilanti, Saline, and Dexter?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! We deliver throughout Washtenaw County including Ann Arbor, Ypsilanti, Saline, Dexter, and surrounding areas. Delivery and setup are included for most orders.
+            </p>
+          </details>
+
+          <!-- FAQ Item 4 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Can you accommodate dietary restrictions?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Absolutely. We create vegetarian, vegan, and gluten-free charcuterie options. Let us know your requirements when requesting a quote, and we'll design a board that works for all your guests.
+            </p>
+          </details>
+
+          <!-- FAQ Item 5 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>What's the difference between a board and grazing table?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Charcuterie boards are designed for smaller gatherings (10-50 guests) and served on wooden boards or platters. Grazing tables are large-scale displays spread across entire tables, ideal for 50-100+ guests and designed as event centerpieces. Both feature similar ingredients but differ in scale and presentation style.
+            </p>
+          </details>
+
+          <!-- FAQ Item 6 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you provide serving utensils and materials?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! All boards include necessary serving utensils, small plates, and napkins. For grazing tables, we provide full setup and can recommend or provide display materials if needed.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Ready to Elevate Your Event with Artisan Charcuterie?
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 max-w-2xl mx-auto">
+          Let's create a stunning charcuterie experience for your Ann Arbor event. Get a free custom quote within 24 hours.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/start-planning?interest=charcuterie" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Start Planning
+          </a>
+          <a href="tel:+17346239799" class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden">
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Call (734) 623-9799
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+        <p class="text-brand-indigo/60 text-sm mt-6">
+          Quick response time • Free consultation • No obligation quote
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Ensure FAQ items have consistent height and don't affect each other */
+  details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  details[open] summary {
+    margin-bottom: 0;
+  }
+</style>
