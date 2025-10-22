@@ -10,6 +10,7 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   site: 'https://chefnamcatering.com',
   output: 'server', // Server mode required for API endpoints
+  trailingSlash: 'never', // Redirect trailing slashes to non-trailing slash URLs
   adapter: cloudflare({
     mode: 'directory',
     functionPerRoute: false
