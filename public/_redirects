@@ -5,7 +5,15 @@ https://www.chefnamcatering.com/* https://chefnamcatering.com/:splat 301!
 www.chefnamcatering.com/* chefnamcatering.com/:splat 301!
 
 # Remove trailing slashes (redirect to non-trailing slash version)
+/about/ /about 301
 /blog/ /blog 301
+/contact/ /contact 301
+/menus/ /menus 301
+/venues/ /venues 301
+/services/corporate/ /services/corporate 301
+/services/social/ /services/social 301
+/services/weddings/ /services/weddings 301
+/menus/charcuterie/ /menus/charcuterie 301
 
 # Redirect old/non-existent blog posts to main blog page
 /blog/corporate-event-catering /blog 301
