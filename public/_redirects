@@ -14,6 +14,7 @@ www.chefnamcatering.com/* chefnamcatering.com/:splat 301!
 
 # Redirect test pages to homepage
 /test-services/ / 301
+/colors-test/ / 301
 
 # Cloudflare email protection - return 410 Gone (page never existed)
 /cdn-cgi/l/email-protection /start-planning 301
