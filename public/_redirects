@@ -4,6 +4,9 @@ https://www.chefnamcatering.com/* https://chefnamcatering.com/:splat 301!
 # Force redirect for all www requests
 www.chefnamcatering.com/* chefnamcatering.com/:splat 301!
 
+# Remove trailing slashes (redirect to non-trailing slash version)
+/blog/ /blog 301
+
 # Redirect old/non-existent blog posts to main blog page
 /blog/corporate-event-catering /blog 301
 /blog/seasonal-global-flavors /blog 301
