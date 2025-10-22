@@ -15,7 +15,16 @@ export default defineConfig({
     functionPerRoute: false
   }),
   integrations: [
-    sitemap(),
+    sitemap({
+      filter: (page) => !page.includes('/admin'),
+      serialize(item) {
+        // Remove trailing slashes from URLs
+        item.url = item.url.replace(/\/$/, '');
+        // Add last modified date
+        item.lastmod = new Date();
+        return item;
+      },
+    }),
     icon({
       iconDir: "src/icons",
       include: {
