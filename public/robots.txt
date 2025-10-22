@@ -1,0 +1,16 @@
+# robots.txt for Chef Nam Catering
+
+User-agent: *
+Allow: /
+
+# Block API endpoints (not for crawling)
+Disallow: /api/
+
+# Block admin area
+Disallow: /admin/
+
+# Block Sanity Studio
+Disallow: /studio/
+
+# Sitemap location
+Sitemap: https://chefnamcatering.com/sitemap-index.xml
