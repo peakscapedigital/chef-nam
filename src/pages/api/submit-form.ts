@@ -54,7 +54,7 @@ async function sendEmailNotification(data: any, isUpdate: boolean = false) {
       isUpdate
     });
 
-    const response = await fetch('https://chefnam-email-worker.dspjson.workers.dev', {
+    const response = await fetch('https://chefnam-email-worker.jason-090.workers.dev', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
