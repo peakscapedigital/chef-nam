@@ -22,7 +22,18 @@ const { className = '', source = 'start-planning', showSidebar = true } = Astro.
           </div>
           
           <form id="planning-form" action="#" method="POST" class="space-y-8">
-            
+
+            <!-- Honeypot field (hidden from users, bots will fill it) -->
+            <input
+              type="text"
+              id="website"
+              name="website"
+              autocomplete="off"
+              tabindex="-1"
+              aria-hidden="true"
+              style="position: absolute; left: -9999px; width: 1px; height: 1px;"
+            />
+
             <!-- Personal Information -->
             <div>
               <h3 class="text-lg font-semibold text-brand-indigo mb-4 flex items-center">
@@ -438,7 +449,48 @@ document.addEventListener('DOMContentLoaded', function() {
   const messageTitle = document.getElementById('messageTitle');
   const messageField = document.getElementById('message');
   const hasEventRadios = document.querySelectorAll('input[name="hasEvent"]');
-  
+
+  // Spam detection: Check for suspicious mixed case pattern
+  function hasSuspiciousMixedCase(text) {
+    if (!text || text.length < 5) return false;
+
+    // Count transitions between lowercase and uppercase (e.g., "aB" or "Ba")
+    const transitions = text.match(/[a-z][A-Z]|[A-Z][a-z]/g);
+    if (!transitions) return false;
+
+    // If more than 30% of characters are case transitions, likely spam
+    // Example: "IBImNNRqxTBytPGqxYt" has excessive transitions
+    return transitions.length > text.length * 0.3;
+  }
+
+  function validateFormData(formData) {
+    // Honeypot check - if filled, it's spam
+    if (formData.website && formData.website.trim() !== '') {
+      console.warn('Spam detected: Honeypot field filled');
+      return { valid: false, reason: 'validation_failed' };
+    }
+
+    // Check first name for suspicious mixed case
+    if (hasSuspiciousMixedCase(formData.firstName)) {
+      console.warn('Spam detected: Suspicious mixed case in first name');
+      return { valid: false, reason: 'validation_failed' };
+    }
+
+    // Check last name for suspicious mixed case
+    if (hasSuspiciousMixedCase(formData.lastName)) {
+      console.warn('Spam detected: Suspicious mixed case in last name');
+      return { valid: false, reason: 'validation_failed' };
+    }
+
+    // Check message for suspicious mixed case
+    if (formData.message && hasSuspiciousMixedCase(formData.message)) {
+      console.warn('Spam detected: Suspicious mixed case in message');
+      return { valid: false, reason: 'validation_failed' };
+    }
+
+    return { valid: true };
+  }
+
   // Handle progressive disclosure
   hasEventRadios.forEach(radio => {
     radio.addEventListener('change', function() {
@@ -578,11 +630,21 @@ document.addEventListener('DOMContentLoaded', function() {
         originalMessage: originalMessage,
         source: source || urlParams.get('source') || 'start-planning',
         submissionId: submissionId, // Include submission ID for updates
+        website: document.getElementById('website').value || '', // Honeypot field
 
         // Attribution data
         ...attribution
       };
-      
+
+      // Validate form data for spam
+      const validation = validateFormData(formData);
+      if (!validation.valid) {
+        alert('There was a problem with your submission. Please check that all fields are filled out correctly.');
+        this.textContent = 'Create My Custom Proposal';
+        this.disabled = false;
+        return;
+      }
+
       // If they have an event, collect event details
       if (hasEventSelected.value === 'yes') {
         formData.eventType = document.getElementById('eventType').value || undefined;

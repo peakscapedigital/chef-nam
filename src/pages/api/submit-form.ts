@@ -4,6 +4,44 @@ import type { APIRoute } from 'astro';
 const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://yrhimzyqasnftlcyehhj.supabase.co';
 const CHEF_NAM_TENANT_ID = 1; // Chef Nam's tenant ID
 
+// Spam detection: Check for suspicious mixed case pattern
+function hasSuspiciousMixedCase(text: string): boolean {
+  if (!text || text.length < 5) return false;
+
+  // Count transitions between lowercase and uppercase (e.g., "aB" or "Ba")
+  const transitions = text.match(/[a-z][A-Z]|[A-Z][a-z]/g);
+  if (!transitions) return false;
+
+  // If more than 30% of characters are case transitions, likely spam
+  // Example: "IBImNNRqxTBytPGqxYt" has excessive transitions
+  return transitions.length > text.length * 0.3;
+}
+
+// Check if submission is likely spam
+function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
+  // Honeypot check - if filled, it's spam
+  if (data.website && data.website.trim() !== '') {
+    return { isSpam: true, reason: 'Honeypot field filled' };
+  }
+
+  // Check first name for suspicious mixed case
+  if (hasSuspiciousMixedCase(data.firstName)) {
+    return { isSpam: true, reason: `Suspicious mixed case in first name: ${data.firstName}` };
+  }
+
+  // Check last name for suspicious mixed case
+  if (hasSuspiciousMixedCase(data.lastName)) {
+    return { isSpam: true, reason: `Suspicious mixed case in last name: ${data.lastName}` };
+  }
+
+  // Check message for suspicious mixed case
+  if (data.message && hasSuspiciousMixedCase(data.message)) {
+    return { isSpam: true, reason: 'Suspicious mixed case in message' };
+  }
+
+  return { isSpam: false };
+}
+
 // Helper function to auto-fix common email typos
 function fixCommonEmailTypos(email: string): string {
   if (!email) return email;
@@ -32,7 +70,13 @@ function fixCommonEmailTypos(email: string): string {
 }
 
 // Helper function to send email notification using Cloudflare Worker
-async function sendEmailNotification(data: any, isUpdate: boolean = false) {
+async function sendEmailNotification(data: any, isUpdate: boolean = false, isSpam: boolean = false) {
+  // Skip email notification for spam submissions
+  if (isSpam) {
+    console.log('Skipping email notification for spam submission');
+    return null;
+  }
+
   try {
     console.log('Starting email notification via worker...');
 
@@ -147,6 +191,20 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Check for spam
+    const spamCheck = isLikelySpam(data);
+    const isSpam = spamCheck.isSpam;
+
+    if (isSpam) {
+      console.log('🚫 Spam submission detected:', spamCheck.reason);
+      console.log('Spam data:', {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        message: data.message?.substring(0, 50)
+      });
+    }
+
     // Auto-fix email if needed
     const fixedEmail = fixCommonEmailTypos(data.email);
 
@@ -159,8 +217,10 @@ export const POST: APIRoute = async ({ request }) => {
       phone: data.phone || '',
       preferred_contact: data.preferredContact || null,
       message: data.message || null,
-      lead_status: 'new',
+      lead_status: isSpam ? 'spam' : 'new',
       lead_source: data.lead_source || 'Direct',
+      is_spam: isSpam,
+      spam_reason: isSpam ? spamCheck.reason : null,
 
       // Event-specific fields (Chef Nam catering)
       has_event: data.hasEvent === 'yes',
@@ -222,32 +282,36 @@ export const POST: APIRoute = async ({ request }) => {
     const leadId = result[0]?.id;
     console.log('Lead created in Supabase:', leadId);
 
-    // Process the lead to create contact and opportunity (if has_event)
-    console.log('Processing lead to create contact and opportunity...');
-    const processResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/process_lead`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ p_lead_id: leadId })
-    });
-
-    if (!processResponse.ok) {
-      const processError = await processResponse.text();
-      console.error('Warning: Failed to process lead:', processError);
-      // Don't throw - we still want to send the email even if processing fails
-    } else {
-      const processResult = await processResponse.json();
-      console.log('Lead processed successfully:', {
-        contact_id: processResult.contact_id,
-        opportunity_id: processResult.opportunity_id
+    // Only process non-spam leads to create contact and opportunity
+    if (!isSpam) {
+      console.log('Processing lead to create contact and opportunity...');
+      const processResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/process_lead`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_SERVICE_KEY,
+          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ p_lead_id: leadId })
       });
+
+      if (!processResponse.ok) {
+        const processError = await processResponse.text();
+        console.error('Warning: Failed to process lead:', processError);
+        // Don't throw - we still want to send the email even if processing fails
+      } else {
+        const processResult = await processResponse.json();
+        console.log('Lead processed successfully:', {
+          contact_id: processResult.contact_id,
+          opportunity_id: processResult.opportunity_id
+        });
+      }
+    } else {
+      console.log('Skipping lead processing for spam submission');
     }
 
-    // Send email notification
-    await sendEmailNotification(data, false);
+    // Send email notification (will be skipped for spam)
+    await sendEmailNotification(data, false, isSpam);
 
     return new Response(
       JSON.stringify({
