@@ -1,9 +1,5 @@
 import type { APIRoute } from 'astro';
 
-// Supabase configuration
-const SUPABASE_URL = import.meta.env.PUBLIC_SUPABASE_URL || 'https://yrhimzyqasnftlcyehhj.supabase.co';
-const CHEF_NAM_TENANT_ID = 1; // Chef Nam's tenant ID
-
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
   if (!text || text.length < 5) return false;
@@ -70,7 +66,7 @@ function fixCommonEmailTypos(email: string): string {
 }
 
 // Helper function to send email notification using Cloudflare Worker
-async function sendEmailNotification(data: any, isUpdate: boolean = false, isSpam: boolean = false) {
+async function sendEmailNotification(data: any, isSpam: boolean = false) {
   // Skip email notification for spam submissions
   if (isSpam) {
     console.log('Skipping email notification for spam submission');
@@ -86,16 +82,14 @@ async function sendEmailNotification(data: any, isUpdate: boolean = false, isSpa
     const emailData = {
       ...data,
       email: fixedEmail,
-      originalEmail: data.email !== fixedEmail ? data.email : undefined, // Track if we fixed it
-      isUpdate: isUpdate
+      originalEmail: data.email !== fixedEmail ? data.email : undefined
     };
 
     console.log('Sending to email worker:', {
       firstName: data.firstName,
       lastName: data.lastName,
       email: fixedEmail,
-      emailWasFixed: data.email !== fixedEmail,
-      isUpdate
+      emailWasFixed: data.email !== fixedEmail
     });
 
     const response = await fetch('https://chefnam-email-worker.jason-090.workers.dev', {
@@ -129,8 +123,6 @@ async function sendEmailNotification(data: any, isUpdate: boolean = false, isSpa
     }
 
     console.log('✅ Email notification sent successfully via worker');
-
-    // Return the fixed email so we can update the record if needed
     return fixedEmail;
   } catch (emailError) {
     console.error('❌❌❌ CRITICAL: Email notification failed ❌❌❌');
@@ -152,20 +144,11 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
 
-    // Get SUPABASE_SERVICE_KEY from PUBLIC_ prefixed env var
-    const SUPABASE_SERVICE_KEY = import.meta.env.PUBLIC_SUPABASE_SERVICE_KEY || import.meta.env.PUBLIC_SUPABASE_ANON_KEY;
-
-    console.log('SUPABASE_URL:', SUPABASE_URL);
-    console.log('Using key type:', import.meta.env.PUBLIC_SUPABASE_SERVICE_KEY ? 'SERVICE_KEY' : 'ANON_KEY');
-
     let data;
     try {
       data = await request.json();
     } catch (jsonError) {
       console.error('JSON parse error:', jsonError);
-      const body = await request.text();
-      console.log('Raw body as text:', body);
-
       return new Response(
         JSON.stringify({
           success: false,
@@ -203,121 +186,39 @@ export const POST: APIRoute = async ({ request }) => {
         email: data.email,
         message: data.message?.substring(0, 50)
       });
+
+      // Return success to spam bots (they don't need to know we caught them)
+      // but don't send any email
+      return new Response(
+        JSON.stringify({
+          success: true,
+          message: 'Form submission received'
+        }),
+        {
+          status: 200,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
-    // Auto-fix email if needed
-    const fixedEmail = fixCommonEmailTypos(data.email);
-
-    // Prepare lead data for Supabase leads table
-    const leadData = {
-      tenant_id: CHEF_NAM_TENANT_ID,
-      first_name: data.firstName || '',
-      last_name: data.lastName || '',
-      email: fixedEmail || '',
-      phone: data.phone || '',
-      preferred_contact: data.preferredContact || null,
-      message: data.message || null,
-      lead_status: isSpam ? 'spam' : 'new',
-      lead_source: data.lead_source || 'Direct',
-      is_spam: isSpam,
-      spam_reason: isSpam ? spamCheck.reason : null,
-
-      // Event-specific fields (Chef Nam catering)
-      has_event: data.hasEvent === 'yes',
-      event_type: data.eventType || null,
-      event_date: data.eventDate || null,
-      event_time: data.eventTime || null,
-      guest_count: data.guestCount || null,
-      location: data.location || null,
-      service_style: data.serviceStyle || null,
-      budget_range: data.budgetRange || null,
-      dietary_requirements: data.dietaryRequirements || null,
-      event_description: data.eventDescription || null,
-
-      // Attribution tracking
-      utm_source: data.utm_source || null,
-      utm_medium: data.utm_medium || null,
-      utm_campaign: data.utm_campaign || null,
-      utm_term: data.utm_term || null,
-      utm_content: data.utm_content || null,
-      gclid: data.gclid || null,
-      fbclid: data.fbclid || null,
-      referrer: data.referrer || null,
-      landing_page: data.landing_page || null,
-      source_page: data.source_page || null,
-
-      // GA4 tracking
-      ga_client_id: data.ga_client_id || null,
-      ga_session_id: data.ga_session_id || null,
-
-      // Form metadata
-      form_type: 'contact_form',
-      touchpoint_type: 'form_submission',
-
-      // Custom fields for any additional data
-      custom_fields: data.custom_fields || null
-    };
-
-    console.log('Creating lead in Supabase...');
-
-    // Insert lead into Supabase
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/leads`, {
-      method: 'POST',
-      headers: {
-        'apikey': SUPABASE_SERVICE_KEY,
-        'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-        'Content-Type': 'application/json',
-        'Prefer': 'return=representation' // Return the created record
-      },
-      body: JSON.stringify(leadData)
+    // Log the submission details
+    console.log('📧 Processing legitimate form submission:', {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      email: data.email,
+      phone: data.phone,
+      hasEvent: data.hasEvent,
+      eventType: data.eventType,
+      guestCount: data.guestCount
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Supabase API error:', response.status, errorText);
-      throw new Error(`Supabase error: ${response.status} - ${errorText}`);
-    }
-
-    const result = await response.json();
-    const leadId = result[0]?.id;
-    console.log('Lead created in Supabase:', leadId);
-
-    // Only process non-spam leads to create contact and opportunity
-    if (!isSpam) {
-      console.log('Processing lead to create contact and opportunity...');
-      const processResponse = await fetch(`${SUPABASE_URL}/rest/v1/rpc/process_lead`, {
-        method: 'POST',
-        headers: {
-          'apikey': SUPABASE_SERVICE_KEY,
-          'Authorization': `Bearer ${SUPABASE_SERVICE_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ p_lead_id: leadId })
-      });
-
-      if (!processResponse.ok) {
-        const processError = await processResponse.text();
-        console.error('Warning: Failed to process lead:', processError);
-        // Don't throw - we still want to send the email even if processing fails
-      } else {
-        const processResult = await processResponse.json();
-        console.log('Lead processed successfully:', {
-          contact_id: processResult.contact_id,
-          opportunity_id: processResult.opportunity_id
-        });
-      }
-    } else {
-      console.log('Skipping lead processing for spam submission');
-    }
-
-    // Send email notification (will be skipped for spam)
-    await sendEmailNotification(data, false, isSpam);
+    // Send email notification
+    await sendEmailNotification(data, false);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Form submission received',
-        id: leadId
+        message: 'Form submission received'
       }),
       {
         status: 200,
