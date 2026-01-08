@@ -1,0 +1,144 @@
+---
+import '../styles/global.css';
+
+export interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+  noindex?: boolean;
+}
+
+const {
+  title,
+  description = 'Professional catering services in Ann Arbor, Michigan. Thai fusion cuisine for weddings, corporate events, and special occasions.',
+  canonical,
+  noindex = false
+} = Astro.props;
+
+const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathname}`;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="description" content={description} />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  {noindex && <meta name="robots" content="noindex, nofollow" />}
+
+  <!-- Favicons -->
+  <link rel="icon" href="/favicon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/site.webmanifest" />
+
+  <meta name="generator" content={Astro.generator} />
+  <link rel="canonical" href={canonicalUrl} />
+
+  <!-- Preconnect -->
+  <link rel="preconnect" href="https://cdn.sanity.io" />
+  <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonicalUrl} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="https://chefnamcatering.com/images/logo/chef-nam-logo-square.png" />
+  <meta property="og:site_name" content="Chef Nam Catering" />
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content={title} />
+  <meta property="twitter:description" content={description} />
+
+  <title>{title}</title>
+
+  <!-- Additional head content -->
+  <slot name="head" />
+
+  <!-- UTM & Attribution Capture -->
+  <script is:inline>
+  (function() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const storage = window.localStorage;
+      const isFirstVisit = !storage.getItem('utm_source') && !storage.getItem('_attribution_captured');
+
+      if (isFirstVisit && (urlParams.has('utm_source') || urlParams.has('gclid') || urlParams.has('fbclid'))) {
+        const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
+        utmParams.forEach(param => {
+          const value = urlParams.get(param);
+          if (value) storage.setItem(param, value);
+        });
+
+        if (document.referrer) storage.setItem('referrer', document.referrer);
+        storage.setItem('landing_page', window.location.pathname + window.location.search);
+
+        let leadSource = 'Direct';
+        const source = urlParams.get('utm_source');
+        const medium = urlParams.get('utm_medium');
+
+        if (urlParams.get('gclid')) leadSource = 'Google Ads';
+        else if (urlParams.get('fbclid')) leadSource = 'Facebook Ads';
+        else if (source && medium) {
+          if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
+          else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
+          else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
+        }
+
+        storage.setItem('lead_source', leadSource);
+        storage.setItem('_attribution_captured', 'true');
+      }
+    } catch (e) {
+      console.warn('Attribution capture error:', e);
+    }
+  })();
+  </script>
+
+  <!-- Google Tag Manager -->
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  let gtmLoaded = false;
+  function loadGTM() {
+    if (gtmLoaded) return;
+    gtmLoaded = true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-WCMPN842');
+  }
+  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event =>
+    document.addEventListener(event, loadGTM, {once: true, passive: true})
+  );
+  setTimeout(loadGTM, 3000);
+  </script>
+</head>
+<body class="bg-brand-white text-brand-indigo">
+  <!-- GTM noscript -->
+  <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCMPN842"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+  <slot />
+
+  <!-- Phone Click Tracking -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('a[href^="tel:"]').forEach(link => {
+        link.addEventListener('click', function() {
+          if (window.dataLayer) {
+            window.dataLayer.push({
+              'event': 'phone_click',
+              'phone_number': this.getAttribute('href').replace('tel:', ''),
+              'event_category': 'engagement',
+              'event_label': 'Phone Click - Landing Page'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

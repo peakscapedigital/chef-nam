@@ -1,0 +1,522 @@
+---
+import LandingPageLayout from '../../layouts/LandingPageLayout.astro';
+---
+
+<LandingPageLayout
+  title="Ann Arbor Catering | Thai Fusion for Weddings & Events - Chef Nam"
+  description="Award-winning Thai fusion catering in Ann Arbor. From intimate dinners to 200+ guest weddings. Custom menus, professional service, flavors your guests will remember."
+  noindex={true}
+>
+  <main>
+    <!-- Hero Section -->
+    <section class="relative min-h-[90vh] flex items-center bg-brand-indigo overflow-hidden">
+      <!-- Background image with overlay -->
+      <div class="absolute inset-0">
+        <img
+          src="/images/hero/hero-catering-800.jpg"
+          alt="Beautifully plated catering dishes"
+          class="w-full h-full object-cover"
+          loading="eager"
+        />
+        <div class="absolute inset-0 bg-gradient-to-r from-brand-indigo/95 via-brand-indigo/85 to-brand-indigo/70"></div>
+      </div>
+
+      <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          <!-- Left: Copy -->
+          <div class="text-center lg:text-left">
+            <!-- Trust badge -->
+            <div class="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full px-4 py-2 mb-6">
+              <span class="text-brand-amber">★★★★★</span>
+              <span class="text-white/90 text-sm">Rated 5.0 from 50+ events</span>
+            </div>
+
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-serif font-bold text-white leading-tight mb-6">
+              Catering That Turns Your Event Into a Story
+            </h1>
+
+            <p class="text-xl text-white/90 mb-8 max-w-xl mx-auto lg:mx-0">
+              Ann Arbor's only Thai fusion caterer. Bold flavors, beautiful presentation, flawless service. Your guests will remember this.
+            </p>
+
+            <!-- Mobile CTA -->
+            <div class="lg:hidden mb-8">
+              <a
+                href="#quote-form"
+                class="inline-block w-full sm:w-auto bg-brand-amber text-white font-semibold py-4 px-8 rounded-lg hover:bg-brand-amber/90 transition-colors text-center"
+              >
+                Get Your Free Quote
+              </a>
+              <p class="text-white/70 text-sm mt-3">Response within 24 hours</p>
+            </div>
+
+            <!-- Trust elements -->
+            <div class="flex flex-wrap justify-center lg:justify-start gap-6 text-white/80 text-sm">
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-brand-amber" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>10-200+ guests</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-brand-amber" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Custom menus</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <svg class="w-5 h-5 text-brand-amber" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                </svg>
+                <span>Full service available</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Form -->
+          <div id="quote-form" class="hidden lg:block">
+            <div class="bg-white rounded-2xl shadow-2xl p-8">
+              <div class="text-center mb-6">
+                <h2 class="text-2xl font-serif font-bold text-brand-indigo mb-2">Get Your Free Quote</h2>
+                <p class="text-brand-indigo/70">Tell us about your event and we'll create a custom proposal</p>
+              </div>
+
+              <form id="lp-quote-form" class="space-y-4">
+                <!-- Honeypot -->
+                <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" class="absolute -left-[9999px] w-px h-px" />
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-1">First Name</label>
+                    <input
+                      type="text"
+                      id="firstName"
+                      name="firstName"
+                      required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                    />
+                  </div>
+                  <div>
+                    <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-1">Last Name</label>
+                    <input
+                      type="text"
+                      id="lastName"
+                      name="lastName"
+                      required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-1">Email</label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+
+                <div>
+                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-1">Phone</label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    required
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                  />
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <label for="eventType" class="block text-sm font-medium text-brand-indigo mb-1">Event Type</label>
+                    <select
+                      id="eventType"
+                      name="eventType"
+                      required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                    >
+                      <option value="">Select...</option>
+                      <option value="wedding">Wedding</option>
+                      <option value="corporate">Corporate</option>
+                      <option value="social">Social Event</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label for="guestCount" class="block text-sm font-medium text-brand-indigo mb-1">Guest Count</label>
+                    <select
+                      id="guestCount"
+                      name="guestCount"
+                      required
+                      class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
+                    >
+                      <option value="">Select...</option>
+                      <option value="10-25">10-25</option>
+                      <option value="26-50">26-50</option>
+                      <option value="51-100">51-100</option>
+                      <option value="101-200">101-200</option>
+                      <option value="200+">200+</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  class="w-full bg-brand-amber text-white font-semibold py-4 px-8 rounded-lg hover:bg-brand-amber/90 transition-colors text-lg"
+                >
+                  Get My Custom Quote
+                </button>
+
+                <p class="text-center text-brand-indigo/60 text-sm">
+                  Free consultation. No obligation. Response within 24 hours.
+                </p>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Mobile Form Section -->
+    <section class="lg:hidden py-12 bg-brand-cream/30">
+      <div class="max-w-lg mx-auto px-4">
+        <div class="bg-white rounded-2xl shadow-xl p-6">
+          <div class="text-center mb-6">
+            <h2 class="text-2xl font-serif font-bold text-brand-indigo mb-2">Get Your Free Quote</h2>
+            <p class="text-brand-indigo/70 text-sm">We'll create a custom proposal for your event</p>
+          </div>
+
+          <form id="lp-quote-form-mobile" class="space-y-4">
+            <input type="text" name="website" autocomplete="off" tabindex="-1" aria-hidden="true" class="absolute -left-[9999px] w-px h-px" />
+
+            <div>
+              <label for="firstName-mobile" class="block text-sm font-medium text-brand-indigo mb-1">Name</label>
+              <div class="grid grid-cols-2 gap-3">
+                <input type="text" id="firstName-mobile" name="firstName" placeholder="First" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber" />
+                <input type="text" id="lastName-mobile" name="lastName" placeholder="Last" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber" />
+              </div>
+            </div>
+
+            <div>
+              <label for="email-mobile" class="block text-sm font-medium text-brand-indigo mb-1">Email</label>
+              <input type="email" id="email-mobile" name="email" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber" />
+            </div>
+
+            <div>
+              <label for="phone-mobile" class="block text-sm font-medium text-brand-indigo mb-1">Phone</label>
+              <input type="tel" id="phone-mobile" name="phone" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber" />
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label for="eventType-mobile" class="block text-sm font-medium text-brand-indigo mb-1">Event Type</label>
+                <select id="eventType-mobile" name="eventType" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber text-sm">
+                  <option value="">Select...</option>
+                  <option value="wedding">Wedding</option>
+                  <option value="corporate">Corporate</option>
+                  <option value="social">Social</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div>
+                <label for="guestCount-mobile" class="block text-sm font-medium text-brand-indigo mb-1">Guests</label>
+                <select id="guestCount-mobile" name="guestCount" required class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber text-sm">
+                  <option value="">Select...</option>
+                  <option value="10-50">10-50</option>
+                  <option value="51-100">51-100</option>
+                  <option value="100+">100+</option>
+                </select>
+              </div>
+            </div>
+
+            <button type="submit" class="w-full bg-brand-amber text-white font-semibold py-4 rounded-lg hover:bg-brand-amber/90 transition-colors">
+              Get My Free Quote
+            </button>
+
+            <p class="text-center text-brand-indigo/60 text-xs">Response within 24 hours</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Why Chef Nam Section -->
+    <section class="py-16 lg:py-24 bg-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl lg:text-4xl font-serif font-bold text-brand-indigo mb-4">
+            Why Ann Arbor Chooses Chef Nam
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-2xl mx-auto">
+            Not another forgettable buffet. Food that becomes part of the story.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <!-- Card 1 -->
+          <div class="text-center p-8">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-3">Custom Menus</h3>
+            <p class="text-brand-indigo/70">
+              Every menu built around your event, your guests, your vision. No cookie-cutter packages.
+            </p>
+          </div>
+
+          <!-- Card 2 -->
+          <div class="text-center p-8">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-3">Thai Fusion Flavors</h3>
+            <p class="text-brand-indigo/70">
+              Authentic Thai heritage meets Michigan hospitality. Bold, memorable dishes guests actually talk about.
+            </p>
+          </div>
+
+          <!-- Card 3 -->
+          <div class="text-center p-8">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-8 h-8 text-brand-amber" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+            </div>
+            <h3 class="text-xl font-serif font-semibold text-brand-indigo mb-3">Flawless Execution</h3>
+            <p class="text-brand-indigo/70">
+              On-time, on-budget, stress-free. You focus on your guests. We handle everything else.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="py-16 lg:py-24 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl lg:text-4xl font-serif font-bold text-brand-indigo mb-4">
+            What Our Clients Say
+          </h2>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <!-- Testimonial 1 -->
+          <div class="bg-white rounded-xl p-8 shadow-sm">
+            <div class="flex items-center gap-1 mb-4 text-brand-amber">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <blockquote class="text-brand-indigo/80 mb-6 leading-relaxed">
+              "Chef Nam's catering made our wedding absolutely perfect. The food was incredible and the service was flawless. Our guests are still talking about the amazing flavors!"
+            </blockquote>
+            <div>
+              <p class="font-semibold text-brand-indigo">Sarah & Mike Johnson</p>
+              <p class="text-brand-indigo/60 text-sm">Wedding Reception, 120 guests</p>
+            </div>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="bg-white rounded-xl p-8 shadow-sm">
+            <div class="flex items-center gap-1 mb-4 text-brand-amber">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <blockquote class="text-brand-indigo/80 mb-6 leading-relaxed">
+              "Professional, delicious, and beautifully presented. Chef Nam understood exactly what we needed for our corporate event. Highly recommend!"
+            </blockquote>
+            <div>
+              <p class="font-semibold text-brand-indigo">David Chen</p>
+              <p class="text-brand-indigo/60 text-sm">Corporate Event, 80 guests</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA -->
+    <section class="py-16 lg:py-24 bg-brand-indigo">
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl lg:text-4xl font-serif font-bold text-white mb-6">
+          Ready to Plan Your Event?
+        </h2>
+        <p class="text-xl text-white/90 mb-8">
+          Get a custom quote in 24 hours. No obligation, no pressure.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a
+            href="#quote-form"
+            class="inline-block bg-brand-amber text-white font-semibold py-4 px-8 rounded-lg hover:bg-brand-amber/90 transition-colors"
+          >
+            Get Your Free Quote
+          </a>
+          <a
+            href="tel:+17346239799"
+            class="inline-block bg-white/10 border border-white/30 text-white font-semibold py-4 px-8 rounded-lg hover:bg-white/20 transition-colors"
+          >
+            Call (734) 623-9799
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Simple Footer -->
+    <footer class="py-8 bg-brand-indigo border-t border-white/10">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-white/70 text-sm">
+          <div class="flex items-center gap-2">
+            <span class="font-serif font-semibold text-white">Chef Nam Catering</span>
+            <span>|</span>
+            <span>Ann Arbor, Michigan</span>
+          </div>
+          <div class="flex items-center gap-6">
+            <a href="mailto:nam@chefnamcatering.com" class="hover:text-white transition-colors">
+              nam@chefnamcatering.com
+            </a>
+            <a href="tel:+17346239799" class="hover:text-white transition-colors">
+              (734) 623-9799
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+</LandingPageLayout>
+
+<script>
+// Form submission handling
+document.addEventListener('DOMContentLoaded', () => {
+  const forms = document.querySelectorAll('#lp-quote-form, #lp-quote-form-mobile');
+
+  // Spam detection
+  function hasSuspiciousMixedCase(text) {
+    if (!text || text.length < 5) return false;
+    const transitions = text.match(/[a-z][A-Z]|[A-Z][a-z]/g);
+    if (!transitions) return false;
+    return transitions.length > text.length * 0.3;
+  }
+
+  // Helper function to get GA4 client_id
+  function getGA4ClientId() {
+    try {
+      const gaCookie = document.cookie.split('; ').find(row => row.startsWith('_ga='));
+      if (gaCookie) {
+        const parts = gaCookie.split('.');
+        if (parts.length >= 4) return parts.slice(-2).join('.');
+      }
+    } catch (e) {}
+    return undefined;
+  }
+
+  forms.forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+      const data = Object.fromEntries(formData);
+
+      // Honeypot check
+      if (data.website && data.website.trim() !== '') {
+        console.warn('Spam detected');
+        return;
+      }
+
+      // Spam check
+      if (hasSuspiciousMixedCase(data.firstName) || hasSuspiciousMixedCase(data.lastName)) {
+        alert('There was a problem with your submission.');
+        return;
+      }
+
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      submitBtn.disabled = true;
+
+      // Get attribution data
+      const attribution = {
+        utm_source: localStorage.getItem('utm_source') || undefined,
+        utm_medium: localStorage.getItem('utm_medium') || undefined,
+        utm_campaign: localStorage.getItem('utm_campaign') || undefined,
+        utm_term: localStorage.getItem('utm_term') || undefined,
+        utm_content: localStorage.getItem('utm_content') || undefined,
+        gclid: localStorage.getItem('gclid') || undefined,
+        fbclid: localStorage.getItem('fbclid') || undefined,
+        lead_source: localStorage.getItem('lead_source') || 'Direct',
+        referrer: localStorage.getItem('referrer') || undefined,
+        landing_page: localStorage.getItem('landing_page') || '/lp/catering',
+        ga_client_id: getGA4ClientId()
+      };
+
+      const payload = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        eventType: data.eventType,
+        guestCount: data.guestCount,
+        hasEvent: 'yes',
+        source: 'lp-catering',
+        ...attribution
+      };
+
+      try {
+        const response = await fetch('/api/submit-form', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          // Push conversion event
+          if (window.dataLayer) {
+            window.dataLayer.push({
+              event: 'generate_lead',
+              form_name: 'lp_catering',
+              form_type: 'landing_page_quote',
+              event_category: 'engagement',
+              ...attribution
+            });
+          }
+
+          // Store for enhanced conversions
+          try {
+            sessionStorage.setItem('sp_lead_email', payload.email || '');
+            sessionStorage.setItem('sp_lead_phone', payload.phone || '');
+            sessionStorage.setItem('sp_lead_first', payload.firstName || '');
+            sessionStorage.setItem('sp_lead_last', payload.lastName || '');
+          } catch (e) {}
+
+          // Redirect to thank you
+          const sid = result.submissionId || result.id || '';
+          window.location.href = sid ? `/thank-you?submissionId=${encodeURIComponent(sid)}` : '/thank-you';
+        } else {
+          throw new Error(result.message || 'Submission failed');
+        }
+      } catch (error) {
+        console.error('Form error:', error);
+        alert('Sorry, there was an error. Please try again or call us directly.');
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+      }
+    });
+  });
+
+  // Smooth scroll for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function(e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+});
+</script>
