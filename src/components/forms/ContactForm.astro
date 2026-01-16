@@ -102,6 +102,25 @@ document.addEventListener('DOMContentLoaded', function() {
       submitButton.disabled = true;
       
       try {
+        // Get attribution data from localStorage (captured on landing)
+        const attribution = {
+          utm_source: localStorage.getItem('utm_source') || undefined,
+          utm_medium: localStorage.getItem('utm_medium') || undefined,
+          utm_campaign: localStorage.getItem('utm_campaign') || undefined,
+          utm_term: localStorage.getItem('utm_term') || undefined,
+          utm_content: localStorage.getItem('utm_content') || undefined,
+          gclid: localStorage.getItem('gclid') || undefined,
+          fbclid: localStorage.getItem('fbclid') || undefined,
+          lead_source: localStorage.getItem('lead_source') || 'Direct',
+          referrer: localStorage.getItem('referrer') || undefined,
+          landing_page: localStorage.getItem('landing_page') || undefined
+        };
+
+        // Clean undefined values
+        Object.keys(attribution).forEach(key => {
+          if (attribution[key] === undefined) delete attribution[key];
+        });
+
         // Submit to API
         const response = await fetch('/api/submit-form', {
           method: 'POST',
@@ -114,7 +133,9 @@ document.addEventListener('DOMContentLoaded', function() {
             email: email,
             phone: phone,
             message: message,
-            source: 'homepage'
+            source: 'homepage',
+            submitted_from_url: window.location.href,
+            ...attribution
           })
         });
         

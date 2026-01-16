@@ -629,6 +629,7 @@ document.addEventListener('DOMContentLoaded', function() {
         source: source || urlParams.get('source') || 'start-planning',
         submissionId: submissionId, // Include submission ID for updates
         website: document.getElementById('website').value || '', // Honeypot field
+        submitted_from_url: window.location.href,
 
         // Attribution data
         ...attribution

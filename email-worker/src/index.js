@@ -60,7 +60,7 @@ export default {
       ` : '<p><em>General inquiry - no specific event details</em></p>';
 
       // Lead source attribution section
-      const hasAttribution = data.utm_source || data.gclid || data.referrer || data.lead_source;
+      const hasAttribution = data.utm_source || data.gclid || data.referrer || data.lead_source || data.submitted_from_url;
       const attributionDetails = hasAttribution ? `
         <h3 style="color: #F39C12;">📊 Lead Source Information:</h3>
         <ul>
@@ -70,6 +70,7 @@ export default {
           ${data.utm_term ? `<li><strong>Keyword:</strong> "${data.utm_term}"</li>` : ''}
           ${data.utm_content ? `<li><strong>Ad Content:</strong> ${data.utm_content}</li>` : ''}
           ${data.landing_page ? `<li><strong>Landing Page:</strong> ${data.landing_page}</li>` : ''}
+          ${data.submitted_from_url ? `<li><strong>Form Submitted From:</strong> ${data.submitted_from_url}</li>` : ''}
           ${data.gclid ? `<li><strong>Google Click ID:</strong> ${data.gclid.substring(0, 20)}...</li>` : ''}
           ${data.referrer ? `<li><strong>Referrer:</strong> ${data.referrer}</li>` : ''}
         </ul>
