@@ -48,7 +48,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     }
 
     // Validate status
-    const validStatuses = ['new', 'contacted', 'qualified', 'won', 'lost'];
+    const validStatuses = ['new', 'contacted', 'qualified', 'quoted', 'won', 'lost'];
     if (!validStatuses.includes(status)) {
       return new Response(
         JSON.stringify({ success: false, error: `Invalid status. Must be one of: ${validStatuses.join(', ')}` }),

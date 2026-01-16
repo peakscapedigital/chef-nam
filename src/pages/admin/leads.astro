@@ -27,6 +27,7 @@ export const prerender = false;
           <option value="new">New</option>
           <option value="contacted">Contacted</option>
           <option value="qualified">Qualified</option>
+          <option value="quoted">Quoted</option>
           <option value="won">Won</option>
           <option value="lost">Lost</option>
         </select>
@@ -37,7 +38,7 @@ export const prerender = false;
     </div>
 
     <!-- Stats -->
-    <div id="stats" class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+    <div id="stats" class="grid grid-cols-2 md:grid-cols-6 gap-4 mb-8">
       <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div class="text-2xl font-bold text-gray-900" id="stat-total">-</div>
         <div class="text-sm text-gray-600">Total Leads</div>
@@ -49,6 +50,10 @@ export const prerender = false;
       <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div class="text-2xl font-bold text-amber-600" id="stat-contacted">-</div>
         <div class="text-sm text-gray-600">Contacted</div>
+      </div>
+      <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
+        <div class="text-2xl font-bold text-purple-600" id="stat-quoted">-</div>
+        <div class="text-sm text-gray-600">Quoted</div>
       </div>
       <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
         <div class="text-2xl font-bold text-green-600" id="stat-won">-</div>
@@ -132,10 +137,26 @@ export const prerender = false;
     </div>
   </div>
 
+  <!-- Value Modal (for editing value without changing status) -->
+  <div id="valueModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 shadow-xl">
+      <h3 class="text-lg font-semibold mb-4">Edit Booking Value for <span id="valueLeadName"></span></h3>
+      <div class="flex items-center gap-2 mb-4">
+        <span class="text-gray-500">$</span>
+        <input type="number" id="editValueInput" min="0" step="100" class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-amber-500 focus:border-amber-500" placeholder="e.g., 4200">
+      </div>
+      <div class="flex justify-end gap-3">
+        <button id="cancelValueBtn" class="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors">Cancel</button>
+        <button id="saveValueBtn" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors">Save Value</button>
+      </div>
+    </div>
+  </div>
+
   <style>
     .status-new { background-color: #dbeafe; color: #1e40af; }
     .status-contacted { background-color: #fef3c7; color: #92400e; }
     .status-qualified { background-color: #d1fae5; color: #065f46; }
+    .status-quoted { background-color: #e9d5ff; color: #6b21a8; }
     .status-won { background-color: #bbf7d0; color: #166534; }
     .status-lost { background-color: #fecaca; color: #991b1b; }
   </style>
@@ -149,6 +170,7 @@ export const prerender = false;
     let currentFilter = 'all';
     let currentNotesLeadId = null;
     let currentWonLeadId = null;
+    let currentValueLeadId = null;
 
     // Elements
     const loading = document.getElementById('loading');
@@ -161,10 +183,20 @@ export const prerender = false;
     const refreshBtn = document.getElementById('refreshBtn');
     const notesModal = document.getElementById('notesModal');
     const wonModal = document.getElementById('wonModal');
+    const valueModal = document.getElementById('valueModal');
 
     function formatDate(dateStr) {
       if (!dateStr) return '-';
-      const date = new Date(dateStr);
+      let date;
+      // BigQuery may return timestamps as scientific notation (Unix seconds) or ISO string
+      if (typeof dateStr === 'number' || /^[\d.]+[Ee]/.test(dateStr) || /^\d+\.?\d*$/.test(dateStr)) {
+        // Unix timestamp in seconds (possibly scientific notation)
+        const seconds = parseFloat(dateStr);
+        date = new Date(seconds * 1000);
+      } else {
+        date = new Date(dateStr);
+      }
+      if (isNaN(date.getTime())) return '-';
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
@@ -210,12 +242,21 @@ export const prerender = false;
               <option value="new" ${lead.status === 'new' || !lead.status ? 'selected' : ''}>New</option>
               <option value="contacted" ${lead.status === 'contacted' ? 'selected' : ''}>Contacted</option>
               <option value="qualified" ${lead.status === 'qualified' ? 'selected' : ''}>Qualified</option>
+              <option value="quoted" ${lead.status === 'quoted' ? 'selected' : ''}>Quoted</option>
               <option value="won" ${lead.status === 'won' ? 'selected' : ''}>Won</option>
               <option value="lost" ${lead.status === 'lost' ? 'selected' : ''}>Lost</option>
             </select>
           </td>
           <td class="px-4 py-4">
-            ${lead.booking_value ? `<span class="font-medium text-green-600">$${Number(lead.booking_value).toLocaleString()}</span>` : '-'}
+            <button
+              class="value-btn hover:bg-gray-100 px-2 py-1 rounded transition-colors"
+              data-lead-id="${lead.lead_id}"
+              data-lead-name="${lead.first_name || ''} ${lead.last_name || ''}"
+              data-value="${lead.booking_value || ''}"
+              title="Click to edit value"
+            >
+              ${lead.booking_value ? `<span class="font-medium text-green-600">$${Number(lead.booking_value).toLocaleString()}</span>` : '<span class="text-gray-400">+ Add</span>'}
+            </button>
           </td>
           <td class="px-4 py-4">
             <button
@@ -239,6 +280,10 @@ export const prerender = false;
 
       document.querySelectorAll('.notes-btn').forEach(btn => {
         btn.addEventListener('click', handleNotesClick);
+      });
+
+      document.querySelectorAll('.value-btn').forEach(btn => {
+        btn.addEventListener('click', handleValueClick);
       });
     }
 
@@ -322,6 +367,44 @@ export const prerender = false;
       }
     }
 
+    function handleValueClick(e) {
+      const btn = e.currentTarget;
+      currentValueLeadId = btn.dataset.leadId;
+      const leadNameEl = document.getElementById('valueLeadName');
+      const inputEl = document.getElementById('editValueInput');
+      if (leadNameEl) leadNameEl.textContent = btn.dataset.leadName;
+      if (inputEl) (inputEl as HTMLInputElement).value = btn.dataset.value || '';
+      valueModal?.classList.remove('hidden');
+      inputEl?.focus();
+    }
+
+    async function saveValue() {
+      if (!currentValueLeadId) return;
+
+      const bookingValue = parseFloat((document.getElementById('editValueInput') as HTMLInputElement)?.value || '0');
+
+      try {
+        const response = await fetch(`/api/admin/leads/${currentValueLeadId}/value`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ booking_value: bookingValue || 0 })
+        });
+
+        const result = await response.json();
+
+        if (!result.success) {
+          throw new Error(result.error);
+        }
+
+        valueModal?.classList.add('hidden');
+        currentValueLeadId = null;
+        await fetchLeads();
+      } catch (err) {
+        console.error('Error saving value:', err);
+        alert('Failed to save value: ' + err.message);
+      }
+    }
+
     async function confirmWon() {
       if (!currentWonLeadId) return;
 
@@ -394,6 +477,7 @@ export const prerender = false;
       const statTotal = document.getElementById('stat-total');
       const statNew = document.getElementById('stat-new');
       const statContacted = document.getElementById('stat-contacted');
+      const statQuoted = document.getElementById('stat-quoted');
       const statWon = document.getElementById('stat-won');
       const statRevenue = document.getElementById('stat-revenue');
 
@@ -401,11 +485,13 @@ export const prerender = false;
 
       const newCount = leads.filter(l => l.status === 'new' || !l.status).length;
       const contactedCount = leads.filter(l => l.status === 'contacted').length;
+      const quotedCount = leads.filter(l => l.status === 'quoted').length;
       const wonCount = leads.filter(l => l.status === 'won').length;
       const revenue = leads.reduce((sum, l) => sum + (Number(l.booking_value) || 0), 0);
 
       if (statNew) statNew.textContent = String(newCount);
       if (statContacted) statContacted.textContent = String(contactedCount);
+      if (statQuoted) statQuoted.textContent = String(quotedCount);
       if (statWon) statWon.textContent = String(wonCount);
       if (statRevenue) statRevenue.textContent = revenue > 0 ? `$${revenue.toLocaleString()}` : '-';
     }
@@ -449,11 +535,22 @@ export const prerender = false;
 
     document.getElementById('confirmWonBtn')?.addEventListener('click', confirmWon);
 
+    document.getElementById('cancelValueBtn')?.addEventListener('click', () => {
+      valueModal?.classList.add('hidden');
+      currentValueLeadId = null;
+      const input = document.getElementById('editValueInput');
+      if (input) (input as HTMLInputElement).value = '';
+    });
+
+    document.getElementById('saveValueBtn')?.addEventListener('click', saveValue);
+
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         notesModal?.classList.add('hidden');
         wonModal?.classList.add('hidden');
+        valueModal?.classList.add('hidden');
         currentNotesLeadId = null;
+        currentValueLeadId = null;
         currentWonLeadId = null;
       }
     });
