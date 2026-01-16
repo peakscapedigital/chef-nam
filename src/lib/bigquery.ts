@@ -68,7 +68,21 @@ let cachedToken: { token: string; expiry: number } | null = null;
  * Decode base64 credentials and parse JSON
  */
 function decodeCredentials(base64Credentials: string): ServiceAccountCredentials {
-  const decoded = atob(base64Credentials);
+  // Clean up the base64 string:
+  // 1. Remove whitespace and newlines
+  // 2. Convert URL-safe base64 to standard base64
+  let cleaned = base64Credentials
+    .replace(/\s/g, '')      // Remove all whitespace
+    .replace(/-/g, '+')      // URL-safe to standard
+    .replace(/_/g, '/');     // URL-safe to standard
+
+  // Add padding if needed
+  const padding = cleaned.length % 4;
+  if (padding) {
+    cleaned += '='.repeat(4 - padding);
+  }
+
+  const decoded = atob(cleaned);
   return JSON.parse(decoded);
 }
 
