@@ -141,7 +141,7 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('Form submission API called');
 
@@ -217,8 +217,10 @@ export const POST: APIRoute = async ({ request }) => {
     const leadId = crypto.randomUUID();
 
     // Insert to BigQuery (fire-and-forget, don't block response)
-    const projectId = import.meta.env.BIGQUERY_PROJECT_ID;
-    const credentials = import.meta.env.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars through runtime context
+    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
+    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
+    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
 
     if (projectId && credentials) {
       // Hash email and phone for enhanced conversions

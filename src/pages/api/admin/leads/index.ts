@@ -14,10 +14,12 @@ export const prerender = false;
  * - orderBy: field to order by (default submitted_at)
  * - orderDir: ASC or DESC (default DESC)
  */
-export const GET: APIRoute = async ({ url }) => {
+export const GET: APIRoute = async ({ url, locals }) => {
   try {
-    const projectId = import.meta.env.BIGQUERY_PROJECT_ID;
-    const credentials = import.meta.env.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars through runtime context
+    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
+    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
+    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
 
     if (!projectId || !credentials) {
       return new Response(

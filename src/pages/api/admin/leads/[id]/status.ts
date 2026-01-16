@@ -11,10 +11,12 @@ export const prerender = false;
  * - status: new | contacted | qualified | won | lost
  * - booking_value: number (required when status = won)
  */
-export const POST: APIRoute = async ({ params, request }) => {
+export const POST: APIRoute = async ({ params, request, locals }) => {
   try {
-    const projectId = import.meta.env.BIGQUERY_PROJECT_ID;
-    const credentials = import.meta.env.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars through runtime context
+    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
+    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
+    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
 
     if (!projectId || !credentials) {
       return new Response(
