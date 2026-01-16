@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { insertLead, createLeadData, sha256Hash } from '../../lib/bigquery';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -212,13 +213,46 @@ export const POST: APIRoute = async ({ request }) => {
       guestCount: data.guestCount
     });
 
+    // Generate lead ID for BigQuery
+    const leadId = crypto.randomUUID();
+
+    // Insert to BigQuery (fire-and-forget, don't block response)
+    const projectId = import.meta.env.BIGQUERY_PROJECT_ID;
+    const credentials = import.meta.env.BIGQUERY_CREDENTIALS;
+
+    if (projectId && credentials) {
+      // Hash email and phone for enhanced conversions
+      const emailHash = data.email ? await sha256Hash(data.email) : undefined;
+      const phoneHash = data.phone ? await sha256Hash(data.phone) : undefined;
+
+      const leadData = createLeadData({
+        ...data,
+        email_hash: emailHash,
+        phone_hash: phoneHash
+      }, leadId);
+
+      // Fire-and-forget BigQuery insert
+      insertLead(leadData, projectId, credentials)
+        .then(result => {
+          if (result.success) {
+            console.log('✅ Lead inserted to BigQuery:', leadId);
+          } else {
+            console.error('❌ BigQuery insert failed:', result.error);
+          }
+        })
+        .catch(err => console.error('❌ BigQuery insert exception:', err));
+    } else {
+      console.warn('⚠️ BigQuery credentials not configured, skipping lead insert');
+    }
+
     // Send email notification
     await sendEmailNotification(data, false);
 
     return new Response(
       JSON.stringify({
         success: true,
-        message: 'Form submission received'
+        message: 'Form submission received',
+        id: leadId
       }),
       {
         status: 200,
