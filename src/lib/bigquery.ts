@@ -65,25 +65,37 @@ interface LeadUpdate {
 let cachedToken: { token: string; expiry: number } | null = null;
 
 /**
- * Decode base64 credentials and parse JSON
+ * Parse credentials - accepts either raw JSON or base64-encoded JSON
  */
-function decodeCredentials(base64Credentials: string): ServiceAccountCredentials {
-  // Clean up the base64 string:
-  // 1. Remove whitespace and newlines
-  // 2. Convert URL-safe base64 to standard base64
-  let cleaned = base64Credentials
-    .replace(/\s/g, '')      // Remove all whitespace
-    .replace(/-/g, '+')      // URL-safe to standard
-    .replace(/_/g, '/');     // URL-safe to standard
+function decodeCredentials(credentials: string): ServiceAccountCredentials {
+  const trimmed = credentials.trim();
 
-  // Add padding if needed
-  const padding = cleaned.length % 4;
-  if (padding) {
-    cleaned += '='.repeat(4 - padding);
+  // If it starts with '{', it's raw JSON
+  if (trimmed.startsWith('{')) {
+    return JSON.parse(trimmed);
   }
 
-  const decoded = atob(cleaned);
-  return JSON.parse(decoded);
+  // Otherwise, try to decode as base64
+  try {
+    // Clean up the base64 string
+    let cleaned = trimmed
+      .replace(/\s/g, '')      // Remove all whitespace
+      .replace(/-/g, '+')      // URL-safe to standard
+      .replace(/_/g, '/');     // URL-safe to standard
+
+    // Add padding if needed
+    const padding = cleaned.length % 4;
+    if (padding) {
+      cleaned += '='.repeat(4 - padding);
+    }
+
+    const decoded = atob(cleaned);
+    return JSON.parse(decoded);
+  } catch (e) {
+    // If base64 decoding fails, provide helpful error
+    const preview = trimmed.substring(0, 50);
+    throw new Error(`Failed to parse credentials. First 50 chars: "${preview}...". Error: ${e}`);
+  }
 }
 
 /**
