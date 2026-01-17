@@ -220,12 +220,14 @@ export const prerender = false;
     function renderLeads() {
       if (!leadsTableBody) return;
 
-      leadsTableBody.innerHTML = leads.map(lead => `
-        <tr class="hover:bg-gray-50 ${lead.is_test ? 'bg-yellow-50' : ''}" data-lead-id="${lead.lead_id}">
+      leadsTableBody.innerHTML = leads.map(lead => {
+        const isTest = lead.is_test === true || lead.is_test === 'true';
+        return `
+        <tr class="hover:bg-gray-50 ${isTest ? 'bg-yellow-50' : ''}" data-lead-id="${lead.lead_id}">
           <td class="px-4 py-4">
             <div class="font-medium text-gray-900">
               ${lead.first_name || ''} ${lead.last_name || ''}
-              ${lead.is_test ? '<span class="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">TEST</span>' : ''}
+              ${isTest ? '<span class="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">TEST</span>' : ''}
             </div>
             <div class="text-sm text-gray-500">${formatDate(lead.submitted_at)}</div>
           </td>
@@ -280,7 +282,7 @@ export const prerender = false;
             </button>
           </td>
         </tr>
-      `).join('');
+      `}).join('');
 
       document.querySelectorAll('.status-select').forEach(select => {
         select.addEventListener('change', handleStatusChange);
