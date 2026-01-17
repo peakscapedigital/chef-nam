@@ -1,5 +1,5 @@
 import { createClient } from '@sanity/client'
-import imageUrlBuilder from '@sanity/image-url'
+import { createImageUrlBuilder, type SanityImageSource } from '@sanity/image-url'
 
 export const client = createClient({
   projectId: 'yojbqnd7',
@@ -9,14 +9,14 @@ export const client = createClient({
   token: process.env.SANITY_API_TOKEN,
 })
 
-const builder = imageUrlBuilder(client)
+const builder = createImageUrlBuilder(client)
 
-export function urlFor(source: any) {
+export function urlFor(source: SanityImageSource) {
   return builder.image(source)
 }
 
 // Optimized image helper following Astro + Sanity best practices
-export function urlForOptimized(source: any, width?: number, height?: number, quality = 75) {
+export function urlForOptimized(source: SanityImageSource, width?: number, height?: number, quality = 75) {
   let imageBuilder = builder.image(source)
     .auto('format')        // Auto-detect best format (WebP, AVIF, etc.)
     .format('webp')        // Fallback to WebP
@@ -36,7 +36,7 @@ export function urlForOptimized(source: any, width?: number, height?: number, qu
 }
 
 // Generate responsive srcset for Astro Image component
-export function generateResponsiveSrcset(source: any, maxWidth: number, quality = 75) {
+export function generateResponsiveSrcset(source: SanityImageSource, maxWidth: number, quality = 75) {
   const breakpoints = [320, 640, 768, 1024, 1280, 1536, 1920]
   const sizes = breakpoints.filter(size => size <= maxWidth * 1.2) // Include up to 20% larger for sharpness
   
@@ -72,22 +72,6 @@ export interface Post {
   }
 }
 
-export interface Service {
-  _id: string
-  title: string
-  slug: { current: string }
-  description: string
-  features: string[]
-  images: Array<{
-    asset: any
-    alt: string
-  }>
-  pricing: {
-    starting: number
-    description: string
-  }
-}
-
 export interface HomePage {
   hero: {
     headline: string
@@ -115,7 +99,6 @@ export interface HomePage {
     }
     caption?: string
   }>
-  services: Service[]
   testimonials: Array<{
     quote: string
     author: string

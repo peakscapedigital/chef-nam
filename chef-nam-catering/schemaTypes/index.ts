@@ -127,77 +127,6 @@ export const post = {
   }
 }
 
-export const service = {
-  name: 'service',
-  title: 'Service',
-  type: 'document',
-  fields: [
-    {
-      name: 'title',
-      title: 'Title',
-      type: 'string',
-      validation: (Rule: any) => Rule.required()
-    },
-    {
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'title'
-      }
-    },
-    {
-      name: 'description',
-      title: 'Description',
-      type: 'text',
-      validation: (Rule: any) => Rule.required()
-    },
-    {
-      name: 'features',
-      title: 'Features',
-      type: 'array',
-      of: [{ type: 'string' }]
-    },
-    {
-      name: 'images',
-      title: 'Images',
-      type: 'array',
-      of: [
-        {
-          type: 'image',
-          options: {
-            hotspot: true
-          },
-          fields: [
-            {
-              name: 'alt',
-              title: 'Alt Text',
-              type: 'string'
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: 'pricing',
-      title: 'Pricing',
-      type: 'object',
-      fields: [
-        {
-          name: 'starting',
-          title: 'Starting Price',
-          type: 'number'
-        },
-        {
-          name: 'description',
-          title: 'Pricing Description',
-          type: 'string'
-        }
-      ]
-    }
-  ]
-}
-
 export const homepage = {
   name: 'homepage',
   title: 'Homepage',
@@ -1069,4 +998,4 @@ export const lead = {
 
 import venue from './venue'
 
-export const schemaTypes = [post, service, homepage, gallery, formSubmission, lead, venue]
+export const schemaTypes = [post, homepage, gallery, formSubmission, lead, venue]

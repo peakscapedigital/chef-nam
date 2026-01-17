@@ -1,13 +1,11 @@
 import { client } from './sanity'
-import { 
-  homepageQuery, 
-  servicesQuery, 
-  latestPostsQuery, 
-  allPostsQuery, 
-  postBySlugQuery,
-  serviceBySlugQuery 
+import {
+  homepageQuery,
+  latestPostsQuery,
+  allPostsQuery,
+  postBySlugQuery
 } from './queries'
-import type { HomePage, Service, Post } from './sanity'
+import type { HomePage, Post } from './sanity'
 
 // Homepage data
 export async function getHomePage(): Promise<HomePage | null> {
@@ -15,25 +13,6 @@ export async function getHomePage(): Promise<HomePage | null> {
     return await client.fetch(homepageQuery)
   } catch (error) {
     console.error('Error fetching homepage data:', error)
-    return null
-  }
-}
-
-// Services data
-export async function getServices(): Promise<Service[]> {
-  try {
-    return await client.fetch(servicesQuery)
-  } catch (error) {
-    console.error('Error fetching services:', error)
-    return []
-  }
-}
-
-export async function getServiceBySlug(slug: string): Promise<Service | null> {
-  try {
-    return await client.fetch(serviceBySlugQuery, { slug })
-  } catch (error) {
-    console.error('Error fetching service:', error)
     return null
   }
 }
@@ -78,7 +57,16 @@ export const fallbackHomePage: HomePage = {
     primaryCTA: "Get Your Quote",
     secondaryCTA: "View Menu"
   },
-  services: [],
+  about: {
+    headline: "Rooted in Flavor. Driven By Heart.",
+    description: "Chef Nam believes that the best events start with good food — and good food starts with heart.",
+    chefImage: {
+      asset: { _id: '', url: '/chef-nam-placeholder.jpg' },
+      alt: "Chef Nam"
+    },
+    credentials: ["15+ Years Professional Experience", "Ann Arbor Local Business"]
+  },
+  gallery: [],
   testimonials: [
     {
       quote: "Chef Nam's catering made our wedding absolutely perfect. The Thai fusion menu was incredible!",

@@ -24,24 +24,6 @@ export const homepageQuery = `
   }
 `
 
-export const servicesQuery = `
-  *[_type == "service"] | order(title asc) {
-    _id,
-    title,
-    slug,
-    description,
-    features,
-    images[] {
-      asset->{
-        _id,
-        url
-      },
-      alt
-    },
-    pricing
-  }
-`
-
 export const latestPostsQuery = `
   *[_type == "post"] | order(publishedAt desc)[0...3] {
     _id,
@@ -97,23 +79,5 @@ export const postBySlugQuery = `
     publishedAt,
     categories,
     author
-  }
-`
-
-export const serviceBySlugQuery = `
-  *[_type == "service" && slug.current == $slug][0] {
-    _id,
-    title,
-    slug,
-    description,
-    features,
-    images[] {
-      asset->{
-        _id,
-        url
-      },
-      alt
-    },
-    pricing
   }
 `
