@@ -11,6 +11,7 @@ interface ServiceAccountCredentials {
 
 interface LeadData {
   lead_id: string;
+  contact_id?: string;  // Links to contacts table for returning customer tracking
   first_name?: string;
   last_name?: string;
   email?: string;
@@ -60,6 +61,30 @@ interface LeadUpdate {
   status_updated_at?: string;
   notes_updated_at?: string;
   won_at?: string;
+}
+
+interface ContactData {
+  contact_id: string;
+  email?: string;
+  phone?: string;
+  alternate_emails?: string[];
+  alternate_phones?: string[];
+  first_name?: string;
+  last_name?: string;
+  preferred_contact?: string;
+  first_utm_source?: string;
+  first_utm_medium?: string;
+  first_utm_campaign?: string;
+  first_lead_source?: string;
+  first_landing_page?: string;
+  first_referrer?: string;
+  total_leads: number;
+  total_converted: number;
+  lifetime_value: number;
+  first_lead_at: string;
+  last_lead_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 // Cache for access tokens (reuse until expiry)
@@ -505,6 +530,252 @@ function isTestSubmission(formData: Record<string, unknown>): boolean {
 }
 
 /**
+ * Find an existing contact by email OR phone in BigQuery
+ */
+export async function findContactByEmailOrPhone(
+  email: string | undefined,
+  phone: string | undefined,
+  projectId: string,
+  base64Credentials: string
+): Promise<{ success: boolean; contact?: ContactData; error?: string }> {
+  try {
+    if (!email && !phone) {
+      return { success: true, contact: undefined }; // No identifiers to search
+    }
+
+    const credentials = decodeCredentials(base64Credentials);
+    const accessToken = await getAccessToken(credentials);
+
+    // Normalize inputs
+    const normalizedEmail = email?.trim().toLowerCase();
+    const normalizedPhone = phone?.replace(/\D/g, ''); // Strip non-digits
+
+    // Build query to check primary AND alternate emails/phones
+    const conditions: string[] = [];
+
+    if (normalizedEmail) {
+      conditions.push(`(LOWER(email) = '${normalizedEmail}' OR '${normalizedEmail}' IN UNNEST(alternate_emails))`);
+    }
+
+    if (normalizedPhone && normalizedPhone.length >= 10) {
+      conditions.push(`(phone = '${normalizedPhone}' OR '${normalizedPhone}' IN UNNEST(alternate_phones))`);
+    }
+
+    if (conditions.length === 0) {
+      return { success: true, contact: undefined };
+    }
+
+    const query = `
+      SELECT * FROM \`${projectId}.leads.contacts\`
+      WHERE ${conditions.join(' OR ')}
+      LIMIT 1
+    `;
+
+    const url = `https://bigquery.googleapis.com/bigquery/v2/projects/${projectId}/queries`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query, useLegacySql: false })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('BigQuery contact query error:', error);
+      return { success: false, error };
+    }
+
+    const result = await response.json() as {
+      schema?: { fields: Array<{ name: string }> };
+      rows?: Array<{ f: Array<{ v: unknown }> }>;
+    };
+
+    if (!result.rows || result.rows.length === 0) {
+      return { success: true, contact: undefined }; // No existing contact
+    }
+
+    // Parse the contact
+    const fields = result.schema?.fields || [];
+    const row = result.rows[0];
+    const contact: Record<string, unknown> = {};
+
+    row.f.forEach((cell, i) => {
+      const fieldName = fields[i].name;
+      // Handle array fields (alternate_emails, alternate_phones)
+      if (cell.v && typeof cell.v === 'object' && 'v' in (cell.v as object)) {
+        // BigQuery returns repeated fields as { v: [{v: 'value1'}, {v: 'value2'}] }
+        contact[fieldName] = (cell.v as { v: Array<{ v: string }> }).v?.map((item: { v: string }) => item.v) || [];
+      } else {
+        contact[fieldName] = cell.v;
+      }
+    });
+
+    return { success: true, contact: contact as unknown as ContactData };
+  } catch (error) {
+    console.error('BigQuery find contact exception:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+/**
+ * Create a new contact in BigQuery
+ */
+export async function createContact(
+  contactData: Partial<ContactData> & { contact_id: string },
+  projectId: string,
+  base64Credentials: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const credentials = decodeCredentials(base64Credentials);
+    const accessToken = await getAccessToken(credentials);
+
+    const now = new Date().toISOString();
+
+    // Normalize phone
+    const normalizedPhone = contactData.phone?.replace(/\D/g, '');
+
+    const contact: ContactData = {
+      contact_id: contactData.contact_id,
+      email: contactData.email?.trim().toLowerCase() || undefined,
+      phone: normalizedPhone || undefined,
+      alternate_emails: [],
+      alternate_phones: [],
+      first_name: contactData.first_name,
+      last_name: contactData.last_name,
+      preferred_contact: contactData.preferred_contact,
+      first_utm_source: contactData.first_utm_source,
+      first_utm_medium: contactData.first_utm_medium,
+      first_utm_campaign: contactData.first_utm_campaign,
+      first_lead_source: contactData.first_lead_source,
+      first_landing_page: contactData.first_landing_page,
+      first_referrer: contactData.first_referrer,
+      total_leads: 1,
+      total_converted: 0,
+      lifetime_value: 0,
+      first_lead_at: now,
+      last_lead_at: now,
+      created_at: now,
+      updated_at: now
+    };
+
+    // Remove undefined fields for clean insert
+    const cleanContact: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(contact)) {
+      if (value !== undefined) {
+        cleanContact[key] = value;
+      }
+    }
+
+    const url = `https://bigquery.googleapis.com/bigquery/v2/projects/${projectId}/datasets/leads/tables/contacts/insertAll`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        rows: [{ insertId: contact.contact_id, json: cleanContact }]
+      })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('BigQuery create contact error:', error);
+      return { success: false, error };
+    }
+
+    const result = await response.json() as { insertErrors?: Array<{ errors: Array<{ message: string }> }> };
+
+    if (result.insertErrors && result.insertErrors.length > 0) {
+      const errorMsg = result.insertErrors[0].errors[0].message;
+      console.error('BigQuery create contact errors:', result.insertErrors);
+      return { success: false, error: errorMsg };
+    }
+
+    console.log('✅ Created new contact:', contact.contact_id);
+    return { success: true };
+  } catch (error) {
+    console.error('BigQuery create contact exception:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+/**
+ * Update an existing contact (increment lead count, add alternates, update last_lead_at)
+ */
+export async function updateContactForNewLead(
+  contactId: string,
+  newEmail: string | undefined,
+  newPhone: string | undefined,
+  existingContact: ContactData,
+  projectId: string,
+  base64Credentials: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const credentials = decodeCredentials(base64Credentials);
+    const accessToken = await getAccessToken(credentials);
+
+    const normalizedEmail = newEmail?.trim().toLowerCase();
+    const normalizedPhone = newPhone?.replace(/\D/g, '');
+
+    const updates: string[] = [
+      `total_leads = total_leads + 1`,
+      `last_lead_at = CURRENT_TIMESTAMP()`,
+      `updated_at = CURRENT_TIMESTAMP()`
+    ];
+
+    // Check if we need to add alternate email
+    if (normalizedEmail &&
+        normalizedEmail !== existingContact.email?.toLowerCase() &&
+        !existingContact.alternate_emails?.includes(normalizedEmail)) {
+      updates.push(`alternate_emails = ARRAY_CONCAT(IFNULL(alternate_emails, []), ['${normalizedEmail}'])`);
+      console.log(`Adding alternate email: ${normalizedEmail}`);
+    }
+
+    // Check if we need to add alternate phone
+    if (normalizedPhone &&
+        normalizedPhone !== existingContact.phone &&
+        !existingContact.alternate_phones?.includes(normalizedPhone)) {
+      updates.push(`alternate_phones = ARRAY_CONCAT(IFNULL(alternate_phones, []), ['${normalizedPhone}'])`);
+      console.log(`Adding alternate phone: ${normalizedPhone}`);
+    }
+
+    const query = `
+      UPDATE \`${projectId}.leads.contacts\`
+      SET ${updates.join(', ')}
+      WHERE contact_id = '${contactId}'
+    `;
+
+    const url = `https://bigquery.googleapis.com/bigquery/v2/projects/${projectId}/queries`;
+
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ query, useLegacySql: false })
+    });
+
+    if (!response.ok) {
+      const error = await response.text();
+      console.error('BigQuery update contact error:', error);
+      return { success: false, error };
+    }
+
+    console.log('✅ Updated existing contact:', contactId);
+    return { success: true };
+  } catch (error) {
+    console.error('BigQuery update contact exception:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+/**
  * Helper to create lead data object from form submission
  */
 export function createLeadData(formData: Record<string, unknown>, leadId: string): LeadData {
@@ -512,6 +783,7 @@ export function createLeadData(formData: Record<string, unknown>, leadId: string
 
   return {
     lead_id: leadId,
+    contact_id: formData.contact_id as string || undefined,
     first_name: formData.firstName as string || undefined,
     last_name: formData.lastName as string || undefined,
     email: formData.email as string || undefined,

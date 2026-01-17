@@ -1,5 +1,12 @@
 import type { APIRoute } from 'astro';
-import { insertLead, createLeadData, sha256Hash } from '../../lib/bigquery';
+import {
+  insertLead as insertLeadBigQuery,
+  createLeadData,
+  sha256Hash,
+  findContactByEmailOrPhone,
+  createContact,
+  updateContactForNewLead
+} from '../../lib/bigquery';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -213,16 +220,107 @@ export const POST: APIRoute = async ({ request, locals }) => {
       guestCount: data.guestCount
     });
 
-    // Generate lead ID for BigQuery
+    // Generate UUIDs for lead and potentially new contact
     const leadId = crypto.randomUUID();
 
-    // Insert to BigQuery (fire-and-forget, don't block response)
     // Access Cloudflare env vars through runtime context
     const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
     const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
     const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
 
-    if (projectId && credentials) {
+    // Track contact info
+    let contactId: string | undefined;
+    let isReturningCustomer = false;
+
+    // ========================================
+    // BIGQUERY-FIRST: Source of Truth
+    // ========================================
+    if (!projectId || !credentials) {
+      console.error('❌ BigQuery credentials not configured - cannot process lead');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          message: 'Server configuration error. Please try again later.'
+        }),
+        { status: 500, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    try {
+      // ========================================
+      // 1. CHECK FOR EXISTING CONTACT
+      // ========================================
+      console.log('🔍 Checking for existing contact by email/phone...');
+      const contactResult = await findContactByEmailOrPhone(
+        data.email,
+        data.phone,
+        projectId,
+        credentials
+      );
+
+      if (!contactResult.success) {
+        console.error('❌ Contact lookup failed:', contactResult.error);
+        // Continue with new contact creation
+      }
+
+      if (contactResult.contact) {
+        // ========================================
+        // 2a. EXISTING CONTACT - Update it
+        // ========================================
+        contactId = contactResult.contact.contact_id;
+        isReturningCustomer = true;
+        console.log('🔄 RETURNING CUSTOMER found:', {
+          contactId,
+          email: contactResult.contact.email,
+          phone: contactResult.contact.phone,
+          totalLeads: contactResult.contact.total_leads
+        });
+
+        // Update contact with new lead info (increment count, add alternates)
+        const updateResult = await updateContactForNewLead(
+          contactId,
+          data.email,
+          data.phone,
+          contactResult.contact,
+          projectId,
+          credentials
+        );
+
+        if (!updateResult.success) {
+          console.error('⚠️ Contact update failed:', updateResult.error);
+          // Continue anyway - lead insert is more important
+        }
+      } else {
+        // ========================================
+        // 2b. NEW CONTACT - Create it
+        // ========================================
+        contactId = crypto.randomUUID();
+        console.log('👤 Creating new contact:', contactId);
+
+        const createResult = await createContact({
+          contact_id: contactId,
+          email: data.email,
+          phone: data.phone,
+          first_name: data.firstName,
+          last_name: data.lastName,
+          preferred_contact: data.preferredContact,
+          first_utm_source: data.utm_source,
+          first_utm_medium: data.utm_medium,
+          first_utm_campaign: data.utm_campaign,
+          first_lead_source: data.lead_source,
+          first_landing_page: data.landing_page,
+          first_referrer: data.referrer,
+        }, projectId, credentials);
+
+        if (!createResult.success) {
+          console.error('⚠️ Contact creation failed:', createResult.error);
+          // Continue anyway - lead insert is more important
+        }
+      }
+
+      // ========================================
+      // 3. INSERT LEAD TO BIGQUERY
+      // ========================================
       // Hash email and phone for enhanced conversions
       const emailHash = data.email ? await sha256Hash(data.email) : undefined;
       const phoneHash = data.phone ? await sha256Hash(data.phone) : undefined;
@@ -230,21 +328,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const leadData = createLeadData({
         ...data,
         email_hash: emailHash,
-        phone_hash: phoneHash
+        phone_hash: phoneHash,
+        contact_id: contactId, // UUID from BigQuery contact
       }, leadId);
 
-      // Fire-and-forget BigQuery insert
-      insertLead(leadData, projectId, credentials)
-        .then(result => {
-          if (result.success) {
-            console.log('✅ Lead inserted to BigQuery:', leadId);
-          } else {
-            console.error('❌ BigQuery insert failed:', result.error);
-          }
-        })
-        .catch(err => console.error('❌ BigQuery insert exception:', err));
-    } else {
-      console.warn('⚠️ BigQuery credentials not configured, skipping lead insert');
+      const insertResult = await insertLeadBigQuery(leadData, projectId, credentials);
+
+      if (insertResult.success) {
+        console.log('✅ Lead inserted to BigQuery:', {
+          leadId,
+          contactId,
+          isReturning: isReturningCustomer
+        });
+      } else {
+        console.error('❌ BigQuery lead insert failed:', insertResult.error);
+        // Still return success to user - we'll have logs to debug
+      }
+    } catch (bigQueryError) {
+      console.error('❌ BigQuery exception:', bigQueryError);
+      // Still return success to user - email notification will still work
     }
 
     // Send email notification
