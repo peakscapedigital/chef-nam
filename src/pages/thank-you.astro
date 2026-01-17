@@ -127,38 +127,80 @@ import { Icon } from 'astro-icon/components';
 
   </main>
 
-  <!-- DataLayer push for form parameters + enhanced conversions fields -->
+  <!-- DataLayer push for form parameters + enhanced conversions + attribution data -->
   <script>
     (function () {
-      // Try to read user-provided fields stored during form submission
-      var email, phone, firstName, lastName;
+      var storage = window.localStorage;
+      var session = window.sessionStorage;
+
+      // Read user-provided fields from sessionStorage (stored during form submission)
+      var email, phone, firstName, lastName, formType, formName;
       try {
-        email = sessionStorage.getItem('sp_lead_email') || undefined;
-        phone = sessionStorage.getItem('sp_lead_phone') || undefined;
-        firstName = sessionStorage.getItem('sp_lead_first') || undefined;
-        lastName = sessionStorage.getItem('sp_lead_last') || undefined;
+        email = session.getItem('sp_lead_email') || undefined;
+        phone = session.getItem('sp_lead_phone') || undefined;
+        firstName = session.getItem('sp_lead_first') || undefined;
+        lastName = session.getItem('sp_lead_last') || undefined;
+        formType = session.getItem('sp_form_type') || 'start_planning';
+        formName = session.getItem('sp_form_name') || 'Start Planning';
       } catch (e) {}
 
-      // Push page + form context and (optionally) user-provided data
+      // Read attribution data from localStorage (stored on first visit)
+      var utmSource, utmMedium, utmCampaign, utmTerm, utmContent;
+      var gclid, fbclid, leadSource, referrer, landingPage;
+      try {
+        utmSource = storage.getItem('utm_source') || undefined;
+        utmMedium = storage.getItem('utm_medium') || undefined;
+        utmCampaign = storage.getItem('utm_campaign') || undefined;
+        utmTerm = storage.getItem('utm_term') || undefined;
+        utmContent = storage.getItem('utm_content') || undefined;
+        gclid = storage.getItem('gclid') || undefined;
+        fbclid = storage.getItem('fbclid') || undefined;
+        leadSource = storage.getItem('lead_source') || 'Direct';
+        referrer = storage.getItem('referrer') || undefined;
+        landingPage = storage.getItem('landing_page') || undefined;
+      } catch (e) {}
+
+      // Push ALL data to dataLayer for GTM tags
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
+        // Event name - GTM trigger should listen for this
         event: 'thank_you_loaded',
-        form_type: 'start_planning',
-        form_name: 'Start Planning',
+
+        // Form context
+        form_type: formType,
+        form_name: formName,
         form_destination: '/thank-you',
+
+        // User data (for Enhanced Conversions)
         email: email,
         phone_number: phone,
         first_name: firstName,
         last_name: lastName,
+
+        // Attribution data (for GA4 event parameters)
+        utm_source: utmSource,
+        utm_medium: utmMedium,
+        utm_campaign: utmCampaign,
+        utm_term: utmTerm,
+        utm_content: utmContent,
+        gclid: gclid,
+        fbclid: fbclid,
+        lead_source: leadSource,
+        referrer: referrer,
+        landing_page: landingPage,
+
+        // Page context
         page_location: window.location.href
       });
 
-      // Clear values so refresh/back doesn't resend PII
+      // Clear user PII from sessionStorage (so refresh doesn't resend)
       try {
-        sessionStorage.removeItem('sp_lead_email');
-        sessionStorage.removeItem('sp_lead_phone');
-        sessionStorage.removeItem('sp_lead_first');
-        sessionStorage.removeItem('sp_lead_last');
+        session.removeItem('sp_lead_email');
+        session.removeItem('sp_lead_phone');
+        session.removeItem('sp_lead_first');
+        session.removeItem('sp_lead_last');
+        session.removeItem('sp_form_type');
+        session.removeItem('sp_form_name');
       } catch (e) {}
     })();
   </script>
