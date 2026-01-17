@@ -97,50 +97,108 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
       const urlParams = new URLSearchParams(window.location.search);
       const storage = window.localStorage;
 
-      // Determine if this is the first visit (no UTM data stored yet)
-      const isFirstVisit = !storage.getItem('utm_source') && !storage.getItem('_attribution_captured');
+      // Check if attribution already captured for this session
+      const isFirstVisit = !storage.getItem('_attribution_captured');
 
-      // Only capture if this is the first visit with parameters OR if new UTM params exist
-      if (isFirstVisit && (urlParams.has('utm_source') || urlParams.has('gclid') || urlParams.has('fbclid'))) {
+      // Capture attribution for ALL first-time visitors
+      if (isFirstVisit) {
 
-        // Capture UTM parameters
+        // Capture UTM parameters if present
         const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
         utmParams.forEach(param => {
           const value = urlParams.get(param);
           if (value) storage.setItem(param, value);
         });
 
-        // Capture referrer (where they came from)
+        // Always capture referrer (where they came from)
         if (document.referrer) {
           storage.setItem('referrer', document.referrer);
         }
 
-        // Capture landing page (first page visited)
+        // Always capture landing page (first page visited)
         storage.setItem('landing_page', window.location.pathname + window.location.search);
 
-        // Generate friendly lead source name
+        // Generate friendly lead source name based on available data
         let leadSource = 'Direct';
         const source = urlParams.get('utm_source');
         const medium = urlParams.get('utm_medium');
 
+        // Priority 1: Paid traffic with click IDs
         if (urlParams.get('gclid')) {
           leadSource = 'Google Ads';
         } else if (urlParams.get('fbclid')) {
           leadSource = 'Facebook Ads';
-        } else if (source && medium) {
+        }
+        // Priority 2: UTM parameters
+        else if (source && medium) {
           if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
           else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
           else if (medium === 'social') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Social';
           else if (medium === 'email') leadSource = 'Email Campaign';
+          else if (medium === 'referral') leadSource = 'Referral - ' + source;
           else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
-        } else if (document.referrer) {
+        }
+        // Priority 3: Referrer-based attribution (organic search, social, referrals)
+        else if (document.referrer) {
           try {
-            const refDomain = new URL(document.referrer).hostname.replace('www.', '');
-            leadSource = 'Referral - ' + refDomain;
+            const refUrl = new URL(document.referrer);
+            const refDomain = refUrl.hostname.replace('www.', '').toLowerCase();
+
+            // Search engines - Organic Search
+            const searchEngines = {
+              'google.com': 'Google',
+              'google.co.uk': 'Google',
+              'bing.com': 'Bing',
+              'yahoo.com': 'Yahoo',
+              'duckduckgo.com': 'DuckDuckGo',
+              'baidu.com': 'Baidu',
+              'yandex.com': 'Yandex',
+              'ecosia.org': 'Ecosia'
+            };
+
+            // Social networks
+            const socialNetworks = {
+              'facebook.com': 'Facebook',
+              'fb.com': 'Facebook',
+              'instagram.com': 'Instagram',
+              'twitter.com': 'Twitter',
+              'x.com': 'Twitter',
+              'linkedin.com': 'LinkedIn',
+              'pinterest.com': 'Pinterest',
+              'tiktok.com': 'TikTok',
+              'youtube.com': 'YouTube',
+              'reddit.com': 'Reddit',
+              'nextdoor.com': 'Nextdoor'
+            };
+
+            // Check search engines
+            for (const [domain, name] of Object.entries(searchEngines)) {
+              if (refDomain === domain || refDomain.endsWith('.' + domain)) {
+                leadSource = 'Organic Search - ' + name;
+                break;
+              }
+            }
+
+            // Check social networks (if not already matched)
+            if (leadSource === 'Direct') {
+              for (const [domain, name] of Object.entries(socialNetworks)) {
+                if (refDomain === domain || refDomain.endsWith('.' + domain)) {
+                  leadSource = 'Social - ' + name;
+                  break;
+                }
+              }
+            }
+
+            // Otherwise it's a referral from another site
+            if (leadSource === 'Direct') {
+              leadSource = 'Referral - ' + refDomain;
+            }
           } catch (e) {
             leadSource = 'Referral';
           }
         }
+        // Priority 4: No referrer = Direct traffic
+        // leadSource already set to 'Direct'
 
         storage.setItem('lead_source', leadSource);
         storage.setItem('_attribution_captured', 'true');

@@ -64,9 +64,10 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
     try {
       const urlParams = new URLSearchParams(window.location.search);
       const storage = window.localStorage;
-      const isFirstVisit = !storage.getItem('utm_source') && !storage.getItem('_attribution_captured');
+      const isFirstVisit = !storage.getItem('_attribution_captured');
 
-      if (isFirstVisit && (urlParams.has('utm_source') || urlParams.has('gclid') || urlParams.has('fbclid'))) {
+      // Capture attribution for ALL first-time visitors
+      if (isFirstVisit) {
         const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
         utmParams.forEach(param => {
           const value = urlParams.get(param);
@@ -80,12 +81,34 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
         const source = urlParams.get('utm_source');
         const medium = urlParams.get('utm_medium');
 
+        // Priority 1: Paid traffic
         if (urlParams.get('gclid')) leadSource = 'Google Ads';
         else if (urlParams.get('fbclid')) leadSource = 'Facebook Ads';
+        // Priority 2: UTM params
         else if (source && medium) {
           if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
           else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
+          else if (medium === 'social') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Social';
+          else if (medium === 'email') leadSource = 'Email Campaign';
           else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
+        }
+        // Priority 3: Referrer-based attribution
+        else if (document.referrer) {
+          try {
+            const refDomain = new URL(document.referrer).hostname.replace('www.', '').toLowerCase();
+            const searchEngines = ['google.com','bing.com','yahoo.com','duckduckgo.com'];
+            const socialNets = ['facebook.com','instagram.com','twitter.com','x.com','linkedin.com','pinterest.com','tiktok.com','youtube.com','nextdoor.com'];
+
+            if (searchEngines.some(se => refDomain === se || refDomain.endsWith('.'+se))) {
+              const name = refDomain.split('.')[0];
+              leadSource = 'Organic Search - ' + name.charAt(0).toUpperCase() + name.slice(1);
+            } else if (socialNets.some(sn => refDomain === sn || refDomain.endsWith('.'+sn))) {
+              const name = refDomain.split('.')[0];
+              leadSource = 'Social - ' + name.charAt(0).toUpperCase() + name.slice(1);
+            } else {
+              leadSource = 'Referral - ' + refDomain;
+            }
+          } catch (e) { leadSource = 'Referral'; }
         }
 
         storage.setItem('lead_source', leadSource);
