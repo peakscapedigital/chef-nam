@@ -50,6 +50,7 @@ interface LeadData {
   won_at?: string;
   form_source?: string;
   is_spam?: boolean;
+  is_test?: boolean;
 }
 
 interface LeadUpdate {
@@ -276,17 +277,23 @@ export async function queryLeads(
     offset?: number;
     orderBy?: string;
     orderDir?: 'ASC' | 'DESC';
+    includeTest?: boolean;
   } = {}
 ): Promise<{ success: boolean; leads?: LeadData[]; error?: string; totalCount?: number }> {
   try {
     const credentials = decodeCredentials(base64Credentials);
     const accessToken = await getAccessToken(credentials);
 
-    const { status, limit = 50, offset = 0, orderBy = 'submitted_at', orderDir = 'DESC' } = options;
+    const { status, limit = 50, offset = 0, orderBy = 'submitted_at', orderDir = 'DESC', includeTest = false } = options;
 
     // Build query
     let query = `SELECT * FROM \`${projectId}.leads.website_leads\``;
     const conditions: string[] = [];
+
+    // Filter out test leads by default
+    if (!includeTest) {
+      conditions.push(`(is_test IS NULL OR is_test = FALSE)`);
+    }
 
     if (status && status !== 'all') {
       conditions.push(`status = '${status}'`);
@@ -486,9 +493,23 @@ export async function updateLead(
 }
 
 /**
+ * Detect if submission is a test based on message content
+ */
+function isTestSubmission(formData: Record<string, unknown>): boolean {
+  const message = (formData.message as string || '').toLowerCase();
+  const firstName = (formData.firstName as string || '').toLowerCase();
+  const lastName = (formData.lastName as string || '').toLowerCase();
+
+  // Check for "test" in message, first name, or last name
+  return message.includes('test') || firstName.includes('test') || lastName.includes('test');
+}
+
+/**
  * Helper to create lead data object from form submission
  */
 export function createLeadData(formData: Record<string, unknown>, leadId: string): LeadData {
+  const isTest = isTestSubmission(formData);
+
   return {
     lead_id: leadId,
     first_name: formData.firstName as string || undefined,
@@ -524,6 +545,7 @@ export function createLeadData(formData: Record<string, unknown>, leadId: string
     status: 'new',
     submitted_at: new Date().toISOString(),
     form_source: formData.source as string || 'unknown',
-    is_spam: false
+    is_spam: false,
+    is_test: isTest
   };
 }

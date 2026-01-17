@@ -21,7 +21,7 @@ export const prerender = false;
         <h1 class="text-3xl font-bold text-gray-900">Lead Management</h1>
         <p class="text-gray-600 mt-1">Manage and track your catering leads</p>
       </div>
-      <div class="flex gap-4">
+      <div class="flex flex-wrap gap-4 items-center">
         <select id="statusFilter" class="px-4 py-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-amber-500 focus:border-amber-500">
           <option value="all">All Leads</option>
           <option value="new">New</option>
@@ -31,6 +31,10 @@ export const prerender = false;
           <option value="won">Won</option>
           <option value="lost">Lost</option>
         </select>
+        <label class="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+          <input type="checkbox" id="includeTestToggle" class="w-4 h-4 rounded border-gray-300 text-amber-500 focus:ring-amber-500">
+          Show test leads
+        </label>
         <button id="refreshBtn" class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
           Refresh
         </button>
@@ -168,6 +172,7 @@ export const prerender = false;
     let totalCount = 0;
     const pageSize = 50;
     let currentFilter = 'all';
+    let includeTest = false;
     let currentNotesLeadId = null;
     let currentWonLeadId = null;
     let currentValueLeadId = null;
@@ -216,9 +221,12 @@ export const prerender = false;
       if (!leadsTableBody) return;
 
       leadsTableBody.innerHTML = leads.map(lead => `
-        <tr class="hover:bg-gray-50" data-lead-id="${lead.lead_id}">
+        <tr class="hover:bg-gray-50 ${lead.is_test ? 'bg-yellow-50' : ''}" data-lead-id="${lead.lead_id}">
           <td class="px-4 py-4">
-            <div class="font-medium text-gray-900">${lead.first_name || ''} ${lead.last_name || ''}</div>
+            <div class="font-medium text-gray-900">
+              ${lead.first_name || ''} ${lead.last_name || ''}
+              ${lead.is_test ? '<span class="ml-2 text-xs bg-yellow-200 text-yellow-800 px-1.5 py-0.5 rounded">TEST</span>' : ''}
+            </div>
             <div class="text-sm text-gray-500">${formatDate(lead.submitted_at)}</div>
           </td>
           <td class="px-4 py-4">
@@ -433,7 +441,8 @@ export const prerender = false;
         const params = new URLSearchParams({
           status: currentFilter,
           limit: pageSize.toString(),
-          offset: (currentPage * pageSize).toString()
+          offset: (currentPage * pageSize).toString(),
+          includeTest: includeTest.toString()
         });
 
         const response = await fetch(`/api/admin/leads?${params}`);
@@ -499,6 +508,12 @@ export const prerender = false;
     // Event listeners
     statusFilter?.addEventListener('change', (e) => {
       currentFilter = (e.target as HTMLSelectElement).value;
+      currentPage = 0;
+      fetchLeads();
+    });
+
+    document.getElementById('includeTestToggle')?.addEventListener('change', (e) => {
+      includeTest = (e.target as HTMLInputElement).checked;
       currentPage = 0;
       fetchLeads();
     });

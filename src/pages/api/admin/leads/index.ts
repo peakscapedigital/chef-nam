@@ -13,6 +13,7 @@ export const prerender = false;
  * - offset: pagination offset (default 0)
  * - orderBy: field to order by (default submitted_at)
  * - orderDir: ASC or DESC (default DESC)
+ * - includeTest: include test submissions (default false)
  */
 export const GET: APIRoute = async ({ url, locals }) => {
   try {
@@ -34,13 +35,15 @@ export const GET: APIRoute = async ({ url, locals }) => {
     const offset = parseInt(url.searchParams.get('offset') || '0', 10);
     const orderBy = url.searchParams.get('orderBy') || 'submitted_at';
     const orderDir = (url.searchParams.get('orderDir') || 'DESC').toUpperCase() as 'ASC' | 'DESC';
+    const includeTest = url.searchParams.get('includeTest') === 'true';
 
     const result = await queryLeads(projectId, credentials, {
       status,
       limit,
       offset,
       orderBy,
-      orderDir
+      orderDir,
+      includeTest
     });
 
     if (!result.success) {
