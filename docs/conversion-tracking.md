@@ -45,20 +45,88 @@ A client-side script captures UTM parameters and attribution data on page load a
   const urlParams = new URLSearchParams(window.location.search);
   const storage = window.localStorage;
 
-  // Only capture if not already stored (first visit takes precedence)
-  if (!storage.getItem('utm_source') && urlParams.toString()) {
-    // Capture UTM parameters
+  // Check if attribution already captured for this session
+  const isFirstVisit = !storage.getItem('_attribution_captured');
+
+  // Capture attribution for ALL first-time visitors (not just those with UTM params)
+  if (isFirstVisit) {
+    // Capture UTM parameters if present
     ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'].forEach(param => {
       const value = urlParams.get(param);
       if (value) storage.setItem(param, value);
     });
 
-    // Capture referrer and landing page
+    // Always capture referrer and landing page
     if (document.referrer) storage.setItem('referrer', document.referrer);
-    storage.setItem('landing_page', window.location.pathname);
+    storage.setItem('landing_page', window.location.pathname + window.location.search);
+
+    // Generate friendly lead source name based on available data
+    let leadSource = 'Direct';
+    const source = urlParams.get('utm_source');
+    const medium = urlParams.get('utm_medium');
+
+    // Priority 1: Paid traffic with click IDs
+    if (urlParams.get('gclid')) {
+      leadSource = 'Google Ads';
+    } else if (urlParams.get('fbclid')) {
+      leadSource = 'Facebook Ads';
+    }
+    // Priority 2: UTM parameters
+    else if (source && medium) {
+      if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
+      else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
+      else if (medium === 'social') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Social';
+      else if (medium === 'email') leadSource = 'Email Campaign';
+      else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
+    }
+    // Priority 3: Referrer-based attribution (organic search, social, referrals)
+    else if (document.referrer) {
+      try {
+        const refDomain = new URL(document.referrer).hostname.replace('www.', '').toLowerCase();
+
+        // Search engines
+        const searchEngines = {'google.com':'Google','bing.com':'Bing','yahoo.com':'Yahoo','duckduckgo.com':'DuckDuckGo'};
+        // Social networks
+        const socialNets = {'facebook.com':'Facebook','instagram.com':'Instagram','twitter.com':'Twitter','x.com':'Twitter','linkedin.com':'LinkedIn','pinterest.com':'Pinterest','tiktok.com':'TikTok','youtube.com':'YouTube','nextdoor.com':'Nextdoor'};
+
+        for (const [domain, name] of Object.entries(searchEngines)) {
+          if (refDomain === domain || refDomain.endsWith('.' + domain)) {
+            leadSource = 'Organic Search - ' + name;
+            break;
+          }
+        }
+        if (leadSource === 'Direct') {
+          for (const [domain, name] of Object.entries(socialNets)) {
+            if (refDomain === domain || refDomain.endsWith('.' + domain)) {
+              leadSource = 'Social - ' + name;
+              break;
+            }
+          }
+        }
+        if (leadSource === 'Direct') {
+          leadSource = 'Referral - ' + refDomain;
+        }
+      } catch (e) { leadSource = 'Referral'; }
+    }
+    // Priority 4: No referrer = Direct traffic (leadSource already 'Direct')
+
+    storage.setItem('lead_source', leadSource);
+    storage.setItem('_attribution_captured', 'true');
   }
 })();
 ```
+
+### Lead Source Detection
+
+| Traffic Type | Detection Method | Example `lead_source` Value |
+|--------------|------------------|----------------------------|
+| Google Ads | `gclid` parameter | "Google Ads" |
+| Facebook Ads | `fbclid` parameter | "Facebook Ads" |
+| UTM Tagged | `utm_source` + `utm_medium` | "Google Search", "Email Campaign" |
+| Organic Search | Referrer from google.com, bing.com, etc. | "Organic Search - Google" |
+| Social | Referrer from facebook.com, instagram.com, etc. | "Social - Facebook" |
+| Referral | Referrer from other domains | "Referral - theknot.com" |
+| Direct | No referrer present | "Direct" |
 
 ## 2. Form Submission Tracking
 
@@ -1118,5 +1186,5 @@ ROI: 2,900%
 
 ---
 
-*Last Updated: January 14, 2025*
-*Version: 2.1* - Added UTM tracking, lead attribution, and migrated to `generate_lead` event
+*Last Updated: January 16, 2026*
+*Version: 2.2* - Fixed attribution tracking to capture ALL traffic sources (organic search, social, referrals, direct) - not just UTM-tagged traffic. Added BigQuery integration for lead-level ROI tracking.
