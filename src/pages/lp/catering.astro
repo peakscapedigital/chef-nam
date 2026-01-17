@@ -491,6 +491,11 @@ document.addEventListener('DOMContentLoaded', () => {
             sessionStorage.setItem('sp_lead_phone', payload.phone || '');
             sessionStorage.setItem('sp_lead_first', payload.firstName || '');
             sessionStorage.setItem('sp_lead_last', payload.lastName || '');
+
+            // Detect test submissions to skip GA4 tracking
+            const isTest = [payload.firstName, payload.lastName]
+              .some(field => field && field.toLowerCase().includes('test'));
+            sessionStorage.setItem('sp_is_test', isTest ? 'true' : 'false');
           } catch (e) {}
 
           // Redirect to thank you

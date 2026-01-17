@@ -134,7 +134,7 @@ import { Icon } from 'astro-icon/components';
       var session = window.sessionStorage;
 
       // Read user-provided fields from sessionStorage (stored during form submission)
-      var email, phone, firstName, lastName, formType, formName;
+      var email, phone, firstName, lastName, formType, formName, isTest;
       try {
         email = session.getItem('sp_lead_email') || undefined;
         phone = session.getItem('sp_lead_phone') || undefined;
@@ -142,6 +142,7 @@ import { Icon } from 'astro-icon/components';
         lastName = session.getItem('sp_lead_last') || undefined;
         formType = session.getItem('sp_form_type') || 'start_planning';
         formName = session.getItem('sp_form_name') || 'Start Planning';
+        isTest = session.getItem('sp_is_test') === 'true';
       } catch (e) {}
 
       // Read attribution data from localStorage (stored on first visit)
@@ -160,38 +161,43 @@ import { Icon } from 'astro-icon/components';
         landingPage = storage.getItem('landing_page') || undefined;
       } catch (e) {}
 
-      // Push ALL data to dataLayer for GTM tags
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        // Event name - GTM trigger should listen for this
-        event: 'thank_you_loaded',
+      // Skip dataLayer push for test submissions (don't send to GA4/Google Ads)
+      if (isTest) {
+        console.log('Test submission detected - skipping GA4/Google Ads tracking');
+      } else {
+        // Push ALL data to dataLayer for GTM tags
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+          // Event name - GTM trigger should listen for this
+          event: 'thank_you_loaded',
 
-        // Form context
-        form_type: formType,
-        form_name: formName,
-        form_destination: '/thank-you',
+          // Form context
+          form_type: formType,
+          form_name: formName,
+          form_destination: '/thank-you',
 
-        // User data (for Enhanced Conversions)
-        email: email,
-        phone_number: phone,
-        first_name: firstName,
-        last_name: lastName,
+          // User data (for Enhanced Conversions)
+          email: email,
+          phone_number: phone,
+          first_name: firstName,
+          last_name: lastName,
 
-        // Attribution data (for GA4 event parameters)
-        utm_source: utmSource,
-        utm_medium: utmMedium,
-        utm_campaign: utmCampaign,
-        utm_term: utmTerm,
-        utm_content: utmContent,
-        gclid: gclid,
-        fbclid: fbclid,
-        lead_source: leadSource,
-        referrer: referrer,
-        landing_page: landingPage,
+          // Attribution data (for GA4 event parameters)
+          utm_source: utmSource,
+          utm_medium: utmMedium,
+          utm_campaign: utmCampaign,
+          utm_term: utmTerm,
+          utm_content: utmContent,
+          gclid: gclid,
+          fbclid: fbclid,
+          lead_source: leadSource,
+          referrer: referrer,
+          landing_page: landingPage,
 
-        // Page context
-        page_location: window.location.href
-      });
+          // Page context
+          page_location: window.location.href
+        });
+      }
 
       // Clear user PII from sessionStorage (so refresh doesn't resend)
       try {
@@ -201,6 +207,7 @@ import { Icon } from 'astro-icon/components';
         session.removeItem('sp_lead_last');
         session.removeItem('sp_form_type');
         session.removeItem('sp_form_name');
+        session.removeItem('sp_is_test');
       } catch (e) {}
     })();
   </script>

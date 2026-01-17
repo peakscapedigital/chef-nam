@@ -710,6 +710,11 @@ document.addEventListener('DOMContentLoaded', function() {
             sessionStorage.setItem('sp_lead_phone', formData.phone || '');
             sessionStorage.setItem('sp_lead_first', formData.firstName || '');
             sessionStorage.setItem('sp_lead_last', formData.lastName || '');
+
+            // Detect test submissions to skip GA4 tracking
+            const isTest = [formData.firstName, formData.lastName, formData.message]
+              .some(field => field && field.toLowerCase().includes('test'));
+            sessionStorage.setItem('sp_is_test', isTest ? 'true' : 'false');
           } catch (e) {
             console.warn('Session storage unavailable', e);
           }
