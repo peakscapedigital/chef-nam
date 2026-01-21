@@ -319,10 +319,23 @@ This is a **LIVE PRODUCTION SITE**. Always follow this protocol:
 - **CSS Classes**: Tailwind utility classes
 
 ### Image Optimization
-- Use ImageMagick for optimization: `magick convert input.jpg -quality 85 -resize 1920x1080^ -gravity center -extent 1920x1080 output.jpg`
-- Store optimized images in `/public/images/`
-- Use descriptive alt text for SEO
-- Set `loading="eager"` for above-fold, `loading="lazy"` for below-fold
+**Full standards documented in `/docs/image-optimization.md`**
+
+Key requirements:
+- **Hero images**: Must use responsive srcset with 3 sizes (640, 1024, 1920px)
+- **ServiceHero component**: Always use `responsiveImages` prop + preload link
+- **File naming**: `{name}-{width}.jpg` (e.g., `wedding-hero-640.jpg`)
+- **Target sizes**: Hero mobile <60KB, desktop <300KB
+- **No external images** for above-fold/LCP content (self-host instead)
+- Set `loading="eager"` + `fetchpriority="high"` for hero only
+- Set `loading="lazy"` for all below-fold images
+
+Quick optimization command:
+```bash
+magick {source}.jpg -quality 85 -resize 640x -strip {name}-640.jpg
+magick {source}.jpg -quality 85 -resize 1024x -strip {name}-1024.jpg
+magick {source}.jpg -quality 85 -resize 1920x -strip {name}-1920.jpg
+```
 
 ### Git Commit Format
 ```
