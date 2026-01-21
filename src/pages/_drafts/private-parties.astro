@@ -1,0 +1,613 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import ServiceHero from '../components/sections/ServiceHero.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout
+  title="Private Party Catering Ann Arbor | Birthdays, Showers & Rehearsal Dinners"
+  description="Hosting a party in Ann Arbor? Chef Nam offers catering for birthdays, baby showers, and private events. From taco bars to elegant grazing tables."
+>
+  <!-- Private Party Catering Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/private-parties#privatepartycateringservice",
+      "serviceType": "Private Party Catering",
+      "name": "Private Party & Event Catering",
+      "description": "Catering for private parties in Ann Arbor including birthdays, baby showers, bridal showers, rehearsal dinners, and family reunions. Drop-off and full-service options.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/private-parties"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Private Party Catering Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Birthday Party Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Baby Shower Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Rehearsal Dinner Catering"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Family Reunion Catering"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/private-parties"
+    }
+  </script>
+
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Private Parties",
+        "item": "https://chefnamcatering.com/private-parties"
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do you cater private parties at people's homes?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We offer both drop-off catering and full-service in-home catering. For drop-off, we deliver and set up the food. For full-service, our team handles setup, serving, and cleanup so you can enjoy your own party."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What's the minimum guest count for private party catering?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our minimum is typically 15 guests for private parties. For smaller gatherings, ask about our charcuterie boards and grazing tables which work well for intimate groups of 10-15."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you cater at venues like Cobblestone Farm or local parks?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely! We regularly cater at Cobblestone Farm, local parks, community centers, and private venues throughout Ann Arbor, Ypsilanti, and Saline. We're familiar with venue requirements and logistics."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer late-night snack service for parties?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! Our late-night snacks are perfect for keeping the party going. Popular options include sliders, popcorn chicken, and mini grilled cheese. Great for after-parties and evening celebrations."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What types of private parties do you cater?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We cater all types of private celebrations including milestone birthdays (30th, 40th, 50th, 80th), baby showers, bridal showers, rehearsal dinners, anniversary parties, family reunions, backyard BBQs, and holiday gatherings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you handle setup and cleanup for private parties?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "For full-service catering, yes—we handle everything from setup to serving to cleanup. For drop-off service, we deliver and arrange the food beautifully, and you handle the rest. Both options include all serving ware and utensils."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <main>
+    <!-- Hero Section -->
+    <ServiceHero
+      title="Catering for Life's"
+      subtitle="Best Moments in Ann Arbor"
+      description="From intimate dinner parties to backyard birthday bashes. We handle the menu so you can enjoy the party."
+      backgroundImage="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Friends celebrating at a beautifully catered private party"
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Private Parties" }
+      ]}
+    />
+
+    <!-- Occasions Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <p class="text-brand-amber font-medium mb-4">We Cater It All</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Perfect for Every Celebration
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            Whether you're toasting a milestone or gathering loved ones, we bring restaurant-quality food to your celebration.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+          <!-- Milestone Birthdays -->
+          <Card variant="elevated">
+            <div class="p-6 text-center">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:cake-variant" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-lg font-serif font-bold text-brand-indigo mb-3">Milestone Birthdays</h3>
+              <p class="text-brand-indigo/70 text-sm">
+                Make the 30th, 40th, 50th, or 80th unforgettable with our slider stations or fusion buffets.
+              </p>
+            </div>
+          </Card>
+
+          <!-- Showers -->
+          <Card variant="elevated">
+            <div class="p-6 text-center">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:baby" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-lg font-serif font-bold text-brand-indigo mb-3">Showers</h3>
+              <p class="text-brand-indigo/70 text-sm">
+                Light, fresh options like fruit skewers, tea sandwiches, and charcuterie—perfect for daytime grazing.
+              </p>
+            </div>
+          </Card>
+
+          <!-- Rehearsal Dinners -->
+          <Card variant="elevated">
+            <div class="p-6 text-center">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:heart-multiple" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-lg font-serif font-bold text-brand-indigo mb-3">Rehearsal Dinners</h3>
+              <p class="text-brand-indigo/70 text-sm">
+                Kick off the wedding weekend with a relaxed, delicious meal that brings families together.
+              </p>
+            </div>
+          </Card>
+
+          <!-- BBQs & Reunions -->
+          <Card variant="elevated">
+            <div class="p-6 text-center">
+              <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Icon name="mdi:account-group" class="w-8 h-8 text-brand-amber" />
+              </div>
+              <h3 class="text-lg font-serif font-bold text-brand-indigo mb-3">BBQs & Reunions</h3>
+              <p class="text-brand-indigo/70 text-sm">
+                Casual, high-quality comfort food like our ribs and wings that feeds a crowd.
+              </p>
+            </div>
+          </Card>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg">
+            Start Planning Your Party
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- In-Home Logistics Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <p class="text-brand-amber font-medium mb-4">In-Home Catering</p>
+            <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+              Restaurant Quality, Right in Your Home
+            </h2>
+            <p class="text-xl text-brand-indigo/70 mb-8">
+              Whether it's a drop-off for a casual hang or full-service staffing for a dinner party, we treat your home with respect. We set up, we serve, and we clean up.
+            </p>
+
+            <div class="space-y-6">
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:truck-fast" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-1">Drop-Off Service</h3>
+                  <p class="text-brand-indigo/70 text-sm">We deliver, set up the spread beautifully, and leave you to enjoy. Perfect for casual gatherings.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:account-tie" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-1">Full-Service Staffing</h3>
+                  <p class="text-brand-indigo/70 text-sm">Our team handles everything—setup, serving, replenishing, and cleanup. You're a guest at your own party.</p>
+                </div>
+              </div>
+
+              <div class="flex items-start">
+                <div class="w-12 h-12 bg-brand-amber/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
+                  <Icon name="mdi:home-heart" class="w-6 h-6 text-brand-amber" />
+                </div>
+                <div>
+                  <h3 class="font-semibold text-brand-indigo mb-1">Respect for Your Space</h3>
+                  <p class="text-brand-indigo/70 text-sm">We leave your kitchen cleaner than we found it. No mess, no stress, just great food and memories.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="relative">
+            <img
+              src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Beautifully set table for private dinner party"
+              class="rounded-xl shadow-xl"
+              loading="lazy"
+            />
+            <div class="absolute -bottom-6 -left-6 bg-white rounded-xl shadow-lg p-4 max-w-xs">
+              <p class="text-brand-indigo/80 text-sm italic">"They made my 50th birthday perfect. I actually got to enjoy my own party!"</p>
+              <p class="text-brand-amber font-medium text-sm mt-2">— Lisa M., Ann Arbor</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu by Vibe Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Match the Menu to the Mood
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            Every party has its own vibe. We'll help you find the perfect menu to match.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- The Mingle Party -->
+          <div class="bg-brand-cream/30 rounded-xl overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1626200419199-391ae4be7a41?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Elegant charcuterie and passed appetizers"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <Icon name="mdi:glass-cocktail" class="w-5 h-5 text-brand-amber" />
+                <span class="text-brand-amber font-medium text-sm">Cocktail Style</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">The "Mingle" Party</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Elegant grazing boards and passed appetizers. Perfect for cocktail hours, open houses, and parties where guests move around.
+              </p>
+              <p class="text-brand-indigo/60 text-sm mb-4">
+                <span class="font-medium">Best for:</span> Cocktail parties, engagement parties, milestone celebrations
+              </p>
+              <a href="/menus/charcuterie" class="inline-flex items-center text-brand-amber font-semibold hover:underline text-sm">
+                See our Grazing Tables
+                <Icon name="mdi:chevron-right" class="w-4 h-4 ml-1" />
+              </a>
+            </div>
+          </div>
+
+          <!-- The Feast -->
+          <div class="bg-brand-cream/30 rounded-xl overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1565299543923-37dd37887442?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Taco bar and slider station setup"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <Icon name="mdi:silverware-fork-knife" class="w-5 h-5 text-brand-amber" />
+                <span class="text-brand-amber font-medium text-sm">Casual Dinner</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">The "Feast"</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Interactive stations that let guests build their own perfect plate. Taco bars, slider stations, and build-your-own bowls.
+              </p>
+              <p class="text-brand-indigo/60 text-sm mb-4">
+                <span class="font-medium">Best for:</span> Birthday parties, reunions, backyard gatherings with kids and adults
+              </p>
+              <a href="/start-planning" class="inline-flex items-center text-brand-amber font-semibold hover:underline text-sm">
+                Plan Your Menu
+                <Icon name="mdi:chevron-right" class="w-4 h-4 ml-1" />
+              </a>
+            </div>
+          </div>
+
+          <!-- The Foodie Crowd -->
+          <div class="bg-brand-cream/30 rounded-xl overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1544025162-d76978a8f1af?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Asian fusion dishes and specialty items"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <Icon name="mdi:chef-hat" class="w-5 h-5 text-brand-amber" />
+                <span class="text-brand-amber font-medium text-sm">Elevated Experience</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">The "Foodie" Crowd</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Surprise your guests with Chef Nam's signature fusion flavors. Asian-inspired dishes that spark conversation.
+              </p>
+              <p class="text-brand-indigo/60 text-sm mb-4">
+                <span class="font-medium">Try:</span> Spicy Thai Dogs, Asian Fusion Ribs, Thai Basil Chicken
+              </p>
+              <a href="/start-planning" class="inline-flex items-center text-brand-amber font-semibold hover:underline text-sm">
+                Get Custom Menu
+                <Icon name="mdi:chevron-right" class="w-4 h-4 ml-1" />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Late Night Snacks Section -->
+    <section class="py-16 bg-brand-indigo text-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div>
+            <div class="flex items-center gap-3 mb-4">
+              <Icon name="mdi:clock" class="w-6 h-6 text-brand-amber" />
+              <p class="text-brand-amber font-medium">Late Night Snacks</p>
+            </div>
+            <h2 class="text-2xl md:text-3xl font-serif font-bold mb-4">Keep the Party Going</h2>
+            <p class="text-white/80 mb-6">
+              The best parties don't end at dinner. Surprise your guests with late-night deliveries of sliders, popcorn chicken, or mini grilled cheese. Perfect for after-parties and evening celebrations that go past midnight.
+            </p>
+            <a href="/start-planning" class="inline-flex items-center px-6 py-3 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+              Add Late Night Snacks
+            </a>
+          </div>
+          <div class="relative">
+            <img
+              src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+              alt="Late night sliders and snacks"
+              class="rounded-xl shadow-xl w-full h-auto"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Venue Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Hosting at a Venue?</h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            We regularly cater at popular Ann Arbor venues and know the logistics inside and out.
+          </p>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">
+          <div class="flex items-start gap-4 mb-6">
+            <Icon name="mdi:map-marker" class="w-8 h-8 text-brand-amber flex-shrink-0" />
+            <div>
+              <h3 class="font-semibold text-brand-indigo mb-2">Experienced with Local Venues</h3>
+              <p class="text-brand-indigo/70">
+                We frequently cater at Cobblestone Farm, local parks, community centers, and private venues throughout Ann Arbor, Ypsilanti, and Saline. We're familiar with venue requirements, kitchen access, and setup logistics.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
+            <div class="bg-brand-cream/30 rounded-lg p-3">
+              <p class="text-brand-indigo font-medium">Cobblestone Farm</p>
+            </div>
+            <div class="bg-brand-cream/30 rounded-lg p-3">
+              <p class="text-brand-indigo font-medium">Local Parks</p>
+            </div>
+            <div class="bg-brand-cream/30 rounded-lg p-3">
+              <p class="text-brand-indigo font-medium">Community Centers</p>
+            </div>
+            <div class="bg-brand-cream/30 rounded-lg p-3">
+              <p class="text-brand-indigo font-medium">Private Venues</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Frequently Asked Questions</h2>
+          <p class="text-xl text-brand-indigo/70">Everything you need to know about private party catering</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <!-- FAQ Item 1 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you cater at people's homes?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! We offer both drop-off catering and full-service in-home catering. For drop-off, we deliver and set up the food beautifully. For full-service, our team handles setup, serving, and cleanup so you can enjoy your own party.
+            </p>
+          </details>
+
+          <!-- FAQ Item 2 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>What's the minimum guest count?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Our minimum is typically 15 guests for private parties. For smaller gatherings, ask about our charcuterie boards and grazing tables which work well for intimate groups of 10-15.
+            </p>
+          </details>
+
+          <!-- FAQ Item 3 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Can you cater at venues like Cobblestone Farm?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Absolutely! We regularly cater at Cobblestone Farm, local parks, community centers, and private venues throughout Ann Arbor, Ypsilanti, and Saline. We're familiar with venue requirements and logistics.
+            </p>
+          </details>
+
+          <!-- FAQ Item 4 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you offer late-night snack service?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! Our late-night snacks are perfect for keeping the party going. Popular options include sliders, popcorn chicken, and mini grilled cheese. Great for after-parties and evening celebrations.
+            </p>
+          </details>
+
+          <!-- FAQ Item 5 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>What types of parties do you cater?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              We cater all types of private celebrations including milestone birthdays (30th, 40th, 50th, 80th), baby showers, bridal showers, rehearsal dinners, anniversary parties, family reunions, backyard BBQs, and holiday gatherings.
+            </p>
+          </details>
+
+          <!-- FAQ Item 6 -->
+          <details class="bg-brand-cream/20 rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you handle setup and cleanup?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              For full-service catering, yes—we handle everything from setup to serving to cleanup. For drop-off service, we deliver and arrange the food beautifully, and you handle the rest. Both options include all serving ware and utensils.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Let's Plan Something Special
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 max-w-2xl mx-auto">
+          You're hosting for someone you love. We'll make sure the food is one less thing to worry about—and something everyone remembers.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/start-planning" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Start Planning Your Party
+          </a>
+          <a href="tel:+17346239799" class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden">
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Call (734) 623-9799
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+        <p class="text-brand-indigo/60 text-sm mt-6">
+          Free consultation • Custom menus • No obligation quote
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Ensure FAQ items have consistent height and don't affect each other */
+  details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  details[open] summary {
+    margin-bottom: 0;
+  }
+</style>

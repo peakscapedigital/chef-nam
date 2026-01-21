@@ -1,0 +1,744 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import ServiceHero from '../components/sections/ServiceHero.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout
+  title="Graduation Catering Ann Arbor | Open House Food & Party Platters"
+  description="Planning a graduation open house in Ann Arbor? Chef Nam provides taco bars, slider stations, and party platters for U of M and high school grads. Book your date early!"
+>
+  <!-- Graduation Catering Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/graduation-catering#graduationcateringservice",
+      "serviceType": "Graduation Party Catering",
+      "name": "Graduation Open House Catering",
+      "description": "Full-service and drop-off catering for graduation open houses in Ann Arbor. Taco bars, slider stations, and party platters for U of M and high school graduations.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/graduation-catering"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Saline, Michigan" },
+        { "@type": "Place", "name": "Dexter, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Graduation Catering Packages",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Build-Your-Own Hot Dog Bar"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Slider & Wing Station"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Graduation Party Packages"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/graduation-catering"
+    }
+  </script>
+
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Graduation Catering",
+        "item": "https://chefnamcatering.com/graduation-catering"
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "How far in advance should I book graduation catering?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our weekends in May and June fill up fast—often 3-4 months in advance. We recommend booking as soon as you have your graduation date confirmed. Don't wait until spring break!"
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much food do I need for a graduation open house?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Open houses are tricky because guests come and go over 4+ hours. We help you calculate exactly how much food you need based on your guest count, timing, and menu selections—so you never run out but don't overspend on leftovers."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you provide chafing dishes and serving equipment?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We include wire racks, chafing dishes, sternos (fuel), and serving utensils so your hot food stays hot for the entire 4-hour window. Everything you need is included."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you accommodate outdoor graduation parties?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We're experienced with Michigan's unpredictable spring weather and can advise on setup for outdoor, tent, or indoor/outdoor hybrid events. We'll help you plan for any scenario."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do you offer school color decorations or themed items?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We can coordinate napkins, plates, and décor in school colors—whether that's Maize and Blue for U of M or your high school's colors. Just let us know when you book."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What areas do you serve for graduation catering?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We serve all of Washtenaw County including Ann Arbor, Ypsilanti, Saline, Dexter, and surrounding areas. Delivery and setup are included with most packages."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <main>
+    <!-- Hero Section -->
+    <ServiceHero
+      title="The Perfect Graduation"
+      subtitle="Open House in Ann Arbor"
+      description="Celebrate their achievement, not the kitchen. Full-service and drop-off catering for U of M and high school graduations."
+      backgroundImage="https://images.unsplash.com/photo-1530103862676-de8c9debad1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Graduation party celebration with catered food"
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Graduation Catering" }
+      ]}
+    />
+
+    <!-- Open House Concept Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <p class="text-brand-amber font-medium mb-4">Be a Guest at Your Own Party</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            The "Open House" format is unique.
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            People come and go for 4+ hours. You need food that stays fresh and keeps coming. We handle the logistics so you can enjoy the celebration.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <!-- Quantity Assurance -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:check-circle" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Quantity Assurance</h3>
+
+              <p class="text-brand-indigo/70">
+                We help you calculate exactly how much food you need so you never run out, but don't overspend on leftovers.
+              </p>
+            </div>
+          </Card>
+
+          <!-- The Grazing Menu -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:silverware-fork-knife" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">The "Grazing" Menu</h3>
+
+              <p class="text-brand-indigo/70">
+                Food designed to be eaten while standing, chatting, and hugging. Easy to handle with a drink in one hand.
+              </p>
+            </div>
+          </Card>
+
+          <!-- Weather-Proof Planning -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:home" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Weather-Proof Planning</h3>
+
+              <p class="text-brand-indigo/70">
+                Advice on setup for Michigan's unpredictable spring weather. Indoor, outdoor, or under a tent—we've got you covered.
+              </p>
+            </div>
+          </Card>
+        </div>
+      </div>
+    </section>
+
+    <!-- Food Stations Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Crowd-Pleasing Food Stations
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            Interactive stations that work for all ages—from toddlers to grandparents. Guests serve themselves while you enjoy the party.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- Hot Dog Bar -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1612392062422-ef19b42f74df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Build your own hot dog bar with toppings"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Interactive</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Fan Favorite</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">The Ultimate Hot Dog Bar</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Interactive, fun, and fully customizable. We provide the steamer, the buns, and a massive topping station.
+              </p>
+              <div class="bg-brand-amber/5 rounded-lg p-3 mb-4">
+                <p class="text-sm font-medium text-brand-indigo flex items-center gap-2">
+                  <Icon name="mdi:chili-hot" class="w-4 h-4 text-brand-amber" />
+                  <span>Try our signature "Spicy Thai Dog"</span>
+                </p>
+                <p class="text-xs text-brand-indigo/60 ml-6">Sweet chili glaze, pickled veggies, sriracha mayo</p>
+              </div>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  All-beef and turkey options
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Classic and gourmet toppings
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Steamer equipment included
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Slider & Wing Station -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1550547660-d9450f859349?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Sliders and wings station for graduation party"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Crowd Pleaser</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Mix & Match</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Sliders & Wings</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Choose 2 styles of wings and 2 sliders to keep everyone happy. Easy to handle while mingling.
+              </p>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Pulled pork, cheeseburger, crispy chicken sliders
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Buffalo, garlic parm, Asian fusion wings
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Boneless options for picky eaters
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Comfort Sides -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1543339494-b4cd4f7ba686?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Mac and cheese and comfort sides"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Comfort Food</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Stays Warm</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Hearty Sides That Stay Warm</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Round out the meal with comfort classics that keep guests satisfied throughout the party.
+              </p>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Creamy mac & cheese
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Loaded tater tot bar
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Fresh fruit kabobs
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charcuterie Cross-Sell -->
+    <section class="py-16 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-brand-cream/50 rounded-xl p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+          <div class="w-full md:w-48 h-32 md:h-auto rounded-lg overflow-hidden flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1626200419199-391ae4be7a41?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+              alt="Charcuterie board for graduation party"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+          <div class="flex-1">
+            <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">Start with the Perfect Graze</h3>
+            <p class="text-brand-indigo/70 mb-6">
+              Expect guests to arrive at different times? A charcuterie board is the perfect "welcome" piece that looks beautiful all day long and gives early arrivals something to nibble on.
+            </p>
+            <a href="/menus/charcuterie" class="inline-flex items-center text-brand-amber font-semibold hover:underline">
+              View Charcuterie & Grazing Tables
+              <Icon name="mdi:chevron-right" class="w-5 h-5 ml-2" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Packages Section -->
+    <section class="relative py-20 text-white overflow-hidden">
+      <!-- Background with Gradient -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1523050854058-8df90110c9f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Graduation celebration"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85))"></div>
+      </div>
+
+      <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6">Graduation Party Packages</h2>
+          <p class="text-xl text-white/90">Three options to match your crowd and budget. All include equipment, setup, and serving ware.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <!-- Open House Classic -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20">
+            <div class="text-center mb-6">
+              <p class="text-brand-amber font-medium text-sm mb-2">Budget Friendly</p>
+              <h3 class="text-2xl font-serif font-bold">The "Open House Classic"</h3>
+            </div>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Build-Your-Own Hot Dog Bar</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Creamy Mac & Cheese</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Fresh Fruit Kabobs</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>All equipment & serving ware</span>
+              </li>
+            </ul>
+            <p class="text-white/70 text-sm text-center">Fun, filling, and perfect for large crowds.</p>
+          </div>
+
+          <!-- Maize & Blue Favorite -->
+          <div class="bg-brand-amber/20 backdrop-blur-sm rounded-xl p-8 border-2 border-brand-amber relative">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+              <span class="bg-brand-amber text-white text-xs font-bold px-4 py-1 rounded-full">MOST POPULAR</span>
+            </div>
+            <div class="text-center mb-6">
+              <p class="text-brand-amber font-medium text-sm mb-2">Best Seller</p>
+              <h3 class="text-2xl font-serif font-bold">The "Maize & Blue" Favorite</h3>
+            </div>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Slider Trio (Cheeseburger, Pulled Pork, Crispy Chicken)</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Buffalo & Garlic Parm Wings</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Loaded Tater Tot Bar</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>All equipment & serving ware</span>
+              </li>
+            </ul>
+            <p class="text-white/70 text-sm text-center">Something for everyone, from kids to grandparents.</p>
+          </div>
+
+          <!-- Chef's Signature -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 border border-white/20">
+            <div class="text-center mb-6">
+              <p class="text-brand-amber font-medium text-sm mb-2">Premium</p>
+              <h3 class="text-2xl font-serif font-bold">The "Chef's Signature"</h3>
+            </div>
+            <ul class="space-y-3 mb-6">
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Asian Fusion Ribs</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Spicy Thai Dog Station</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Charcuterie Grazing Table</span>
+              </li>
+              <li class="flex items-start text-white/90">
+                <Icon name="mdi:check-circle" class="w-5 h-5 text-brand-amber mr-3 mt-0.5 flex-shrink-0" />
+                <span>Mini Grilled Cheese & Tomato Soup Shooters</span>
+              </li>
+            </ul>
+            <p class="text-white/70 text-sm text-center">Elevate your open house with signature fusion flavors.</p>
+          </div>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg">
+            Check Availability for May/June
+          </a>
+          <p class="text-white/60 text-sm mt-4">All packages customizable to your guest count and preferences</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- School Spirit Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Proudly Serving Graduates From...</h2>
+          <p class="text-xl text-brand-indigo/70">Local caterer, local pride. We know these schools and their traditions.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+          <!-- Universities -->
+          <div class="bg-brand-cream/30 rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:school" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-serif font-bold text-brand-indigo mb-4">Universities</h3>
+            <ul class="space-y-2 text-brand-indigo/70">
+              <li>University of Michigan</li>
+              <li>Eastern Michigan University</li>
+              <li>Washtenaw Community College</li>
+            </ul>
+          </div>
+
+          <!-- Ann Arbor Public Schools -->
+          <div class="bg-brand-cream/30 rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:trophy" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-serif font-bold text-brand-indigo mb-4">Ann Arbor Public Schools</h3>
+            <ul class="space-y-2 text-brand-indigo/70">
+              <li>Pioneer High School</li>
+              <li>Huron High School</li>
+              <li>Skyline High School</li>
+            </ul>
+          </div>
+
+          <!-- Area High Schools -->
+          <div class="bg-brand-cream/30 rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:star" class="w-8 h-8 text-brand-amber" />
+            </div>
+            <h3 class="font-serif font-bold text-brand-indigo mb-4">Area High Schools</h3>
+            <ul class="space-y-2 text-brand-indigo/70">
+              <li>Saline High School</li>
+              <li>Dexter High School</li>
+              <li>Ypsilanti High Schools</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- School Colors Callout -->
+        <div class="bg-brand-indigo/5 border border-brand-indigo/10 rounded-xl p-6 max-w-2xl mx-auto text-center">
+          <p class="text-brand-indigo/80">
+            <span class="font-semibold">School spirit included!</span> We can coordinate napkins, plates, and décor in school colors—whether that's Maize and Blue or your high school's colors.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Equipment & Logistics Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Everything's Included</h2>
+          <p class="text-xl text-brand-indigo/70">No hidden fees, no last-minute trips to the store.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <Icon name="mdi:food" class="w-10 h-10 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold text-brand-indigo mb-2">Chafing Dishes & Sternos</h3>
+            <p class="text-brand-indigo/70 text-sm">Wire racks, fuel, and everything to keep hot food hot for 4+ hours.</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <Icon name="mdi:silverware-fork-knife" class="w-10 h-10 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold text-brand-indigo mb-2">Serving Utensils</h3>
+            <p class="text-brand-indigo/70 text-sm">Tongs, ladles, serving spoons—all included with your order.</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <Icon name="mdi:check-circle" class="w-10 h-10 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold text-brand-indigo mb-2">Heavy-Duty Plates & Cutlery</h3>
+            <p class="text-brand-indigo/70 text-sm">Quality disposables that won't leak or bend. Grandma's dress stays clean.</p>
+          </div>
+
+          <div class="bg-white rounded-xl p-6 text-center shadow-sm">
+            <Icon name="mdi:truck-fast" class="w-10 h-10 text-brand-amber mx-auto mb-4" />
+            <h3 class="font-semibold text-brand-indigo mb-2">Delivery & Setup</h3>
+            <p class="text-brand-indigo/70 text-sm">We arrive early, set everything up, and make it look perfect.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Urgency Section -->
+    <section class="py-16 bg-brand-amber">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div class="flex items-center justify-center gap-3 mb-4">
+          <Icon name="mdi:calendar-clock" class="w-8 h-8 text-white" />
+          <h2 class="text-2xl md:text-3xl font-serif font-bold text-white">May & June Weekends Fill Up Fast</h2>
+        </div>
+        <p class="text-white/90 text-lg mb-6">
+          Our graduation season dates book 3-4 months in advance. Don't wait until spring break to start planning.
+        </p>
+        <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-white text-brand-amber font-semibold rounded-lg hover:bg-white/90 transition-colors">
+          Secure Your Date Today
+        </a>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Frequently Asked Questions</h2>
+          <p class="text-xl text-brand-indigo/70">Everything you need to know about graduation catering</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <!-- FAQ Item 1 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>How far in advance should I book?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Our weekends in May and June fill up fast—often 3-4 months in advance. We recommend booking as soon as you have your graduation date confirmed. Don't wait until spring break!
+            </p>
+          </details>
+
+          <!-- FAQ Item 2 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>How much food do I need for an open house?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Open houses are tricky because guests come and go over 4+ hours. We help you calculate exactly how much food you need based on your guest count, timing, and menu selections—so you never run out but don't overspend on leftovers.
+            </p>
+          </details>
+
+          <!-- FAQ Item 3 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you provide chafing dishes and equipment?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! We include wire racks, chafing dishes, sternos (fuel), and serving utensils so your hot food stays hot for the entire 4-hour window. Everything you need is included.
+            </p>
+          </details>
+
+          <!-- FAQ Item 4 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Can you do outdoor graduation parties?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Absolutely. We're experienced with Michigan's unpredictable spring weather and can advise on setup for outdoor, tent, or indoor/outdoor hybrid events. We'll help you plan for any scenario.
+            </p>
+          </details>
+
+          <!-- FAQ Item 5 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you offer school color decorations?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! We can coordinate napkins, plates, and décor in school colors—whether that's Maize and Blue for U of M or your high school's colors. Just let us know when you book.
+            </p>
+          </details>
+
+          <!-- FAQ Item 6 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>What areas do you serve?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              We serve all of Washtenaw County including Ann Arbor, Ypsilanti, Saline, Dexter, and surrounding areas. Delivery and setup are included with most packages.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Make Their Day Unforgettable
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 max-w-2xl mx-auto">
+          They worked hard for this moment. You deserve to enjoy it too. Let us handle the food while you celebrate with family and friends.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/start-planning" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Check Availability for May/June
+          </a>
+          <a href="tel:+17346239799" class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden">
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Call (734) 623-9799
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+        <p class="text-brand-indigo/60 text-sm mt-6">
+          Free consultation • Custom quotes within 24 hours • No obligation
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Ensure FAQ items have consistent height and don't affect each other */
+  details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  details[open] summary {
+    margin-bottom: 0;
+  }
+</style>

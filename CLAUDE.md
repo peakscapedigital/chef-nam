@@ -37,7 +37,128 @@ PUBLIC_SITE_URL=https://chefnamcatering.com
 
 # Email (Cloudflare Worker only)
 RESEND_API_KEY=[stored in Worker env]
+
+# Google Cloud / BigQuery
+BIGQUERY_PROJECT_ID=chef-nam-analytics
+BIGQUERY_CREDENTIALS=[base64 encoded service account JSON]
 ```
+
+## Google Cloud Integration
+
+### Project Configuration
+- **Google Cloud Project ID**: `chef-nam-analytics`
+- **Google Ads Account ID**: `3871181264`
+- **Authentication**: Service Account with JWT (no Node.js SDK, uses REST API)
+
+### BigQuery Datasets
+
+| Dataset | Purpose | Key Tables/Views |
+|---------|---------|------------------|
+| `leads` | Website form submissions | `website_leads` (partitioned by `submitted_at`, clustered on `status`, `gclid`) |
+| `google_ads_export` | Google Ads data transfer | 50+ views: `ads_CampaignStats_*`, `ads_AdStats_*`, `ads_ConversionStats_*`, etc. |
+| `searchconsole` | Google Search Console data | Search performance data |
+| `analytics_501458691` | GA4 BigQuery export | `events_*`, `pseudonymous_users_*` (daily tables) |
+
+### BigQuery Architecture
+The site uses a custom BigQuery REST API implementation (`src/lib/bigquery.ts`) that:
+- Creates JWTs signed with service account private key
+- Exchanges JWTs for access tokens via Google OAuth
+- Performs streaming inserts and DML queries directly via REST
+
+### Service Account Requirements
+The service account needs these roles:
+- `roles/bigquery.dataEditor` - Insert and update rows
+- `roles/bigquery.jobUser` - Run queries
+
+### Credentials Format
+The `BIGQUERY_CREDENTIALS` env var accepts either:
+1. **Raw JSON** - The full service account JSON file contents
+2. **Base64 encoded** - `base64 -i service-account.json` (preferred for env vars)
+
+### BigQuery Table Schema
+```sql
+-- leads.website_leads table structure
+CREATE TABLE leads.website_leads (
+  lead_id STRING NOT NULL,
+  first_name STRING,
+  last_name STRING,
+  email STRING,
+  email_hash STRING,        -- SHA256 for enhanced conversions
+  phone STRING,
+  phone_hash STRING,        -- SHA256 for enhanced conversions
+  preferred_contact STRING,
+  has_event BOOL,
+  event_type STRING,
+  event_date DATE,
+  event_time STRING,
+  guest_count STRING,
+  location STRING,
+  service_style STRING,
+  budget_range STRING,
+  dietary_requirements ARRAY<STRING>,
+  message STRING,
+  event_description STRING,
+  gclid STRING,             -- Google Ads click ID
+  ga_client_id STRING,      -- GA4 client ID
+  fbclid STRING,
+  utm_source STRING,
+  utm_medium STRING,
+  utm_campaign STRING,
+  utm_term STRING,
+  utm_content STRING,
+  lead_source STRING,
+  landing_page STRING,
+  referrer STRING,
+  submitted_from_url STRING,
+  status STRING,
+  notes STRING,
+  booking_value FLOAT64,
+  submitted_at TIMESTAMP,
+  status_updated_at TIMESTAMP,
+  notes_updated_at TIMESTAMP,
+  won_at TIMESTAMP,
+  form_source STRING,
+  is_spam BOOL,
+  is_test BOOL
+);
+```
+
+### Local Development with BigQuery
+```bash
+# Set up local environment variables
+export BIGQUERY_PROJECT_ID=chef-nam-analytics
+export BIGQUERY_CREDENTIALS=$(cat /path/to/service-account.json | base64)
+
+# Or use gcloud CLI for testing queries
+gcloud config set project chef-nam-analytics
+bq query --use_legacy_sql=false 'SELECT * FROM leads.website_leads LIMIT 10'
+```
+
+### Common BigQuery Commands
+```bash
+# List datasets
+bq ls chef-nam-analytics:
+
+# List tables in leads dataset
+bq ls chef-nam-analytics:leads
+
+# Query recent leads
+bq query --use_legacy_sql=false \
+  'SELECT lead_id, first_name, last_name, email, status, submitted_at
+   FROM `chef-nam-analytics.leads.website_leads`
+   ORDER BY submitted_at DESC LIMIT 20'
+
+# Export leads to CSV
+bq extract --destination_format=CSV \
+  chef-nam-analytics:leads.website_leads \
+  gs://your-bucket/leads-export.csv
+```
+
+### Integration with Marketing CRM (Phase 2)
+The PHASE-2-PLAN.md outlines future integration:
+1. Form submissions will also write to Supabase (marketing-crm)
+2. Nightly sync from Supabase → BigQuery for attribution
+3. BigQuery enables joining lead status with GA4/Ads data
 
 ## Deployment Workflow
 
@@ -312,6 +433,6 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 
 ---
 
-**Last Updated**: 2025-10-21
+**Last Updated**: 2026-01-17
 **Project Status**: LIVE in production with auto-deployment
-**Current Phase**: Ongoing content expansion and optimization
+**Current Phase**: Ongoing content expansion and optimization; Phase 2 CRM integration planned

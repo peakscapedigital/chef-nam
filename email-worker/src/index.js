@@ -154,7 +154,7 @@ export default {
         {
           // Internal notification
           from: 'forms@chefnamcatering.com',
-          to: ['nam@chefnamcatering.com', 'dspjson@gmail.com', 'kyleklobucar@gmail.com'],
+          to: ['nam@chefnamcatering.com', 'dspjson@gmail.com'],
           subject: subject,
           html: emailHtml,
         },

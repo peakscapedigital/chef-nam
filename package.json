@@ -19,6 +19,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^12.6.4",
     "@astrojs/sitemap": "^3.5.0",
+    "@supabase/supabase-js": "^2.47.14",
     "@iconify-json/mdi": "^1.2.3",
     "@sanity/client": "^7.14.0",
     "@sanity/image-url": "^2.0.3",

@@ -1,0 +1,651 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Card from '../components/ui/Card.astro';
+import ServiceHero from '../components/sections/ServiceHero.astro';
+import { Icon } from 'astro-icon/components';
+---
+
+<Layout
+  title="Office Catering Ann Arbor | Lunch Delivery & Box Lunches | Chef Nam"
+  description="Reliable office catering in Ann Arbor. From individual box lunches to hot taco bars, we deliver fresh meals for your team meetings. Setup included. Order online today."
+>
+  <!-- Office Catering Service Structured Data -->
+  <script type="application/ld+json" slot="head">
+    {
+      "@context": "https://schema.org",
+      "@type": "Service",
+      "@id": "https://chefnamcatering.com/office-catering#officecateringservice",
+      "serviceType": "Office Catering",
+      "name": "Office Catering & Team Lunch Delivery",
+      "description": "Reliable office catering in Ann Arbor. From individual box lunches to hot taco bars, we deliver fresh meals for your team meetings. Setup included.",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://chefnamcatering.com/office-catering"
+      },
+      "provider": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "brand": {
+        "@type": "Organization",
+        "@id": "https://chefnamcatering.com/#business",
+        "name": "Chef Nam Catering"
+      },
+      "areaServed": [
+        { "@type": "Place", "name": "Ann Arbor, Michigan" },
+        { "@type": "Place", "name": "Ypsilanti, Michigan" },
+        { "@type": "Place", "name": "Research Park, Michigan" },
+        { "@type": "Place", "name": "North Campus, Michigan" },
+        { "@type": "Place", "name": "Washtenaw County, Michigan" }
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Office Catering Services",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Box Lunch Delivery"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Sandwich & Wrap Platters"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Hot Buffet Bars"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Medical Office Catering"
+            }
+          }
+        ]
+      },
+      "url": "https://chefnamcatering.com/office-catering"
+    }
+  </script>
+
+  <!-- Breadcrumb Navigation -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://chefnamcatering.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Office Catering",
+        "item": "https://chefnamcatering.com/office-catering"
+      }
+    ]
+  }
+  </script>
+
+  <!-- FAQ Structured Data -->
+  <script type="application/ld+json" slot="head">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Do you offer corporate accounts or billing?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes! We offer corporate accounts with monthly invoicing for regular clients. Contact us to set up a corporate account for your business."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can you deliver to hospitals and medical centers?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Absolutely. We regularly deliver to Michigan Medicine, St. Joseph Mercy, and medical offices throughout Ann Arbor and Ypsilanti. We're familiar with hospital delivery protocols and can coordinate with your front desk or reception."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Is setup included with office catering orders?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, setup is always included. We unbox everything, arrange the spread, and provide eco-friendly utensils and napkins so you don't have to lift a finger."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What is the minimum order for office catering?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Our minimum order is 10 people for most office catering options. For smaller groups, ask about our individual box lunch delivery."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "How much notice do you need for office catering orders?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We prefer 24-48 hours notice for most orders. However, call us for last-minute needs—we can often accommodate same-day requests depending on availability."
+        }
+      }
+    ]
+  }
+  </script>
+
+  <main>
+    <!-- Hero Section -->
+    <ServiceHero
+      title="Reliable Office Catering"
+      subtitle="& Team Lunches in Ann Arbor"
+      description="Fresh box lunches, sandwich platters, and hot buffets delivered directly to your office. Setup included."
+      backgroundImage="https://images.unsplash.com/photo-1567521464027-f127ff144326?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundAlt="Professional office lunch catering setup on conference table"
+      breadcrumbs={[
+        { label: "Home", href: "/" },
+        { label: "Office Catering" }
+      ]}
+    />
+
+    <!-- Problem Solver Section (Why Us?) -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <p class="text-brand-amber font-medium mb-4">Why Choose Chef Nam</p>
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Feeding the team shouldn't be your most stressful task of the day.
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            We handle everything so you can focus on your meeting, not the menu.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+          <!-- Punctuality Guarantee -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:clock-check" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Punctuality Guarantee</h3>
+
+              <p class="text-brand-indigo/70">
+                We know your meeting starts at 12:00. We arrive by 11:45. Your food will be ready when your team walks in.
+              </p>
+            </div>
+          </Card>
+
+          <!-- Dietary Inclusion -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:leaf" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">Dietary Inclusion</h3>
+
+              <p class="text-brand-indigo/70">
+                Gluten-free, vegan, and dairy-free options are clearly marked and packaged separately. No one goes hungry.
+              </p>
+            </div>
+          </Card>
+
+          <!-- All-Inclusive Pricing -->
+          <Card variant="elevated">
+            <div class="p-8 text-center">
+              <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Icon name="mdi:clipboard-text" class="w-10 h-10 text-brand-amber" />
+              </div>
+
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">All-Inclusive Pricing</h3>
+
+              <p class="text-brand-indigo/70">
+                Delivery, setup, eco-friendly utensils, and napkins are always included. No hidden fees or surprise charges.
+              </p>
+            </div>
+          </Card>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg">
+            Request a Quote
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Menu Formats Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+            Choose Your Format
+          </h2>
+          <p class="text-xl text-brand-indigo/70 max-w-3xl mx-auto">
+            Different meetings call for different setups. We have the right option for how your team eats.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+          <!-- Boxed Lunches -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Individual boxed lunch with fresh ingredients"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Grab-and-Go</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Sanitary</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Boxed Lunches</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Perfect for working meetings where speed matters. Individually packaged and labeled with names and dietary info.
+              </p>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Sandwich, salad, or entrée boxes
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Individual labeling available
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Easy cleanup, no shared serving
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Sandwich & Wrap Platters -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1509722747041-616f39b57569?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Sandwich and wrap platter with variety of options"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Collaborative</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Variety</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Sandwich & Wrap Platters</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Mix and match our most popular options. Great for casual team gatherings where people can help themselves.
+              </p>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Assorted sandwich varieties
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Vegetarian & vegan options included
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Served with sides and chips
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Hot Buffet Bars -->
+          <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="h-48 overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1565299543923-37dd37887442?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+                alt="Hot taco bar buffet setup with fresh toppings"
+                class="w-full h-full object-cover"
+                loading="lazy"
+              />
+            </div>
+            <div class="p-6">
+              <div class="flex items-center gap-2 mb-3">
+                <span class="px-3 py-1 bg-brand-amber/10 text-brand-amber text-xs font-medium rounded-full">Comfort Food</span>
+                <span class="px-3 py-1 bg-brand-indigo/10 text-brand-indigo text-xs font-medium rounded-full">Build-Your-Own</span>
+              </div>
+              <h3 class="text-xl font-serif font-bold text-brand-indigo mb-3">Hot Buffet Bars</h3>
+              <p class="text-brand-indigo/70 mb-4">
+                Build-your-own Taco Bars, Pasta Stations, or Thai Bowls. Keeps food warm and morale high.
+              </p>
+              <ul class="space-y-2 text-brand-indigo/80 text-sm">
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Taco bars, pasta stations, rice bowls
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Warming equipment included
+                </li>
+                <li class="flex items-center">
+                  <span class="w-2 h-2 bg-brand-amber rounded-full mr-3"></span>
+                  Full toppings bar setup
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ordering Logistics Section -->
+    <section class="relative py-20 text-white overflow-hidden">
+      <!-- Background with Gradient -->
+      <div class="absolute inset-0 z-0">
+        <img
+          src="https://images.unsplash.com/photo-1497366216548-37526070297c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+          alt="Modern office building"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+        <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.95), rgba(44, 62, 80, 0.85))"></div>
+      </div>
+
+      <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-serif font-bold mb-6">How Ordering Works</h2>
+          <p class="text-xl text-white/90">Simple logistics, no surprises</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+
+          <!-- Delivery Area -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:map-marker" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="font-serif font-semibold text-xl mb-3">Delivery Area</h3>
+            <p class="text-white/80 text-sm">
+              Serving Ann Arbor, Ypsilanti, Research Park, North Campus, Medical Campus, and surrounding business districts.
+            </p>
+          </div>
+
+          <!-- Order Minimums -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:account-group" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="font-serif font-semibold text-xl mb-3">Order Minimum</h3>
+            <p class="text-white/80 text-sm">
+              Minimum order of 10 people for most options. Smaller groups? Ask about individual box lunch delivery.
+            </p>
+          </div>
+
+          <!-- Lead Time -->
+          <div class="bg-white/10 backdrop-blur-sm rounded-xl p-8 text-center">
+            <div class="w-16 h-16 bg-brand-amber rounded-full flex items-center justify-center mx-auto mb-4">
+              <Icon name="mdi:calendar-clock" class="w-8 h-8 text-white" />
+            </div>
+            <h3 class="font-serif font-semibold text-xl mb-3">Lead Time</h3>
+            <p class="text-white/80 text-sm">
+              24-48 hours advance notice preferred. Call us for last-minute needs—we can often make it work.
+            </p>
+          </div>
+        </div>
+
+        <!-- Medical Office Callout -->
+        <div class="bg-brand-amber/20 border border-brand-amber/30 rounded-xl p-6 max-w-3xl mx-auto text-center">
+          <div class="flex items-center justify-center gap-3 mb-3">
+            <Icon name="mdi:office-building" class="w-6 h-6 text-brand-amber" />
+            <h4 class="font-semibold text-lg">Medical Office Friendly</h4>
+          </div>
+          <p class="text-white/90 text-sm">
+            Pharma reps and sales teams: We regularly deliver to Michigan Medicine, St. Joseph Mercy, and clinics throughout the area. We understand hospital delivery protocols and compliance requirements.
+          </p>
+        </div>
+
+        <div class="text-center mt-12">
+          <a href="/start-planning" class="inline-flex items-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors shadow-lg">
+            Request a Quote
+          </a>
+          <p class="text-white/60 text-sm mt-4">Or call <a href="tel:+17346239799" class="text-brand-amber hover:underline">(734) 623-9799</a> for same-day requests</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Social Proof Section -->
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Trusted by Ann Arbor Offices</h2>
+          <p class="text-xl text-brand-indigo/70">From tech startups to established institutions</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+
+          <!-- Testimonial 1 -->
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-brand-amber mb-4 flex space-x-1">
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+            </div>
+            <p class="text-brand-indigo/80 italic text-lg mb-6">
+              "Chef Nam is my go-to for board meetings. They are never late, the food is consistently good, and the dietary labels mean I don't have to field questions from everyone. They make my job easier."
+            </p>
+            <p class="text-brand-indigo font-semibold">- Sarah M.</p>
+            <p class="text-brand-indigo/60 text-sm">Office Manager, Downtown Ann Arbor</p>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-brand-amber mb-4 flex space-x-1">
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+              <Icon name="mdi:star" class="w-5 h-5" />
+            </div>
+            <p class="text-brand-indigo/80 italic text-lg mb-6">
+              "We order from Chef Nam every week for our team lunch. The Thai fusion options are a nice change from the usual sandwich platters, and the team loves the taco bar Fridays."
+            </p>
+            <p class="text-brand-indigo font-semibold">- Michael T.</p>
+            <p class="text-brand-indigo/60 text-sm">HR Director, Tech Company</p>
+          </div>
+        </div>
+
+        <!-- Client Types -->
+        <div class="text-center">
+          <p class="text-brand-indigo/60 text-sm mb-6">Serving offices across Ann Arbor including:</p>
+          <div class="flex flex-wrap justify-center gap-8 text-brand-indigo/50 text-sm">
+            <span>Tech Companies</span>
+            <span>•</span>
+            <span>Law Firms</span>
+            <span>•</span>
+            <span>Medical Offices</span>
+            <span>•</span>
+            <span>Research Facilities</span>
+            <span>•</span>
+            <span>Financial Services</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Cross-Sell Section -->
+    <section class="py-16 bg-brand-cream/50">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-xl shadow-lg p-8 md:p-12 flex flex-col md:flex-row items-center gap-8">
+          <div class="flex-1">
+            <h3 class="text-2xl font-serif font-bold text-brand-indigo mb-4">Planning Something Bigger Than Lunch?</h3>
+            <p class="text-brand-indigo/70 mb-6">
+              For retirement parties, holiday galas, client appreciation events, or full-service corporate gatherings, check out our full-scale event catering.
+            </p>
+            <a href="/services/corporate" class="inline-flex items-center text-brand-amber font-semibold hover:underline">
+              View Corporate Events
+              <Icon name="mdi:chevron-right" class="w-5 h-5 ml-2" />
+            </a>
+          </div>
+          <div class="w-full md:w-48 h-32 md:h-auto rounded-lg overflow-hidden flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+              alt="Corporate event catering setup"
+              class="w-full h-full object-cover"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-20 bg-brand-cream/30">
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-12">
+          <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Frequently Asked Questions</h2>
+          <p class="text-xl text-brand-indigo/70">Quick answers to common questions</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+          <!-- FAQ Item 1 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you offer corporate accounts or billing?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! We offer corporate accounts with monthly invoicing for regular clients. This makes recurring orders simple and keeps your accounting team happy. Contact us to set up a corporate account for your business.
+            </p>
+          </details>
+
+          <!-- FAQ Item 2 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Can you deliver to hospitals and medical centers?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Absolutely. We regularly deliver to Michigan Medicine, St. Joseph Mercy, and medical offices throughout Ann Arbor and Ypsilanti. We're familiar with hospital delivery protocols and can coordinate with your front desk or reception to ensure smooth delivery.
+            </p>
+          </details>
+
+          <!-- FAQ Item 3 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Is setup included with office catering orders?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes, setup is always included at no extra charge. We unbox everything, arrange the spread attractively, and provide eco-friendly utensils and napkins. You don't have to lift a finger.
+            </p>
+          </details>
+
+          <!-- FAQ Item 4 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>What is the minimum order for office catering?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Our minimum order is 10 people for most office catering options. For smaller groups, ask about our individual box lunch delivery which can accommodate groups as small as 5.
+            </p>
+          </details>
+
+          <!-- FAQ Item 5 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>How much notice do you need for orders?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              We prefer 24-48 hours notice for most orders. However, call us for last-minute needs—we can often accommodate same-day requests depending on our schedule and availability.
+            </p>
+          </details>
+
+          <!-- FAQ Item 6 -->
+          <details class="bg-white rounded-xl p-6 shadow-sm group">
+            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
+              <span>Do you handle dietary restrictions?</span>
+              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+              </svg>
+            </summary>
+            <p class="text-brand-indigo/80 mt-4">
+              Yes! Gluten-free, vegan, vegetarian, and dairy-free options are available. All dietary items are clearly labeled and packaged separately so there's no confusion at mealtime.
+            </p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- Final CTA Section -->
+    <section class="py-20 bg-brand-cream">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-serif font-bold text-brand-indigo mb-6">
+          Ready to Make Team Lunch Easy?
+        </h2>
+        <p class="text-xl text-brand-indigo/70 mb-8 max-w-2xl mx-auto">
+          Stop stressing about feeding your team. Get a custom quote for your office catering needs in minutes.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/start-planning" class="inline-flex items-center justify-center px-8 py-4 bg-brand-amber text-white font-semibold rounded-lg hover:bg-brand-amber/90 transition-colors">
+            Request a Quote
+          </a>
+          <a href="tel:+17346239799" class="inline-flex items-center justify-center px-8 py-4 border-2 border-brand-indigo text-brand-indigo font-semibold rounded-lg group relative overflow-hidden">
+            <span class="relative z-10 transition-colors duration-300 group-hover:text-white">
+              Call (734) 623-9799
+            </span>
+            <div class="absolute inset-0 bg-brand-indigo transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+          </a>
+        </div>
+        <p class="text-brand-indigo/60 text-sm mt-6">
+          Quick response • Free consultation • No obligation
+        </p>
+      </div>
+    </section>
+
+  </main>
+</Layout>
+
+<style>
+  /* Ensure FAQ items have consistent height and don't affect each other */
+  details {
+    display: flex;
+    flex-direction: column;
+  }
+
+  details[open] summary {
+    margin-bottom: 0;
+  }
+</style>
