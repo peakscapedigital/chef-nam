@@ -14,17 +14,19 @@ export interface Props {
 const {
   headline,
   subheading,
-  backgroundImage = "/images/hero/hero-catering-800.jpg", // Default to mobile-first image
+  backgroundImage = "/images/hero/hero-catering-1920.jpg",
   height = 'full'
 } = Astro.props;
 
-// Create responsive srcset for local hero images - prioritize smaller sizes
+// Create responsive srcset for local hero images
 const heroSrcset = [
+  "/images/hero/hero-catering-640.jpg 640w",
   "/images/hero/hero-catering-800.jpg 800w",
-  "/images/hero/hero-catering-1200.jpg 1200w"
+  "/images/hero/hero-catering-1200.jpg 1200w",
+  "/images/hero/hero-catering-1920.jpg 1920w"
 ].join(", ");
 
-const heroSizes = "(max-width: 768px) 800px, 1200px";
+const heroSizes = "100vw";
 
 // Determine height classes based on prop
 const heightClasses = height === 'compact' 

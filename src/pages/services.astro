@@ -89,18 +89,34 @@ import ServiceHero from '../components/sections/ServiceHero.astro';
   }
   </script>
 
-<Layout 
+<Layout
   title="Catering Services Ann Arbor | Weddings, Corporate & Social Events"
   description="Full-service catering for all occasions in Ann Arbor, Michigan. Weddings, corporate events, social gatherings with authentic cuisine and professional service."
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero/services-hero-640.jpg"
+    imagesrcset="/images/hero/services-hero-640.jpg 640w, /images/hero/services-hero-1024.jpg 1024w, /images/hero/services-hero-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <main>
     <!-- Hero Section -->
     <ServiceHero
       title="Catering Services"
       subtitle="For Every Occasion"
       description="From intimate gatherings to grand celebrations, we bring authentic Thai fusion flavors and professional service to every event throughout Ann Arbor and Michigan."
-      backgroundImage="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundImage="/images/hero/services-hero-1920.jpg"
       backgroundAlt="Beautiful catering spread with various elegant dishes and professional presentation"
+      responsiveImages={{
+        src640: "/images/hero/services-hero-640.jpg",
+        src1024: "/images/hero/services-hero-1024.jpg",
+        src1920: "/images/hero/services-hero-1920.jpg"
+      }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Services" }

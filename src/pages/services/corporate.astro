@@ -5,10 +5,21 @@ import ServiceHero from '../../components/sections/ServiceHero.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
-<Layout 
+<Layout
   title="Corporate & Office Catering in Ann Arbor | Chef Nam Catering"
   description="Professional corporate, business, and office catering in Ann Arbor, Michigan. Executive lunches, team lunches, holiday parties, conferences, and meetings with reliable service and transparent pricing."
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero/corporate-hero-640.jpg"
+    imagesrcset="/images/hero/corporate-hero-640.jpg 640w, /images/hero/corporate-hero-1024.jpg 1024w, /images/hero/corporate-hero-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <!-- Corporate Service Structured Data -->
   <script type="application/ld+json" slot="head">
     {
@@ -111,8 +122,13 @@ import { Icon } from 'astro-icon/components';
       title="Corporate & Office Catering"
       subtitle="That Delivers"
       description="Reliable, professional catering for Ann Arbor businesses. From executive lunches to company celebrations, we make your corporate events seamless and memorable."
-      backgroundImage="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80"
+      backgroundImage="/images/hero/corporate-hero-1920.jpg"
       backgroundAlt="Professional corporate catering buffet setup"
+      responsiveImages={{
+        src640: "/images/hero/corporate-hero-640.jpg",
+        src1024: "/images/hero/corporate-hero-1024.jpg",
+        src1920: "/images/hero/corporate-hero-1920.jpg"
+      }}
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Services", href: "/services" },

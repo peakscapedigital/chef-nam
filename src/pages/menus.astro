@@ -4,10 +4,21 @@ import Breadcrumb from '../components/ui/Breadcrumb.astro';
 import { Icon } from 'astro-icon/components';
 ---
 
-<Layout 
+<Layout
   title="Explore Catering Menus & Pricing Options | Chef Nam Catering"
   description="View sample catering menus and learn about our fully customizable dishes and dietary options tailored to your budget and needs."
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero/menus-hero-640.jpg"
+    imagesrcset="/images/hero/menus-hero-640.jpg 640w, /images/hero/menus-hero-1024.jpg 1024w, /images/hero/menus-hero-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <!-- Menus Page Structured Data -->
   <script type="application/ld+json" slot="head">
   {
@@ -78,10 +89,15 @@ import { Icon } from 'astro-icon/components';
     <section class="pt-32 pb-20 bg-brand-indigo relative overflow-hidden">
       <!-- Background Image -->
       <div class="absolute inset-0 z-0">
-        <img 
-          src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" 
+        <img
+          src="/images/hero/menus-hero-1920.jpg"
+          srcset="/images/hero/menus-hero-640.jpg 640w, /images/hero/menus-hero-1024.jpg 1024w, /images/hero/menus-hero-1920.jpg 1920w"
+          sizes="100vw"
           alt="Colorful array of fresh ingredients and prepared dishes showcasing menu variety"
           class="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <!-- Clean overlay for text readability with brand indigo tint -->
         <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>

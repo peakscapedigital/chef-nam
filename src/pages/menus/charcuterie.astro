@@ -8,6 +8,17 @@ import { Icon } from 'astro-icon/components';
   title="Charcuterie Board Catering Ann Arbor | Artisan Grazing Tables | Chef Nam"
   description="Premium charcuterie board catering in Ann Arbor. Artisan cheese boards and grazing tables perfect for weddings, corporate events, and parties. Custom designs available."
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/charcuterie-hero-640.jpg"
+    imagesrcset="/images/charcuterie-hero-640.jpg 640w, /images/charcuterie-hero-1024.jpg 1024w, /images/charcuterie-hero-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <!-- Charcuterie Page Structured Data -->
   <script type="application/ld+json" slot="head">
   {
@@ -145,9 +156,14 @@ import { Icon } from 'astro-icon/components';
       <!-- Background Image -->
       <div class="absolute inset-0 z-0">
         <img
-          src="/images/charcuterie.jpg"
+          src="/images/charcuterie-hero-1920.jpg"
+          srcset="/images/charcuterie-hero-640.jpg 640w, /images/charcuterie-hero-1024.jpg 1024w, /images/charcuterie-hero-1920.jpg 1920w"
+          sizes="100vw"
           alt="Artisan charcuterie board with premium cheeses, cured meats, and seasonal fruits"
           class="w-full h-full object-cover"
+          loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <!-- Clean overlay for text readability with brand indigo tint -->
         <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.75), rgba(44, 62, 80, 0.6))"></div>

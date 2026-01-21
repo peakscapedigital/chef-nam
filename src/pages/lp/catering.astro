@@ -7,16 +7,31 @@ import LandingPageLayout from '../../layouts/LandingPageLayout.astro';
   description="Award-winning Thai fusion catering in Ann Arbor. From intimate dinners to 200+ guest weddings. Custom menus, professional service, flavors your guests will remember."
   noindex={true}
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero/hero-catering-640.jpg"
+    imagesrcset="/images/hero/hero-catering-640.jpg 640w, /images/hero/hero-catering-800.jpg 800w, /images/hero/hero-catering-1200.jpg 1200w, /images/hero/hero-catering-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <main>
     <!-- Hero Section -->
     <section class="relative min-h-[90vh] flex items-center bg-brand-indigo overflow-hidden">
       <!-- Background image with overlay -->
       <div class="absolute inset-0">
         <img
-          src="/images/hero/hero-catering-800.jpg"
+          src="/images/hero/hero-catering-1920.jpg"
+          srcset="/images/hero/hero-catering-640.jpg 640w, /images/hero/hero-catering-800.jpg 800w, /images/hero/hero-catering-1200.jpg 1200w, /images/hero/hero-catering-1920.jpg 1920w"
+          sizes="100vw"
           alt="Beautifully plated catering dishes"
           class="w-full h-full object-cover"
           loading="eager"
+          fetchpriority="high"
+          decoding="async"
         />
         <div class="absolute inset-0 bg-gradient-to-r from-brand-indigo/95 via-brand-indigo/85 to-brand-indigo/70"></div>
       </div>

@@ -49,16 +49,16 @@ const heroProps = homepage?.hero ? {
   subheading: homepage.hero.subheading,
   primaryCTA: homepage.hero.primaryCTA || 'Start Planning',
   secondaryCTA: homepage.hero.secondaryCTA || 'View Services',
-  backgroundImage: homepage.hero.backgroundImage ? 
-    urlForOptimized(homepage.hero.backgroundImage.asset, 1920, 1080).url() : 
-    '/images/hero/hero-catering-800.jpg' // Fallback to mobile-optimized image
+  backgroundImage: homepage.hero.backgroundImage ?
+    urlForOptimized(homepage.hero.backgroundImage.asset, 1920, 1080).url() :
+    '/images/hero/hero-catering-1920.jpg'
 } : {
   // Static fallbacks for when Sanity is unavailable
   headline: "Catering With Care\nFor Moments That Matter",
   subheading: "Elevating your special moments with exquisite cuisine and impeccable service throughout Ann Arbor and Michigan.",
   primaryCTA: 'Start Planning',
   secondaryCTA: 'View Services',
-  backgroundImage: '/images/hero/hero-catering-800.jpg'
+  backgroundImage: '/images/hero/hero-catering-1920.jpg'
 };
 
 // Prepare about props from Sanity
@@ -72,10 +72,21 @@ const aboutProps = homepage?.about ? {
 } : {};
 ---
 
-<Layout 
+<Layout
   title="Chef Nam Catering | Ann Arbor Weddings, Corporate & Social"
   description="Ann Arbor's trusted catering team for weddings, corporate events, and social gatherings. Chef Nam blends flavor, style, and exceptional service for every occasion."
 >
+  <!-- Preload hero image for faster LCP -->
+  <link
+    rel="preload"
+    as="image"
+    href="/images/hero/hero-catering-640.jpg"
+    imagesrcset="/images/hero/hero-catering-640.jpg 640w, /images/hero/hero-catering-800.jpg 800w, /images/hero/hero-catering-1200.jpg 1200w, /images/hero/hero-catering-1920.jpg 1920w"
+    imagesizes="100vw"
+    fetchpriority="high"
+    slot="head"
+  />
+
   <!-- Main Business Structured Data -->
   <script type="application/ld+json" slot="head">
     {
