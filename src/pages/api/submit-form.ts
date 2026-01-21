@@ -7,6 +7,10 @@ import {
   createContact,
   updateContactForNewLead
 } from '../../lib/bigquery';
+import {
+  createFirestoreLead,
+  createFirestoreLeadData
+} from '../../lib/firestore';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -340,6 +344,36 @@ export const POST: APIRoute = async ({ request, locals }) => {
           contactId,
           isReturning: isReturningCustomer
         });
+
+        // ========================================
+        // 4. INSERT TO FIRESTORE (CRM Lite)
+        // ========================================
+        // Firestore stores minimal fields for mobile CRM operations
+        // BigQuery remains source of truth for analytics/attribution
+        const firestoreCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+
+        if (firestoreCredentials) {
+          try {
+            const firestoreLeadData = createFirestoreLeadData(data, leadId);
+            const firestoreResult = await createFirestoreLead(
+              firestoreLeadData,
+              projectId, // Same GCP project
+              firestoreCredentials
+            );
+
+            if (firestoreResult.success) {
+              console.log('✅ Lead inserted to Firestore (CRM):', leadId);
+            } else {
+              console.error('⚠️ Firestore insert failed:', firestoreResult.error);
+              // Non-blocking: BigQuery is source of truth, Firestore is for CRM convenience
+            }
+          } catch (firestoreError) {
+            console.error('⚠️ Firestore exception:', firestoreError);
+            // Non-blocking: continue without Firestore
+          }
+        } else {
+          console.log('ℹ️ FIREBASE_CREDENTIALS not configured, skipping Firestore write');
+        }
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
         // Still return success to user - we'll have logs to debug
