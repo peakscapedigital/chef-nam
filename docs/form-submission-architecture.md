@@ -37,7 +37,7 @@
 │       │         • Source of truth for analytics                             │
 │       │                                                                      │
 │       ├──→ Firestore Insert (leads/{lead_id})                               │
-│       │         • Minimal CRM fields only                                   │
+│       │         • All CRM fields (20 fields)                                │
 │       │         • Source of truth for operations                            │
 │       │         • Syncs back to BigQuery via extension                      │
 │       │                                                                      │
@@ -158,7 +158,7 @@ Priority 4: Default             → "Direct"
    - SHA256 hashes of email/phone for enhanced conversions
    - Status defaults to 'new'
 6. Firestore insert (if FIREBASE_CREDENTIALS configured)
-   - Minimal CRM fields only (10 fields)
+   - All CRM fields (20 fields including event details)
    - Same lead_id as BigQuery for joins
 7. Email notification (async, non-blocking)
    - POST to email worker with lead data
@@ -287,15 +287,24 @@ Document ID: `{lead_id}` (same UUID as BigQuery)
 | `name` | string | `${firstName} ${lastName}` |
 | `email` | string | For display in CRM |
 | `phone` | string | For display in CRM |
+| `preferred_contact` | string \| null | email/phone/text |
 | `event_date` | string \| null | For sorting/filtering |
-| `guest_count` | string \| null | Quick context |
+| `event_time` | string \| null | morning/lunch/afternoon/evening |
+| `event_type` | string \| null | wedding/corporate/graduation/etc |
+| `guest_count` | string \| null | Guest count range |
+| `location` | string \| null | Event location |
+| `service_style` | string \| null | plated/buffet/family-style/etc |
+| `budget_range` | string \| null | Budget per person |
+| `dietary_requirements` | string[] \| null | Array of dietary needs |
+| `message` | string \| null | Short form message |
+| `event_description` | string \| null | Full form description |
 | `status` | string | CRM operations (new/contacted/etc) |
 | `notes` | string | CRM notes |
 | `booking_value` | number \| null | Deal value |
 | `created_at` | string | ISO timestamp |
 | `updated_at` | string | ISO timestamp |
 
-**Why minimal fields?** Firestore is for CRM operations only. BigQuery has full attribution data. The Firebase extension syncs Firestore changes back to BigQuery for analytics.
+**20 fields total.** Firestore contains all event details needed for CRM operations. BigQuery has additional attribution data (UTM, gclid, etc). The Firebase extension syncs Firestore changes back to BigQuery for analytics.
 
 ---
 
@@ -411,10 +420,11 @@ npm run dev
 ## Related Documentation
 
 - `CLAUDE.md` - Project overview and environment setup
+- `CONTINUE.md` - Current state and recent fixes
 - `docs/image-optimization.md` - Image handling standards
 - `scripts/bigquery-views.sql` - Analytics views
-- `scripts/backfill-firestore.ts` - Migration script
+- `scripts/fix-all-firestore-leads.ts` - Rebuild Firestore from BigQuery
 
 ---
 
-*Last Updated: 2025-01-21*
+*Last Updated: 2026-01-22*
