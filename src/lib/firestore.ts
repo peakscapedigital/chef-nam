@@ -15,8 +15,17 @@ interface FirestoreLeadDocument {
   name: string;
   email: string;
   phone: string;
+  preferred_contact: string | null;
   event_date: string | null;
+  event_time: string | null;
+  event_type: string | null;
   guest_count: string | null;
+  location: string | null;
+  service_style: string | null;
+  budget_range: string | null;
+  dietary_requirements: string[] | null;
+  message: string | null;
+  event_description: string | null;
   status: string;
   notes: string;
   booking_value: number | null;
@@ -234,8 +243,17 @@ export async function createFirestoreLead(
     last_name: string;
     email: string;
     phone: string;
+    preferred_contact?: string;
     event_date?: string;
+    event_time?: string;
+    event_type?: string;
     guest_count?: string;
+    location?: string;
+    service_style?: string;
+    budget_range?: string;
+    dietary_requirements?: string[];
+    message?: string;
+    event_description?: string;
   },
   projectId: string,
   base64Credentials: string
@@ -251,8 +269,17 @@ export async function createFirestoreLead(
       name: `${leadData.first_name || ''} ${leadData.last_name || ''}`.trim(),
       email: leadData.email || '',
       phone: leadData.phone || '',
+      preferred_contact: leadData.preferred_contact || null,
       event_date: leadData.event_date || null,
+      event_time: leadData.event_time || null,
+      event_type: leadData.event_type || null,
       guest_count: leadData.guest_count || null,
+      location: leadData.location || null,
+      service_style: leadData.service_style || null,
+      budget_range: leadData.budget_range || null,
+      dietary_requirements: leadData.dietary_requirements || null,
+      message: leadData.message || null,
+      event_description: leadData.event_description || null,
       status: 'new',
       notes: '',
       booking_value: null,
@@ -440,8 +467,17 @@ export function createFirestoreLeadData(formData: Record<string, unknown>, leadI
   last_name: string;
   email: string;
   phone: string;
+  preferred_contact?: string;
   event_date?: string;
+  event_time?: string;
+  event_type?: string;
   guest_count?: string;
+  location?: string;
+  service_style?: string;
+  budget_range?: string;
+  dietary_requirements?: string[];
+  message?: string;
+  event_description?: string;
 } {
   return {
     lead_id: leadId,
@@ -449,7 +485,16 @@ export function createFirestoreLeadData(formData: Record<string, unknown>, leadI
     last_name: formData.lastName as string || '',
     email: formData.email as string || '',
     phone: formData.phone as string || '',
+    preferred_contact: formData.preferredContact as string || undefined,
     event_date: formData.eventDate as string || undefined,
-    guest_count: formData.guestCount as string || undefined
+    event_time: formData.eventTime as string || undefined,
+    event_type: formData.eventType as string || undefined,
+    guest_count: formData.guestCount as string || undefined,
+    location: formData.location as string || undefined,
+    service_style: formData.serviceStyle as string || undefined,
+    budget_range: formData.budgetRange as string || undefined,
+    dietary_requirements: formData.dietaryRequirements as string[] || undefined,
+    message: formData.message as string || undefined,
+    event_description: formData.eventDescription as string || undefined
   };
 }
