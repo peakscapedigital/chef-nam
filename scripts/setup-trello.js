@@ -1,17 +1,16 @@
 /**
  * One-time setup script for Trello webhook integration.
  *
- * Creates:
- * 1. "Lead ID" custom field (text) on the Catering Leads board
- * 2. "Booking Value" custom field (number) on the Catering Leads board
- * 3. Registers webhook pointing at the production endpoint
+ * - Registers webhook pointing at the production endpoint
+ * - Backfills existing cards with lead_id tag in description
  *
- * Run: node scripts/setup-trello.js
+ * Run: TRELLO_API_KEY=xxx TRELLO_API_TOKEN=xxx node scripts/setup-trello.js
  *
- * Requires env vars: TRELLO_API_KEY, TRELLO_API_TOKEN
+ * Note: Lead ID is stored in card descriptions as <!-- lead_id:UUID -->
+ * because Custom Fields require Trello Premium.
  */
 
-const BOARD_ID = '69894415201f9d44987bce9f'; // Catering Leads board
+const BOARD_ID = '69894415201f9d44987bce85'; // Catering Leads board
 const WEBHOOK_CALLBACK_URL = 'https://chefnamcatering.com/api/webhooks/trello';
 
 async function main() {
@@ -25,62 +24,8 @@ async function main() {
 
   const auth = `key=${apiKey}&token=${apiToken}`;
 
-  // 1. Create "Lead ID" custom field (text)
-  console.log('Creating "Lead ID" custom field...');
-  const leadIdRes = await fetch(
-    `https://api.trello.com/1/customFields?${auth}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        idModel: BOARD_ID,
-        modelType: 'board',
-        name: 'Lead ID',
-        type: 'text',
-        pos: 'top',
-        display_cardFront: false,
-      }),
-    }
-  );
-
-  if (!leadIdRes.ok) {
-    const err = await leadIdRes.text();
-    console.error('Failed to create Lead ID field:', leadIdRes.status, err);
-  } else {
-    const leadIdField = await leadIdRes.json();
-    console.log(`✅ Lead ID field created: ${leadIdField.id}`);
-    console.log(`   → Set CUSTOM_FIELD_LEAD_ID = '${leadIdField.id}' in src/lib/trello.ts`);
-  }
-
-  // 2. Create "Booking Value" custom field (number)
-  console.log('\nCreating "Booking Value" custom field...');
-  const bvRes = await fetch(
-    `https://api.trello.com/1/customFields?${auth}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({
-        idModel: BOARD_ID,
-        modelType: 'board',
-        name: 'Booking Value',
-        type: 'number',
-        pos: 'bottom',
-        display_cardFront: true,
-      }),
-    }
-  );
-
-  if (!bvRes.ok) {
-    const err = await bvRes.text();
-    console.error('Failed to create Booking Value field:', bvRes.status, err);
-  } else {
-    const bvField = await bvRes.json();
-    console.log(`✅ Booking Value field created: ${bvField.id}`);
-    console.log(`   → Set CUSTOM_FIELD_BOOKING_VALUE = '${bvField.id}' in src/lib/trello.ts`);
-  }
-
-  // 3. Register webhook
-  console.log('\nRegistering Trello webhook...');
+  // 1. Register webhook
+  console.log('Registering Trello webhook...');
   const whRes = await fetch(
     `https://api.trello.com/1/webhooks?${auth}`,
     {
@@ -98,19 +43,37 @@ async function main() {
   if (!whRes.ok) {
     const err = await whRes.text();
     console.error('Failed to register webhook:', whRes.status, err);
-    console.error('Make sure the HEAD endpoint is deployed and returns 200 first.');
   } else {
     const webhook = await whRes.json();
     console.log(`✅ Webhook registered: ${webhook.id}`);
     console.log(`   Callback: ${WEBHOOK_CALLBACK_URL}`);
-    console.log(`   Model: ${BOARD_ID}`);
   }
 
-  console.log('\n--- Summary ---');
-  console.log('After getting the field IDs above, update src/lib/trello.ts:');
-  console.log("  export const CUSTOM_FIELD_LEAD_ID = '<lead-id-field-id>';");
-  console.log("  export const CUSTOM_FIELD_BOOKING_VALUE = '<booking-value-field-id>';");
-  console.log('\nThen redeploy and run the backfill to set Lead ID on existing cards.');
+  // 2. List existing cards on the board to help with backfill
+  console.log('\nFetching existing cards for backfill...');
+  const cardsRes = await fetch(
+    `https://api.trello.com/1/boards/${BOARD_ID}/cards?${auth}&fields=id,name,desc,idList`,
+    { headers: { Accept: 'application/json' } }
+  );
+
+  if (!cardsRes.ok) {
+    console.error('Failed to fetch cards:', cardsRes.status);
+    return;
+  }
+
+  const cards = await cardsRes.json();
+  console.log(`Found ${cards.length} cards on the board:\n`);
+
+  for (const card of cards) {
+    const hasLeadId = card.desc?.includes('<!-- lead_id:');
+    console.log(`  ${card.name}`);
+    console.log(`    Card ID: ${card.id}`);
+    console.log(`    Has Lead ID: ${hasLeadId ? 'YES' : 'NO - needs backfill'}`);
+    console.log('');
+  }
+
+  console.log('To backfill a card, run:');
+  console.log('  node scripts/backfill-trello-cards.js');
 }
 
 main().catch(console.error);

@@ -1,11 +1,7 @@
 import type { APIRoute } from 'astro';
 import { updateLead, getLeadById } from '../../../lib/bigquery';
 import { updateFirestoreLead } from '../../../lib/firestore';
-import {
-  LIST_STATUS_MAP,
-  CUSTOM_FIELD_BOOKING_VALUE,
-  getLeadIdFromCard,
-} from '../../../lib/trello';
+import { LIST_STATUS_MAP, getLeadIdFromCard } from '../../../lib/trello';
 
 export const prerender = false;
 
@@ -25,7 +21,6 @@ export const HEAD: APIRoute = async () => {
  * Handled events:
  * - updateCard (listAfter) - card moved between lists = status change
  * - commentCard - comment added = append to notes
- * - updateCustomFieldItem - booking value changed
  */
 export const POST: APIRoute = async ({ request, locals }) => {
   try {
@@ -37,10 +32,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
           listAfter?: { id: string; name: string };
           listBefore?: { id: string; name: string };
           text?: string; // comment text
-          customField?: { id: string; name: string };
-          customFieldItem?: {
-            value?: { text?: string; number?: string };
-          };
           old?: { idList?: string };
         };
         memberCreator?: { fullName: string; username: string };
@@ -71,7 +62,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response('ok', { status: 200 });
     }
 
-    // Look up lead ID from the Trello card's custom field
+    // Look up lead ID from the Trello card description
     const leadId = await getLeadIdFromCard(cardId, trelloApiKey, trelloApiToken);
 
     if (!leadId) {
@@ -91,7 +82,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response('ok', { status: 200 });
       }
 
-      console.log(`📊 Status change: ${action.data.listBefore?.name} → ${action.data.listAfter.name} (${newStatus})`);
+      console.log(`📊 Status change: ${action.data.listBefore?.name} to ${action.data.listAfter.name} (${newStatus})`);
 
       // Build updates
       const updates: { status: string; won_at?: string } = { status: newStatus };
@@ -123,7 +114,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         console.error('❌ BigQuery status update failed:', bqResult.error);
       }
 
-      // Update Firestore (non-blocking)
+      // Update Firestore
       if (fsCredentials) {
         const fsResult = await updateFirestoreLead(leadId, { status: newStatus }, projectId, fsCredentials);
         if (fsResult.success) {
@@ -156,45 +147,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
         console.error('❌ BigQuery notes update failed:', bqResult.error);
       }
 
-      // Update Firestore (non-blocking)
+      // Update Firestore
       if (fsCredentials) {
         const fsResult = await updateFirestoreLead(leadId, { notes: updatedNotes }, projectId, fsCredentials);
         if (fsResult.success) {
           console.log('✅ Firestore notes updated');
         } else {
           console.error('⚠️ Firestore notes update failed:', fsResult.error);
-        }
-      }
-    }
-
-    // Handle: Custom field updated (booking value)
-    if (actionType === 'updateCustomFieldItem') {
-      const fieldId = action.data.customField?.id;
-
-      if (fieldId === CUSTOM_FIELD_BOOKING_VALUE) {
-        const rawValue = action.data.customFieldItem?.value?.number;
-        const bookingValue = rawValue ? parseFloat(rawValue) : null;
-
-        console.log(`💰 Booking value updated: $${bookingValue}`);
-
-        // Update BigQuery
-        if (bookingValue !== null) {
-          const bqResult = await updateLead(leadId, { booking_value: bookingValue }, projectId, bqCredentials);
-          if (bqResult.success) {
-            console.log('✅ BigQuery booking value updated');
-          } else {
-            console.error('❌ BigQuery booking value update failed:', bqResult.error);
-          }
-
-          // Update Firestore (non-blocking)
-          if (fsCredentials) {
-            const fsResult = await updateFirestoreLead(leadId, { booking_value: bookingValue }, projectId, fsCredentials);
-            if (fsResult.success) {
-              console.log('✅ Firestore booking value updated');
-            } else {
-              console.error('⚠️ Firestore booking value update failed:', fsResult.error);
-            }
-          }
         }
       }
     }

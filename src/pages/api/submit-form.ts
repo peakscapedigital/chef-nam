@@ -11,7 +11,6 @@ import {
   createFirestoreLead,
   createFirestoreLeadData
 } from '../../lib/firestore';
-import { CUSTOM_FIELD_LEAD_ID, setCardCustomField } from '../../lib/trello';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -141,6 +140,12 @@ async function sendToTrello(data: any, env: Record<string, string> | undefined, 
       if (data.referrer) descParts.push(`- **Referrer:** ${data.referrer}`);
     }
 
+    // Embed lead_id as hidden tag for webhook sync
+    if (leadId) {
+      descParts.push('');
+      descParts.push(`<!-- lead_id:${leadId} -->`);
+    }
+
     const params = new URLSearchParams({
       key: apiKey,
       token: apiToken,
@@ -163,23 +168,6 @@ async function sendToTrello(data: any, env: Record<string, string> | undefined, 
 
     const card = await response.json() as { id: string; shortUrl: string };
     console.log('✅ Trello card created:', card.id, card.shortUrl);
-
-    // Set Lead ID custom field so webhook can map card back to lead
-    if (leadId && CUSTOM_FIELD_LEAD_ID && apiKey && apiToken) {
-      const fieldSet = await setCardCustomField(
-        card.id,
-        CUSTOM_FIELD_LEAD_ID,
-        { text: leadId },
-        apiKey,
-        apiToken
-      );
-      if (fieldSet) {
-        console.log('✅ Lead ID custom field set on Trello card');
-      } else {
-        console.error('⚠️ Failed to set Lead ID custom field on Trello card');
-      }
-    }
-
     return card;
   } catch (trelloError) {
     console.error('⚠️ Trello exception:', trelloError);
