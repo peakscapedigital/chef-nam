@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { updateLead, getLeadById } from '../../../../../lib/bigquery';
+import { updateFirestoreLead } from '../../../../../lib/firestore';
 
 export const prerender = false;
 
@@ -99,7 +100,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
       }
     }
 
-    // Update the lead
+    // Update the lead in BigQuery
     const result = await updateLead(leadId, updates, projectId, credentials);
 
     if (!result.success) {
@@ -110,6 +111,19 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     }
 
     console.log(`✅ Lead ${leadId} status updated to: ${status}`);
+
+    // Sync to Firestore (non-blocking)
+    const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+    if (fsCredentials) {
+      const fsUpdates: { status: string; booking_value?: number } = { status };
+      if (booking_value !== undefined) fsUpdates.booking_value = booking_value;
+      updateFirestoreLead(leadId, fsUpdates, projectId, fsCredentials)
+        .then(r => {
+          if (r.success) console.log(`✅ Firestore status synced: ${status}`);
+          else console.error('⚠️ Firestore status sync failed:', r.error);
+        })
+        .catch(e => console.error('⚠️ Firestore status sync error:', e));
+    }
 
     return new Response(
       JSON.stringify({ success: true, leadId, status, booking_value }),

@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { updateLead } from '../../../../../lib/bigquery';
+import { updateFirestoreLead } from '../../../../../lib/firestore';
 
 export const prerender = false;
 
@@ -53,6 +54,17 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     }
 
     console.log(`✅ Lead ${leadId} notes updated`);
+
+    // Sync to Firestore (non-blocking)
+    const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+    if (fsCredentials) {
+      updateFirestoreLead(leadId, { notes }, projectId, fsCredentials)
+        .then(r => {
+          if (r.success) console.log(`✅ Firestore notes synced`);
+          else console.error('⚠️ Firestore notes sync failed:', r.error);
+        })
+        .catch(e => console.error('⚠️ Firestore notes sync error:', e));
+    }
 
     return new Response(
       JSON.stringify({ success: true, leadId }),

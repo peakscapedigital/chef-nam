@@ -11,6 +11,7 @@ import {
   createFirestoreLead,
   createFirestoreLeadData
 } from '../../lib/firestore';
+import { CUSTOM_FIELD_LEAD_ID, setCardCustomField } from '../../lib/trello';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -75,6 +76,115 @@ function fixCommonEmailTypos(email: string): string {
   }
 
   return trimmed;
+}
+
+// Helper function to create a Trello card for new leads
+async function sendToTrello(data: any, env: Record<string, string> | undefined, leadId?: string) {
+  const apiKey = env?.TRELLO_API_KEY;
+  const apiToken = env?.TRELLO_API_TOKEN;
+
+  if (!apiKey || !apiToken) {
+    console.log('ℹ️ Trello credentials not configured, skipping Trello card creation');
+    return null;
+  }
+
+  try {
+    const name = data.eventType
+      ? `${data.firstName} ${data.lastName} - ${data.eventType}`
+      : `${data.firstName} ${data.lastName}`;
+
+    const descParts: string[] = [];
+
+    // Contact info
+    descParts.push('## Contact');
+    descParts.push(`- **Email:** ${data.email}`);
+    if (data.phone) descParts.push(`- **Phone:** ${data.phone}`);
+    if (data.preferredContact) descParts.push(`- **Preferred:** ${data.preferredContact}`);
+
+    // Event details
+    if (data.hasEvent === 'yes') {
+      descParts.push('');
+      descParts.push('## Event Details');
+      if (data.eventType) descParts.push(`- **Type:** ${data.eventType}`);
+      if (data.eventDate) descParts.push(`- **Date:** ${data.eventDate}`);
+      if (data.eventTime) descParts.push(`- **Time:** ${data.eventTime}`);
+      if (data.guestCount) descParts.push(`- **Guests:** ${data.guestCount}`);
+      if (data.location) descParts.push(`- **Location:** ${data.location}`);
+      if (data.serviceStyle) descParts.push(`- **Service Style:** ${data.serviceStyle}`);
+      if (data.budgetRange) descParts.push(`- **Budget:** ${data.budgetRange}`);
+      if (data.dietaryRequirements?.length) {
+        descParts.push(`- **Dietary:** ${data.dietaryRequirements.join(', ')}`);
+      }
+    }
+
+    // Message
+    if (data.message) {
+      descParts.push('');
+      descParts.push('## Message');
+      descParts.push(data.message);
+    }
+
+    if (data.eventDescription) {
+      descParts.push('');
+      descParts.push('## Event Description');
+      descParts.push(data.eventDescription);
+    }
+
+    // Source attribution
+    if (data.utm_source || data.lead_source || data.referrer) {
+      descParts.push('');
+      descParts.push('## Source');
+      if (data.lead_source) descParts.push(`- **Lead Source:** ${data.lead_source}`);
+      if (data.utm_source) descParts.push(`- **UTM Source:** ${data.utm_source}`);
+      if (data.utm_medium) descParts.push(`- **UTM Medium:** ${data.utm_medium}`);
+      if (data.utm_campaign) descParts.push(`- **UTM Campaign:** ${data.utm_campaign}`);
+      if (data.referrer) descParts.push(`- **Referrer:** ${data.referrer}`);
+    }
+
+    const params = new URLSearchParams({
+      key: apiKey,
+      token: apiToken,
+      idList: '69894415201f9d44987bcea9',
+      name,
+      desc: descParts.join('\n'),
+      pos: 'top',
+    });
+
+    const response = await fetch(`https://api.trello.com/1/cards?${params.toString()}`, {
+      method: 'POST',
+      headers: { 'Accept': 'application/json' },
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('⚠️ Trello card creation failed:', response.status, errorText);
+      return null;
+    }
+
+    const card = await response.json() as { id: string; shortUrl: string };
+    console.log('✅ Trello card created:', card.id, card.shortUrl);
+
+    // Set Lead ID custom field so webhook can map card back to lead
+    if (leadId && CUSTOM_FIELD_LEAD_ID && apiKey && apiToken) {
+      const fieldSet = await setCardCustomField(
+        card.id,
+        CUSTOM_FIELD_LEAD_ID,
+        { text: leadId },
+        apiKey,
+        apiToken
+      );
+      if (fieldSet) {
+        console.log('✅ Lead ID custom field set on Trello card');
+      } else {
+        console.error('⚠️ Failed to set Lead ID custom field on Trello card');
+      }
+    }
+
+    return card;
+  } catch (trelloError) {
+    console.error('⚠️ Trello exception:', trelloError);
+    return null;
+  }
 }
 
 // Helper function to send email notification using Cloudflare Worker
@@ -374,6 +484,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
         } else {
           console.log('ℹ️ FIREBASE_CREDENTIALS not configured, skipping Firestore write');
         }
+
+        // ========================================
+        // 5. CREATE TRELLO CARD (Lead Pipeline)
+        // ========================================
+        await sendToTrello(data, runtime?.env, leadId);
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
         // Still return success to user - we'll have logs to debug

@@ -212,7 +212,7 @@ import { Icon } from 'astro-icon/components';
           <Card variant="elevated">
             <div class="p-8 text-center">
               <div class="w-20 h-20 bg-brand-amber/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Icon name="mdi:clipboard-text" class="w-10 h-10 text-brand-amber" />
+                <Icon name="mdi:receipt-text-check" class="w-10 h-10 text-brand-amber" />
               </div>
 
               <h3 class="text-xl font-serif font-bold text-brand-indigo mb-4">All-Inclusive Pricing</h3>
@@ -415,7 +415,7 @@ import { Icon } from 'astro-icon/components';
         <!-- Medical Office Callout -->
         <div class="bg-brand-amber/20 border border-brand-amber/30 rounded-xl p-6 max-w-3xl mx-auto text-center">
           <div class="flex items-center justify-center gap-3 mb-3">
-            <Icon name="mdi:office-building" class="w-6 h-6 text-brand-amber" />
+            <Icon name="mdi:hospital-building" class="w-6 h-6 text-brand-amber" />
             <h4 class="font-semibold text-lg">Medical Office Friendly</h4>
           </div>
           <p class="text-white/90 text-sm">
@@ -504,7 +504,7 @@ import { Icon } from 'astro-icon/components';
             </p>
             <a href="/services/corporate" class="inline-flex items-center text-brand-amber font-semibold hover:underline">
               View Corporate Events
-              <Icon name="mdi:chevron-right" class="w-5 h-5 ml-2" />
+              <Icon name="mdi:arrow-right" class="w-5 h-5 ml-2" />
             </a>
           </div>
           <div class="w-full md:w-48 h-32 md:h-auto rounded-lg overflow-hidden flex-shrink-0">
@@ -520,91 +520,54 @@ import { Icon } from 'astro-icon/components';
     </section>
 
     <!-- FAQ Section -->
-    <section class="py-20 bg-brand-cream/30">
-      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section class="py-20 bg-brand-white">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center mb-12">
           <h2 class="text-3xl font-serif font-bold text-brand-indigo mb-6">Frequently Asked Questions</h2>
           <p class="text-xl text-brand-indigo/70">Quick answers to common questions</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          <!-- FAQ Item 1 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>Do you offer corporate accounts or billing?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
+        <div class="space-y-6">
+
+          <!-- FAQ 1 -->
+          <div class="bg-brand-cream/20 rounded-xl p-6">
+            <h3 class="font-semibold text-brand-indigo mb-3">Do you offer corporate accounts or billing?</h3>
+            <p class="text-brand-indigo/70">
               Yes! We offer corporate accounts with monthly invoicing for regular clients. This makes recurring orders simple and keeps your accounting team happy. Contact us to set up a corporate account for your business.
             </p>
-          </details>
+          </div>
 
-          <!-- FAQ Item 2 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>Can you deliver to hospitals and medical centers?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
+          <!-- FAQ 2 -->
+          <div class="bg-brand-cream/20 rounded-xl p-6">
+            <h3 class="font-semibold text-brand-indigo mb-3">Can you deliver to hospitals and medical centers?</h3>
+            <p class="text-brand-indigo/70">
               Absolutely. We regularly deliver to Michigan Medicine, St. Joseph Mercy, and medical offices throughout Ann Arbor and Ypsilanti. We're familiar with hospital delivery protocols and can coordinate with your front desk or reception to ensure smooth delivery.
             </p>
-          </details>
+          </div>
 
-          <!-- FAQ Item 3 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>Is setup included with office catering orders?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
+          <!-- FAQ 3 -->
+          <div class="bg-brand-cream/20 rounded-xl p-6">
+            <h3 class="font-semibold text-brand-indigo mb-3">Is setup included with office catering orders?</h3>
+            <p class="text-brand-indigo/70">
               Yes, setup is always included at no extra charge. We unbox everything, arrange the spread attractively, and provide eco-friendly utensils and napkins. You don't have to lift a finger.
             </p>
-          </details>
+          </div>
 
-          <!-- FAQ Item 4 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>What is the minimum order for office catering?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
+          <!-- FAQ 4 -->
+          <div class="bg-brand-cream/20 rounded-xl p-6">
+            <h3 class="font-semibold text-brand-indigo mb-3">What is the minimum order for office catering?</h3>
+            <p class="text-brand-indigo/70">
               Our minimum order is 10 people for most office catering options. For smaller groups, ask about our individual box lunch delivery which can accommodate groups as small as 5.
             </p>
-          </details>
+          </div>
 
-          <!-- FAQ Item 5 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>How much notice do you need for orders?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
+          <!-- FAQ 5 -->
+          <div class="bg-brand-cream/20 rounded-xl p-6">
+            <h3 class="font-semibold text-brand-indigo mb-3">How much notice do you need for office catering orders?</h3>
+            <p class="text-brand-indigo/70">
               We prefer 24-48 hours notice for most orders. However, call us for last-minute needs—we can often accommodate same-day requests depending on our schedule and availability.
             </p>
-          </details>
-
-          <!-- FAQ Item 6 -->
-          <details class="bg-white rounded-xl p-6 shadow-sm group">
-            <summary class="text-lg font-semibold text-brand-indigo cursor-pointer flex items-center justify-between">
-              <span>Do you handle dietary restrictions?</span>
-              <svg class="w-5 h-5 text-brand-amber transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-              </svg>
-            </summary>
-            <p class="text-brand-indigo/80 mt-4">
-              Yes! Gluten-free, vegan, vegetarian, and dairy-free options are available. All dietary items are clearly labeled and packaged separately so there's no confusion at mealtime.
-            </p>
-          </details>
+          </div>
         </div>
       </div>
     </section>
@@ -637,15 +600,3 @@ import { Icon } from 'astro-icon/components';
 
   </main>
 </Layout>
-
-<style>
-  /* Ensure FAQ items have consistent height and don't affect each other */
-  details {
-    display: flex;
-    flex-direction: column;
-  }
-
-  details[open] summary {
-    margin-bottom: 0;
-  }
-</style>
