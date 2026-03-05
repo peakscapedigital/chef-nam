@@ -76,12 +76,13 @@ const aboutProps = homepage?.about ? {
   title="Chef Nam Catering | Ann Arbor Weddings, Corporate & Social"
   description="Ann Arbor's trusted catering team for weddings, corporate events, and social gatherings. Chef Nam blends flavor, style, and exceptional service for every occasion."
 >
-  <!-- Preload hero image for faster LCP -->
+  <!-- Preload hero image for faster LCP (WebP) -->
   <link
     rel="preload"
     as="image"
-    href="/images/hero/hero-catering-640.jpg"
-    imagesrcset="/images/hero/hero-catering-640.jpg 640w, /images/hero/hero-catering-800.jpg 800w, /images/hero/hero-catering-1200.jpg 1200w, /images/hero/hero-catering-1920.jpg 1920w"
+    type="image/webp"
+    href="/images/hero/hero-catering-640.webp"
+    imagesrcset="/images/hero/hero-catering-640.webp 640w, /images/hero/hero-catering-800.webp 800w, /images/hero/hero-catering-1200.webp 1200w, /images/hero/hero-catering-1920.webp 1920w"
     imagesizes="100vw"
     fetchpriority="high"
     slot="head"

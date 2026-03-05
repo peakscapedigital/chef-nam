@@ -1,108 +1,33 @@
 /* Local Font Declarations - Performance Optimized */
+/* Using WOFF2 variable fonts (latin subset) for minimal file size */
+/* Total: ~121K for 3 font families vs ~1MB+ with TTF */
 
-/* Playfair Display - Serif font for headings */
+/* Playfair Display - Serif font for headings (variable weight 400-700) */
 @font-face {
   font-family: 'Playfair Display';
   font-style: normal;
-  font-weight: 400;
+  font-weight: 400 700;
   font-display: swap;
-  src: url('/fonts/playfair-display-400.ttf') format('truetype');
+  src: url('/fonts/playfair-display-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: 'Playfair Display';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/playfair-display-500.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/playfair-display-600.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Playfair Display';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/playfair-display-700.ttf') format('truetype');
-}
-
-/* Montserrat - Sans-serif font for body text */
+/* Montserrat - Sans-serif font for body text (variable weight 400-600) */
 @font-face {
   font-family: 'Montserrat';
   font-style: normal;
-  font-weight: 300;
+  font-weight: 400 600;
   font-display: swap;
-  src: url('/fonts/montserrat-300.ttf') format('truetype');
+  src: url('/fonts/montserrat-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 400;
-  font-display: swap;
-  src: url('/fonts/montserrat-400.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/montserrat-500.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/montserrat-600.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Montserrat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/montserrat-700.ttf') format('truetype');
-}
-
-/* Caveat - Handwritten font for accents */
+/* Caveat - Handwritten font for accents (weight 400 only) */
 @font-face {
   font-family: 'Caveat';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('/fonts/caveat-400.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Caveat';
-  font-style: normal;
-  font-weight: 500;
-  font-display: swap;
-  src: url('/fonts/caveat-500.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Caveat';
-  font-style: normal;
-  font-weight: 600;
-  font-display: swap;
-  src: url('/fonts/caveat-600.ttf') format('truetype');
-}
-
-@font-face {
-  font-family: 'Caveat';
-  font-style: normal;
-  font-weight: 700;
-  font-display: swap;
-  src: url('/fonts/caveat-700.ttf') format('truetype');
+  src: url('/fonts/caveat-400.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }

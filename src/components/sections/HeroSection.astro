@@ -18,8 +18,15 @@ const {
   height = 'full'
 } = Astro.props;
 
-// Create responsive srcset for local hero images
-const heroSrcset = [
+// Create responsive srcset for local hero images (WebP with JPG fallback)
+const heroWebpSrcset = [
+  "/images/hero/hero-catering-640.webp 640w",
+  "/images/hero/hero-catering-800.webp 800w",
+  "/images/hero/hero-catering-1200.webp 1200w",
+  "/images/hero/hero-catering-1920.webp 1920w"
+].join(", ");
+
+const heroJpgSrcset = [
   "/images/hero/hero-catering-640.jpg 640w",
   "/images/hero/hero-catering-800.jpg 800w",
   "/images/hero/hero-catering-1200.jpg 1200w",
@@ -37,18 +44,25 @@ const heightClasses = height === 'compact'
 <section class={`relative ${heightClasses} flex items-center justify-center overflow-hidden`}>
   <!-- Background Image -->
   <div class="absolute inset-0 z-0">
-    <!-- Optimized responsive hero image -->
-    <img 
-      src={backgroundImage} 
-      srcset={heroSrcset}
-      sizes={heroSizes}
-      alt="Chef Nam Catering - Beautiful food presentation" 
-      class="w-full h-full object-cover"
-      loading="eager"
-      fetchpriority="high"
-      width="1920"
-      height="1280"
-    />
+    <!-- Optimized responsive hero image with WebP -->
+    <picture>
+      <source
+        type="image/webp"
+        srcset={heroWebpSrcset}
+        sizes={heroSizes}
+      />
+      <img
+        src={backgroundImage}
+        srcset={heroJpgSrcset}
+        sizes={heroSizes}
+        alt="Chef Nam Catering - Beautiful food presentation"
+        class="w-full h-full object-cover"
+        loading="eager"
+        fetchpriority="high"
+        width="1920"
+        height="1280"
+      />
+    </picture>
     <!-- Clean overlay for text readability with brand indigo tint -->
     <div class="absolute inset-0" style="background: linear-gradient(to right, rgba(44, 62, 80, 0.7), rgba(44, 62, 80, 0.5))"></div>
   </div>
