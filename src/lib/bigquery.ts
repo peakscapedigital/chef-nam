@@ -49,6 +49,7 @@ interface LeadData {
   status_updated_at?: string;
   notes_updated_at?: string;
   won_at?: string;
+  booked_at?: string;
   form_source?: string;
   is_spam?: boolean;
   is_test?: boolean;
@@ -61,6 +62,7 @@ interface LeadUpdate {
   status_updated_at?: string;
   notes_updated_at?: string;
   won_at?: string;
+  booked_at?: string;
 }
 
 interface ContactData {
@@ -485,6 +487,10 @@ export async function updateLead(
 
     if (updates.won_at !== undefined) {
       setClauses.push(`won_at = TIMESTAMP('${updates.won_at}')`);
+    }
+
+    if (updates.booked_at !== undefined) {
+      setClauses.push(`booked_at = TIMESTAMP('${updates.booked_at}')`);
     }
 
     if (setClauses.length === 0) {

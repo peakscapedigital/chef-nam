@@ -13,7 +13,132 @@ This is the **chefnamcatering.com** website and lead management system. The site
 
 ---
 
-## Current State (2026-01-22)
+## February 2026 Priorities
+
+| Priority | Task | Status |
+|----------|------|--------|
+| **P1** | Mobile conversion optimization | **Pending client decision** |
+| **P1** | ntfy push notifications | Not started |
+| **P1** | Verify BigQuery + Firestore health | Not started |
+| **P2** | Monthly lead tracking report (Jan) | ✅ Complete |
+| **P2** | Google reviews follow-up system | Not started |
+| **P3** | GMB content automation | Not started |
+| **P3** | Graduation + office catering pages | Draft ready, pending client approval |
+
+### P1: Mobile Conversion Optimization (PENDING DECISION)
+
+**Problem:** January 2026 Google Ads data shows mobile converts at less than half the rate of desktop.
+
+| Device | Clicks | Conversions | Conv. Rate | Cost/Conv |
+|--------|--------|-------------|------------|-----------|
+| Mobile | 102 | 4 | **3.92%** | $56.73 |
+| Desktop | 35 | 3 | **8.57%** | $24.15 |
+
+**Opportunity:** If mobile matched desktop's rate → 5 additional leads/month, ~$300 savings in CPA.
+
+**Proposed Solution:** Convert `/start-planning` form to a 3-step wizard on mobile.
+
+#### Current vs. Proposed Form
+
+**Current:** Single long form with 15+ fields (some conditional)
+
+**Proposed:** 3 steps, each fitting on one mobile screen
+
+**Step 1: Contact Info**
+- First name, last name, email, phone
+- Preferred contact method (Email / Text / Call buttons)
+- "Continue" button
+
+**Step 2: Your Event**
+- "Do you have an event?" (yes/no cards)
+- If yes: Event type, approximate date, guest count
+- If no: Skip to Step 3
+- "Continue" button
+
+**Step 3: Final Details**
+- Optional textarea: "Anything else we should know?"
+- Optional dietary requirements (collapsed)
+- Submit button
+
+#### Fields Removed (Deferred to Follow-up Conversation)
+
+| Field | Reasoning |
+|-------|-----------|
+| Event time | Can ask in follow-up |
+| Location | Can ask in follow-up |
+| Service style | Can ask in follow-up |
+| Budget range | Can ask in follow-up |
+| Event description | Merged with general message |
+
+#### Questions for Chef Nam
+
+1. **Field removals:** Are you comfortable asking for location, time, service style, and budget in the follow-up conversation instead of the form?
+
+2. **Dietary requirements:** Keep as collapsed optional section, or remove entirely and ask in follow-up?
+
+3. **Contact preference:** Currently a dropdown. Proposed as tap-friendly buttons (Email / Text / Call). Any preference?
+
+4. **Desktop experience:** Apply multi-step to desktop too, or keep current form on desktop?
+
+#### Technical Notes
+
+- Form state saved in sessionStorage between steps (if user accidentally closes, data preserved)
+- Backend `/api/submit-form` doesn't need changes - same data submitted
+- Progress indicator shows Step X of 3
+- Back button on each step to revise previous answers
+
+**Status:** Awaiting client input before implementation.
+
+### P1: ntfy Push Notifications
+
+Retool app is working on phone, new leads showing up. Need push alerts.
+
+**Implementation:**
+1. Install ntfy app (iOS/Android) - you + Chef Nam
+2. Subscribe to topic: `chefnam-leads-<secret>`
+3. Add to `submit-form.ts` after successful writes:
+```javascript
+await fetch('https://ntfy.sh/chefnam-leads-<secret>', {
+  method: 'POST',
+  body: `New lead: ${firstName} ${lastName} - ${eventType || 'General inquiry'}`
+});
+```
+
+### P1: Verify Data Store Health
+
+Received email that Supabase was paused. Need to confirm:
+- [ ] BigQuery `chef-nam-analytics.leads.website_leads` accessible
+- [ ] Firestore `leads` collection accessible
+- [ ] Supabase status (if used) - check what project this refers to
+- [ ] Test form submission end-to-end
+
+### P2: Monthly Lead Report
+
+Generate January 2026 lead tracking report:
+- Total leads by source
+- Conversion rates by status
+- Response time metrics
+- Revenue from booked events
+
+### P2: Google Reviews Follow-up
+
+System to prompt satisfied customers for Google reviews after completed events.
+
+### P3: GMB Content Automation
+
+Automate Google My Business posting (photos, updates, offers).
+
+### P3: New Service Pages
+
+Draft pages ready for:
+- Graduation catering
+- Office catering
+
+Confirm content with client, then publish.
+
+---
+
+## Current State
 
 ### What's Working
 
@@ -26,28 +151,22 @@ This is the **chefnamcatering.com** website and lead management system. The site
 - Email notifications via Resend
 
 **BigQuery (Source of Truth)**
-- 39 leads total (non-spam, non-test)
 - All form fields captured
 - Attribution data (UTM, gclid, ga_client_id)
 - Views for analytics: `lead_response_time`, `lead_current_status`, etc.
 
 **Firestore (CRM Operations)**
-- 39 leads synced from BigQuery
-- 20 fields per lead including all event details (fixed 2026-01-22)
+- Leads synced from BigQuery
+- 20 fields per lead including all event details
 - Dates in ISO format
 
 **Retool Mobile CRM**
 - List view with status filter dropdown
 - Detail view with editable status, notes, booking_value
 - Sorted by created_at descending (newest first)
-- Dates formatted MM/DD/YYYY h:mm a
 - Connected to Firestore via ChefNamFirestore resource
 
-### What's NOT Working / Limitations
-
-**Push Notifications**
-- Retool Mobile push notifications require Business plan ($65/user/month)
-- Not available on free plan despite some documentation suggesting otherwise
+### Known Limitations
 
 **Firestore → BigQuery Sync**
 - Firebase extension installed but changelog table may not be populating correctly

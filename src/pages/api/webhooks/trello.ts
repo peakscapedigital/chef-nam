@@ -85,16 +85,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.log(`📊 Status change: ${action.data.listBefore?.name} to ${action.data.listAfter.name} (${newStatus})`);
 
       // Build updates
-      const updates: { status: string; won_at?: string } = { status: newStatus };
+      const updates: { status: string; won_at?: string; booked_at?: string } = { status: newStatus };
 
-      // If moving to "Won", set won_at and trigger conversion logic
-      if (newStatus === 'won') {
-        updates.won_at = new Date().toISOString();
-
-        // Check for gclid to trigger offline conversion
+      // If moving to "Qualified", trigger Lead_Qualified offline conversion
+      if (newStatus === 'qualified') {
         const leadResult = await getLeadById(leadId, projectId, bqCredentials);
         if (leadResult.success && leadResult.lead?.gclid) {
-          console.log('📊 Won lead has gclid - offline conversion should fire');
+          console.log('📊 Qualified lead has gclid - Lead_Qualified conversion should fire');
           console.log('Lead:', {
             id: leadId,
             gclid: leadResult.lead.gclid,
@@ -102,8 +99,37 @@ export const POST: APIRoute = async ({ request, locals }) => {
             phone_hash: leadResult.lead.phone_hash,
           });
           // TODO: Implement Google Ads Conversion API call
-          console.log('🔜 Google Ads offline conversion pending implementation');
+          // Conversion action ID: 7350099303 (Lead_Qualified)
+          console.log('🔜 Google Ads Lead_Qualified offline conversion pending implementation');
         }
+      }
+
+      // If moving to "Event Booked (Deposit)", set booked_at
+      if (newStatus === 'booked') {
+        updates.booked_at = new Date().toISOString();
+      }
+
+      // If moving to "Invoice Paid", trigger Purchase offline conversion (full revenue confirmed)
+      if (newStatus === 'invoice_paid') {
+        const leadResult = await getLeadById(leadId, projectId, bqCredentials);
+        if (leadResult.success && leadResult.lead?.gclid) {
+          console.log('📊 Invoice paid lead has gclid - Purchase conversion should fire');
+          console.log('Lead:', {
+            id: leadId,
+            gclid: leadResult.lead.gclid,
+            booking_value: leadResult.lead.booking_value,
+            email_hash: leadResult.lead.email_hash,
+            phone_hash: leadResult.lead.phone_hash,
+          });
+          // TODO: Implement Google Ads Conversion API call
+          // Conversion action ID: 7350098097 (Purchase)
+          console.log('🔜 Google Ads Purchase offline conversion pending implementation');
+        }
+      }
+
+      // If moving to "Won", set won_at timestamp
+      if (newStatus === 'won') {
+        updates.won_at = new Date().toISOString();
       }
 
       // Update BigQuery

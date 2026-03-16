@@ -29,3 +29,9 @@ pnpm-debug.log*
 
 # Local Netlify folder
 .netlify
+
+# Claude Code config
+.claude/
+
+# Local analysis/journals
+roi-analytics/

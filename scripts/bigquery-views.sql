@@ -1,171 +1,266 @@
--- ============================================
 -- BigQuery Views for Lead Analytics
--- Run these after installing the Firestore → BigQuery extension
--- ============================================
+-- Reference implementation: Chef Nam (chef-nam-analytics)
+-- For new clients: find/replace project ID, Google Ads account ID, GA4 property ID
 
--- ============================================
--- 1. LEAD RESPONSE TIME VIEW
--- Calculates time between lead submission and first "contacted" status
--- ============================================
+-- ============================================================
+-- lead_response_time
+-- Time from submission to first "contacted" status
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.lead_response_time` AS
-WITH status_changes AS (
-  SELECT
-    REGEXP_EXTRACT(document_name, r'leads/(.*)') as lead_id,
-    timestamp as changed_at,
-    JSON_EXTRACT_SCALAR(data, '$.status') as new_status,
-    operation
-  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
-  WHERE JSON_EXTRACT_SCALAR(data, '$.status') IS NOT NULL
-),
-first_contacted AS (
-  SELECT
-    lead_id,
-    MIN(changed_at) as contacted_at
-  FROM status_changes
-  WHERE new_status = 'contacted'
-  GROUP BY lead_id
-)
 SELECT
-  w.lead_id,
-  w.first_name,
-  w.last_name,
-  w.email,
-  w.lead_source,
-  w.utm_source,
-  w.utm_medium,
-  w.utm_campaign,
-  w.gclid,
-  w.submitted_at,
-  f.contacted_at,
-  TIMESTAMP_DIFF(f.contacted_at, w.submitted_at, MINUTE) as response_time_minutes,
-  TIMESTAMP_DIFF(f.contacted_at, w.submitted_at, HOUR) as response_time_hours,
-  CASE
-    WHEN f.contacted_at IS NULL THEN 'not_contacted'
-    WHEN TIMESTAMP_DIFF(f.contacted_at, w.submitted_at, MINUTE) <= 60 THEN 'under_1_hour'
-    WHEN TIMESTAMP_DIFF(f.contacted_at, w.submitted_at, HOUR) <= 24 THEN 'under_24_hours'
-    ELSE 'over_24_hours'
-  END as response_bucket
-FROM `chef-nam-analytics.leads.website_leads` w
-LEFT JOIN first_contacted f ON w.lead_id = f.lead_id
-WHERE w.is_spam = FALSE AND w.is_test = FALSE;
+  l.lead_id,
+  l.submitted_at,
+  MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))) AS first_contacted_at,
+  TIMESTAMP_DIFF(
+    MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))),
+    l.submitted_at,
+    MINUTE
+  ) AS response_minutes,
+  ROUND(TIMESTAMP_DIFF(
+    MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))),
+    l.submitted_at,
+    MINUTE
+  ) / 60.0, 1) AS response_hours
+FROM `chef-nam-analytics.leads.website_leads` l
+JOIN `chef-nam-analytics.leads.lead_status_changelog_raw_changelog` c
+  ON JSON_EXTRACT_SCALAR(c.data, '$.lead_id') = l.lead_id
+WHERE l.is_spam = FALSE
+  AND l.is_test = FALSE
+  AND JSON_EXTRACT_SCALAR(c.data, '$.status') = 'contacted'
+GROUP BY l.lead_id, l.submitted_at;
 
-
--- ============================================
--- 2. LEAD STATUS HISTORY VIEW
--- Flattened view of all status changes per lead
--- ============================================
+-- ============================================================
+-- lead_status_history
+-- All status changes per lead from Firestore changelog
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.lead_status_history` AS
 SELECT
-  REGEXP_EXTRACT(document_name, r'leads/(.*)') as lead_id,
-  timestamp as changed_at,
-  operation,
-  JSON_EXTRACT_SCALAR(data, '$.status') as status,
-  JSON_EXTRACT_SCALAR(data, '$.notes') as notes,
-  CAST(JSON_EXTRACT_SCALAR(data, '$.booking_value') AS FLOAT64) as booking_value,
-  JSON_EXTRACT_SCALAR(data, '$.name') as name,
-  JSON_EXTRACT_SCALAR(data, '$.email') as email
+  JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+  JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+  TIMESTAMP(JSON_EXTRACT_SCALAR(data, '$.updated_at')) AS changed_at,
+  timestamp AS firestore_timestamp
 FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
-ORDER BY timestamp DESC;
+WHERE operation IN ('UPDATE', 'CREATE')
+  AND JSON_EXTRACT_SCALAR(data, '$.status') IS NOT NULL
+ORDER BY timestamp;
 
-
--- ============================================
--- 3. CURRENT LEAD STATUS VIEW
--- Latest status for each lead (joins Firestore changelog with BigQuery lead data)
--- ============================================
+-- ============================================================
+-- lead_current_status
+-- Latest status per lead, joining Firestore changelog with BigQuery
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.lead_current_status` AS
-WITH latest_firestore AS (
+WITH latest_status AS (
   SELECT
-    lead_id,
-    status,
-    notes,
-    booking_value,
-    changed_at as firestore_updated_at,
-    ROW_NUMBER() OVER (PARTITION BY lead_id ORDER BY changed_at DESC) as rn
-  FROM `chef-nam-analytics.leads.lead_status_history`
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
+    JSON_EXTRACT_SCALAR(data, '$.notes') AS notes,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
 )
 SELECT
-  w.lead_id,
-  w.contact_id,
-  w.first_name,
-  w.last_name,
-  w.email,
-  w.phone,
-  w.event_type,
-  w.event_date,
-  w.guest_count,
-  w.budget_range,
-  w.gclid,
-  w.ga_client_id,
-  w.utm_source,
-  w.utm_medium,
-  w.utm_campaign,
-  w.lead_source,
-  w.submitted_at,
-  -- Use Firestore status if available (more current), otherwise BigQuery
-  COALESCE(f.status, w.status) as current_status,
-  COALESCE(f.notes, w.notes) as current_notes,
-  COALESCE(f.booking_value, w.booking_value) as current_booking_value,
-  f.firestore_updated_at
-FROM `chef-nam-analytics.leads.website_leads` w
-LEFT JOIN latest_firestore f ON w.lead_id = f.lead_id AND f.rn = 1
-WHERE w.is_spam = FALSE AND w.is_test = FALSE;
+  l.*,
+  COALESCE(ls.status, l.status) AS current_status,
+  SAFE_CAST(ls.booking_value AS FLOAT64) AS current_booking_value,
+  ls.notes AS current_notes
+FROM `chef-nam-analytics.leads.website_leads` l
+LEFT JOIN latest_status ls ON l.lead_id = ls.lead_id AND ls.rn = 1
+WHERE l.is_spam = FALSE AND l.is_test = FALSE;
 
-
--- ============================================
--- 4. LEAD ATTRIBUTION SUMMARY
--- Aggregated metrics by source for offline conversion analysis
--- ============================================
+-- ============================================================
+-- lead_attribution_summary
+-- Aggregated metrics by source with conversion funnel
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.lead_attribution_summary` AS
 SELECT
-  utm_source,
-  utm_medium,
-  utm_campaign,
-  lead_source,
-  COUNT(*) as total_leads,
-  COUNTIF(current_status = 'contacted') as contacted,
-  COUNTIF(current_status = 'proposal_sent') as proposals_sent,
-  COUNTIF(current_status = 'converted') as converted,
-  COUNTIF(current_status = 'lost') as lost,
-  SUM(CASE WHEN current_status = 'converted' THEN current_booking_value ELSE 0 END) as total_revenue,
-  AVG(CASE WHEN current_status = 'converted' THEN current_booking_value END) as avg_deal_value,
-  SAFE_DIVIDE(COUNTIF(current_status = 'converted'), COUNT(*)) as conversion_rate
-FROM `chef-nam-analytics.leads.lead_current_status`
-GROUP BY utm_source, utm_medium, utm_campaign, lead_source
-ORDER BY total_leads DESC;
+  COALESCE(l.lead_source, 'Unknown') AS lead_source,
+  COUNT(*) AS total_leads,
+  COUNTIF(COALESCE(ls.status, l.status) = 'contacted') AS contacted,
+  COUNTIF(COALESCE(ls.status, l.status) = 'qualified') AS qualified,
+  COUNTIF(COALESCE(ls.status, l.status) = 'quoted') AS quoted,
+  COUNTIF(COALESCE(ls.status, l.status) = 'tasting') AS tasting,
+  COUNTIF(COALESCE(ls.status, l.status) = 'invoice_sent') AS invoice_sent,
+  COUNTIF(COALESCE(ls.status, l.status) = 'booked') AS booked,
+  COUNTIF(COALESCE(ls.status, l.status) = 'invoice_paid') AS invoice_paid,
+  COUNTIF(COALESCE(ls.status, l.status) = 'won') AS won,
+  COUNTIF(COALESCE(ls.status, l.status) = 'lost') AS lost,
+  COUNTIF(COALESCE(ls.status, l.status) = 'no_response') AS no_response,
+  SUM(CASE WHEN COALESCE(ls.status, l.status) IN ('invoice_paid', 'won')
+    THEN SAFE_CAST(ls.booking_value AS FLOAT64) ELSE 0 END) AS total_revenue
+FROM `chef-nam-analytics.leads.website_leads` l
+LEFT JOIN (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
+WHERE l.is_spam = FALSE AND l.is_test = FALSE
+GROUP BY lead_source;
 
-
--- ============================================
--- 5. GOOGLE ADS OFFLINE CONVERSION VIEW
--- Format for uploading to Google Ads (gclid + conversion data)
--- ============================================
+-- ============================================================
+-- google_ads_conversions
+-- Formatted for Google Ads offline conversion CSV upload
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.google_ads_conversions` AS
+-- Lead_Qualified conversions (triggered at qualified stage)
 SELECT
-  gclid,
-  'Lead Converted' as conversion_name,
-  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S', firestore_updated_at) as conversion_time,
-  current_booking_value as conversion_value,
-  'USD' as conversion_currency
-FROM `chef-nam-analytics.leads.lead_current_status`
-WHERE
-  gclid IS NOT NULL
-  AND current_status = 'converted'
-  AND current_booking_value IS NOT NULL;
+  l.gclid AS `Google Click ID`,
+  'Lead_Qualified' AS `Conversion Name`,
+  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S-05:00', l.status_updated_at) AS `Conversion Time`,
+  100.0 AS `Conversion Value`,
+  'USD' AS `Conversion Currency`
+FROM `chef-nam-analytics.leads.website_leads` l
+JOIN (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
+WHERE l.is_spam = FALSE
+  AND l.is_test = FALSE
+  AND l.gclid IS NOT NULL
+  AND COALESCE(ls.status, l.status) IN ('qualified', 'quoted', 'tasting', 'invoice_sent', 'booked', 'invoice_paid', 'won')
 
+UNION ALL
 
--- ============================================
--- 6. GA4 OFFLINE CONVERSION VIEW
--- Format for GA4 Measurement Protocol (client_id + conversion data)
--- ============================================
+-- Purchase conversions (triggered at invoice_paid stage)
+SELECT
+  l.gclid AS `Google Click ID`,
+  'Purchase' AS `Conversion Name`,
+  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S-05:00', COALESCE(l.booked_at, l.status_updated_at)) AS `Conversion Time`,
+  SAFE_CAST(ls.booking_value AS FLOAT64) AS `Conversion Value`,
+  'USD' AS `Conversion Currency`
+FROM `chef-nam-analytics.leads.website_leads` l
+JOIN (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
+WHERE l.is_spam = FALSE
+  AND l.is_test = FALSE
+  AND l.gclid IS NOT NULL
+  AND COALESCE(ls.status, l.status) IN ('invoice_paid', 'won');
+
+-- ============================================================
+-- ga4_conversions
+-- Formatted for GA4 Measurement Protocol
+-- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.ga4_conversions` AS
 SELECT
-  ga_client_id as client_id,
-  'purchase' as event_name,
-  current_booking_value as value,
-  'USD' as currency,
-  lead_id as transaction_id,
-  firestore_updated_at as conversion_timestamp
-FROM `chef-nam-analytics.leads.lead_current_status`
-WHERE
-  ga_client_id IS NOT NULL
-  AND current_status = 'converted'
-  AND current_booking_value IS NOT NULL;
+  l.ga_client_id AS client_id,
+  'purchase' AS event,
+  SAFE_CAST(ls.booking_value AS FLOAT64) AS value,
+  'USD' AS currency,
+  l.lead_id AS transaction_id
+FROM `chef-nam-analytics.leads.website_leads` l
+JOIN (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
+WHERE l.is_spam = FALSE
+  AND l.is_test = FALSE
+  AND l.ga_client_id IS NOT NULL
+  AND COALESCE(ls.status, l.status) IN ('invoice_paid', 'won');
+
+-- ============================================================
+-- v_channel_summary
+-- Leads by channel with funnel stages
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_channel_summary` AS
+SELECT
+  CASE
+    WHEN gclid IS NOT NULL THEN 'Google Ads'
+    WHEN utm_medium = 'organic' THEN CONCAT('Organic - ', COALESCE(utm_source, 'Unknown'))
+    WHEN utm_medium = 'referral' THEN CONCAT('Referral - ', COALESCE(utm_source, 'Unknown'))
+    WHEN utm_source IS NOT NULL THEN CONCAT(COALESCE(utm_source, ''), ' / ', COALESCE(utm_medium, ''))
+    ELSE 'Direct'
+  END AS channel,
+  COUNT(*) AS total_leads,
+  COUNTIF(status IN ('contacted', 'qualified', 'quoted', 'tasting', 'invoice_sent', 'booked', 'invoice_paid', 'won')) AS progressed,
+  COUNTIF(status IN ('invoice_paid', 'won')) AS won
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE
+GROUP BY channel
+ORDER BY total_leads DESC;
+
+-- ============================================================
+-- v_daily_metrics
+-- Daily lead counts
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_daily_metrics` AS
+SELECT
+  DATE(submitted_at) AS date,
+  COUNT(*) AS leads,
+  COUNTIF(gclid IS NOT NULL) AS from_ads,
+  COUNTIF(gclid IS NULL) AS from_organic_or_other
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE
+GROUP BY date
+ORDER BY date DESC;
+
+-- ============================================================
+-- v_ppc_performance
+-- Google Ads campaign stats from data transfer
+-- Replace 3871181264 with client's Google Ads account ID
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_ppc_performance` AS
+SELECT
+  cs.segments_date AS date,
+  c.campaign_name,
+  cs.metrics_impressions AS impressions,
+  cs.metrics_clicks AS clicks,
+  ROUND(cs.metrics_cost_micros / 1000000, 2) AS cost,
+  cs.metrics_conversions AS conversions,
+  CASE WHEN cs.metrics_conversions > 0
+    THEN ROUND(cs.metrics_cost_micros / 1000000 / cs.metrics_conversions, 2)
+    ELSE NULL END AS cpa
+FROM `chef-nam-analytics.google_ads_export.p_ads_CampaignStats_3871181264` cs
+JOIN `chef-nam-analytics.google_ads_export.p_ads_Campaign_3871181264` c
+  ON cs.campaign_id = c.campaign_id
+ORDER BY cs.segments_date DESC;
+
+-- ============================================================
+-- v_organic_performance
+-- Search Console queries with rankings
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_organic_performance` AS
+SELECT
+  query,
+  SUM(impressions) AS impressions,
+  SUM(clicks) AS clicks,
+  ROUND(AVG(position), 1) AS avg_position,
+  ROUND(SAFE_DIVIDE(SUM(clicks), SUM(impressions)) * 100, 2) AS ctr_pct
+FROM `chef-nam-analytics.searchconsole.search_performance`
+GROUP BY query
+HAVING impressions > 10
+ORDER BY clicks DESC;
