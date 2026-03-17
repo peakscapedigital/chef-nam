@@ -6,8 +6,7 @@
  *
  * Run: TRELLO_API_KEY=xxx TRELLO_API_TOKEN=xxx node scripts/setup-trello.js
  *
- * Note: Lead ID is stored in card descriptions as <!-- lead_id:UUID -->
- * because Custom Fields require Trello Premium.
+ * Lead ID is stored as a custom text field on each card.
  */
 
 const BOARD_ID = '69894415201f9d44987bce85'; // Catering Leads board

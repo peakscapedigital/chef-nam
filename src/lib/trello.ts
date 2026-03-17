@@ -2,10 +2,16 @@
  * Trello helper for webhook processing and card management
  * Used by the webhook handler and form submission flow
  *
- * Lead ID is stored in the card description as a hidden tag:
- *   <!-- lead_id:UUID -->
- * This avoids needing Trello Premium for custom fields.
+ * Custom fields on Catering Leads board:
+ *   - "Lead ID" (text)       — links card to BigQuery/Firestore lead
+ *   - "Lead Received" (date) — submission timestamp for response time tracking
+ *   - "Quote Sent" (date)    — when quote was sent
+ *   - "Order" (text)         — order details
  */
+
+// Custom Field IDs (Catering Leads board)
+export const CUSTOM_FIELD_LEAD_ID = '69b8d1b4dedc722fcd0b9bd1';
+export const CUSTOM_FIELD_LEAD_RECEIVED = '69a080be13db331102cbd35c';
 
 // Trello List ID → Lead Status mapping
 export const LIST_STATUS_MAP: Record<string, string> = {
@@ -22,19 +28,8 @@ export const LIST_STATUS_MAP: Record<string, string> = {
   '699358522131fbabfe83302a': 'no_response',     // No Response
 };
 
-// Pattern to extract lead_id from card description
-const LEAD_ID_PATTERN = /<!-- lead_id:([0-9a-f-]{36}) -->/;
-
 /**
- * Extract Lead ID from a card description string
- */
-export function parseLeadIdFromDesc(desc: string): string | null {
-  const match = desc.match(LEAD_ID_PATTERN);
-  return match ? match[1] : null;
-}
-
-/**
- * Fetch the Lead ID from a Trello card's description
+ * Fetch the Lead ID from a Trello card's custom fields
  */
 export async function getLeadIdFromCard(
   cardId: string,
@@ -42,18 +37,19 @@ export async function getLeadIdFromCard(
   apiToken: string
 ): Promise<string | null> {
   try {
-    const url = `https://api.trello.com/1/cards/${cardId}?key=${apiKey}&token=${apiToken}&fields=desc`;
+    const url = `https://api.trello.com/1/cards/${cardId}/customFieldItems?key=${apiKey}&token=${apiToken}`;
     const response = await fetch(url, {
       headers: { 'Accept': 'application/json' },
     });
 
     if (!response.ok) {
-      console.error('Failed to get card:', response.status);
+      console.error('Failed to get card custom fields:', response.status);
       return null;
     }
 
-    const card = await response.json() as { desc: string };
-    return parseLeadIdFromDesc(card.desc);
+    const items = await response.json() as Array<{ idCustomField: string; value?: { text?: string } }>;
+    const leadIdItem = items.find(item => item.idCustomField === CUSTOM_FIELD_LEAD_ID);
+    return leadIdItem?.value?.text || null;
   } catch (error) {
     console.error('Error fetching lead ID from card:', error);
     return null;

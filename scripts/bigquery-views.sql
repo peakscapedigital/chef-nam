@@ -9,25 +9,17 @@
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.lead_response_time` AS
 SELECT
   l.lead_id,
+  l.first_name,
+  l.last_name,
   l.submitted_at,
-  MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))) AS first_contacted_at,
-  TIMESTAMP_DIFF(
-    MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))),
-    l.submitted_at,
-    MINUTE
-  ) AS response_minutes,
-  ROUND(TIMESTAMP_DIFF(
-    MIN(TIMESTAMP(JSON_EXTRACT_SCALAR(c.data, '$.updated_at'))),
-    l.submitted_at,
-    MINUTE
-  ) / 60.0, 1) AS response_hours
+  l.contacted_at,
+  l.status,
+  TIMESTAMP_DIFF(l.contacted_at, l.submitted_at, MINUTE) AS response_minutes,
+  ROUND(TIMESTAMP_DIFF(l.contacted_at, l.submitted_at, MINUTE) / 60.0, 1) AS response_hours
 FROM `chef-nam-analytics.leads.website_leads` l
-JOIN `chef-nam-analytics.leads.lead_status_changelog_raw_changelog` c
-  ON JSON_EXTRACT_SCALAR(c.data, '$.lead_id') = l.lead_id
 WHERE l.is_spam = FALSE
   AND l.is_test = FALSE
-  AND JSON_EXTRACT_SCALAR(c.data, '$.status') = 'contacted'
-GROUP BY l.lead_id, l.submitted_at;
+  AND l.contacted_at IS NOT NULL;
 
 -- ============================================================
 -- lead_status_history

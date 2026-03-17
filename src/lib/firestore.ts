@@ -328,6 +328,7 @@ export async function updateFirestoreLead(
     status?: string;
     notes?: string;
     booking_value?: number | null;
+    contacted_at?: string;
   },
   projectId: string,
   base64Credentials: string
@@ -355,6 +356,11 @@ export async function updateFirestoreLead(
     if (updates.booking_value !== undefined) {
       updateMask.push('booking_value');
       fields.booking_value = toFirestoreValue(updates.booking_value);
+    }
+
+    if (updates.contacted_at !== undefined) {
+      updateMask.push('contacted_at');
+      fields.contacted_at = toFirestoreValue(updates.contacted_at);
     }
 
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${leadId}?updateMask.fieldPaths=${updateMask.join('&updateMask.fieldPaths=')}`;

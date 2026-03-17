@@ -85,7 +85,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.log(`📊 Status change: ${action.data.listBefore?.name} to ${action.data.listAfter.name} (${newStatus})`);
 
       // Build updates
-      const updates: { status: string; won_at?: string; booked_at?: string } = { status: newStatus };
+      const updates: { status: string; contacted_at?: string; won_at?: string; booked_at?: string } = { status: newStatus };
+
+      // If moving to "Contacted", set contacted_at (one-time milestone for response time tracking)
+      if (newStatus === 'contacted') {
+        updates.contacted_at = new Date().toISOString();
+      }
 
       // If moving to "Qualified", trigger Lead_Qualified offline conversion
       if (newStatus === 'qualified') {
@@ -142,7 +147,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       // Update Firestore
       if (fsCredentials) {
-        const fsResult = await updateFirestoreLead(leadId, { status: newStatus }, projectId, fsCredentials);
+        const fsUpdates: { status: string; contacted_at?: string } = { status: newStatus };
+        if (updates.contacted_at) {
+          fsUpdates.contacted_at = updates.contacted_at;
+        }
+        const fsResult = await updateFirestoreLead(leadId, fsUpdates, projectId, fsCredentials);
         if (fsResult.success) {
           console.log(`✅ Firestore status updated: ${newStatus}`);
         } else {

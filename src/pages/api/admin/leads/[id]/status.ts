@@ -60,9 +60,15 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     // Build update object
     const updates: {
       status: string;
+      contacted_at?: string;
       booking_value?: number;
       won_at?: string;
     } = { status };
+
+    // If marking as contacted, set contacted_at
+    if (status === 'contacted') {
+      updates.contacted_at = new Date().toISOString();
+    }
 
     // If marking as won, require booking_value and set won_at
     if (status === 'won') {

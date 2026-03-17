@@ -11,6 +11,7 @@ import {
   createFirestoreLead,
   createFirestoreLeadData
 } from '../../lib/firestore';
+import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -140,12 +141,6 @@ async function sendToTrello(data: any, env: Record<string, string> | undefined, 
       if (data.referrer) descParts.push(`- **Referrer:** ${data.referrer}`);
     }
 
-    // Embed lead_id as hidden tag for webhook sync
-    if (leadId) {
-      descParts.push('');
-      descParts.push(`<!-- lead_id:${leadId} -->`);
-    }
-
     const params = new URLSearchParams({
       key: apiKey,
       token: apiToken,
@@ -168,6 +163,32 @@ async function sendToTrello(data: any, env: Record<string, string> | undefined, 
 
     const card = await response.json() as { id: string; shortUrl: string };
     console.log('✅ Trello card created:', card.id, card.shortUrl);
+
+    // Set custom fields: Lead ID and Lead Received
+    const customFields = [
+      { id: CUSTOM_FIELD_LEAD_ID, value: { text: leadId || '' } },
+      { id: CUSTOM_FIELD_LEAD_RECEIVED, value: { date: new Date().toISOString() } },
+    ];
+
+    for (const field of customFields) {
+      try {
+        const fieldResponse = await fetch(
+          `https://api.trello.com/1/cards/${card.id}/customField/${field.id}/item?key=${apiKey}&token=${apiToken}`,
+          {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ value: field.value }),
+          }
+        );
+        if (!fieldResponse.ok) {
+          console.error(`⚠️ Failed to set custom field ${field.id}:`, fieldResponse.status);
+        }
+      } catch (fieldError) {
+        console.error(`⚠️ Custom field ${field.id} exception:`, fieldError);
+      }
+    }
+    console.log('✅ Custom fields set on card (Lead ID + Lead Received)');
+
     return card;
   } catch (trelloError) {
     console.error('⚠️ Trello exception:', trelloError);
