@@ -104,7 +104,7 @@ GROUP BY lead_source;
 -- Formatted for Google Ads offline conversion CSV upload
 -- ============================================================
 CREATE OR REPLACE VIEW `chef-nam-analytics.leads.google_ads_conversions` AS
--- Lead_Qualified conversions (triggered at qualified stage)
+-- Lead_Qualified conversions (triggered at qualified stage — they responded)
 SELECT
   l.gclid AS `Google Click ID`,
   'Lead_Qualified' AS `Conversion Name`,
@@ -112,48 +112,40 @@ SELECT
   100.0 AS `Conversion Value`,
   'USD' AS `Conversion Currency`
 FROM `chef-nam-analytics.leads.website_leads` l
-JOIN (
-  SELECT
-    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
-    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
-    ROW_NUMBER() OVER (
-      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
-      ORDER BY timestamp DESC
-    ) AS rn
-  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
-  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
-) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
 WHERE l.is_spam = FALSE
   AND l.is_test = FALSE
   AND l.gclid IS NOT NULL
-  AND COALESCE(ls.status, l.status) IN ('qualified', 'quoted', 'tasting', 'invoice_sent', 'booked', 'invoice_paid', 'won')
+  AND l.status IN ('qualified', 'quoted', 'tasting', 'invoice_sent', 'booked', 'invoice_paid', 'won')
 
 UNION ALL
 
--- Purchase conversions (triggered at invoice_paid stage)
+-- Quote conversions (triggered when quote_amount is set)
+SELECT
+  l.gclid AS `Google Click ID`,
+  'Quote' AS `Conversion Name`,
+  FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S-05:00', l.status_updated_at) AS `Conversion Time`,
+  l.quote_amount AS `Conversion Value`,
+  'USD' AS `Conversion Currency`
+FROM `chef-nam-analytics.leads.website_leads` l
+WHERE l.is_spam = FALSE
+  AND l.is_test = FALSE
+  AND l.gclid IS NOT NULL
+  AND l.quote_amount IS NOT NULL
+
+UNION ALL
+
+-- Purchase conversions (triggered when order_amount is set)
 SELECT
   l.gclid AS `Google Click ID`,
   'Purchase' AS `Conversion Name`,
   FORMAT_TIMESTAMP('%Y-%m-%d %H:%M:%S-05:00', COALESCE(l.booked_at, l.status_updated_at)) AS `Conversion Time`,
-  SAFE_CAST(ls.booking_value AS FLOAT64) AS `Conversion Value`,
+  COALESCE(l.order_amount, l.booking_value) AS `Conversion Value`,
   'USD' AS `Conversion Currency`
 FROM `chef-nam-analytics.leads.website_leads` l
-JOIN (
-  SELECT
-    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
-    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
-    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
-    ROW_NUMBER() OVER (
-      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
-      ORDER BY timestamp DESC
-    ) AS rn
-  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
-  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
-) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
 WHERE l.is_spam = FALSE
   AND l.is_test = FALSE
   AND l.gclid IS NOT NULL
-  AND COALESCE(ls.status, l.status) IN ('invoice_paid', 'won');
+  AND l.status IN ('invoice_paid', 'won');
 
 -- ============================================================
 -- ga4_conversions
@@ -163,26 +155,14 @@ CREATE OR REPLACE VIEW `chef-nam-analytics.leads.ga4_conversions` AS
 SELECT
   l.ga_client_id AS client_id,
   'purchase' AS event,
-  SAFE_CAST(ls.booking_value AS FLOAT64) AS value,
+  COALESCE(l.order_amount, l.booking_value) AS value,
   'USD' AS currency,
   l.lead_id AS transaction_id
 FROM `chef-nam-analytics.leads.website_leads` l
-JOIN (
-  SELECT
-    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
-    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
-    JSON_EXTRACT_SCALAR(data, '$.booking_value') AS booking_value,
-    ROW_NUMBER() OVER (
-      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
-      ORDER BY timestamp DESC
-    ) AS rn
-  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
-  WHERE JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
-) ls ON l.lead_id = ls.lead_id AND ls.rn = 1
 WHERE l.is_spam = FALSE
   AND l.is_test = FALSE
   AND l.ga_client_id IS NOT NULL
-  AND COALESCE(ls.status, l.status) IN ('invoice_paid', 'won');
+  AND l.status IN ('invoice_paid', 'won');
 
 -- ============================================================
 -- v_channel_summary

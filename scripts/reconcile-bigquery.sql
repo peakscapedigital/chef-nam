@@ -15,6 +15,8 @@
 --   - won_at (timestamp of first "won" status)
 --   - notes (latest from changelog)
 --   - booking_value (latest from changelog)
+--   - quote_amount (latest from changelog)
+--   - order_amount (latest from changelog)
 
 UPDATE `chef-nam-analytics.leads.website_leads` w
 SET
@@ -36,13 +38,17 @@ SET
     w.won_at
   ),
   w.notes = COALESCE(l.notes, w.notes),
-  w.booking_value = COALESCE(l.booking_value, w.booking_value)
+  w.booking_value = COALESCE(l.booking_value, w.booking_value),
+  w.quote_amount = COALESCE(l.quote_amount, w.quote_amount),
+  w.order_amount = COALESCE(l.order_amount, w.order_amount)
 FROM (
   SELECT
     lead_id,
     status,
     notes,
     booking_value,
+    quote_amount,
+    order_amount,
     contacted_at,
     booked_at,
     won_at,
@@ -56,6 +62,8 @@ FROM (
       JSON_EXTRACT_SCALAR(c.data, '$.status') AS status,
       JSON_EXTRACT_SCALAR(c.data, '$.notes') AS notes,
       SAFE_CAST(JSON_EXTRACT_SCALAR(c.data, '$.booking_value') AS FLOAT64) AS booking_value,
+      SAFE_CAST(JSON_EXTRACT_SCALAR(c.data, '$.quote_amount') AS FLOAT64) AS quote_amount,
+      SAFE_CAST(JSON_EXTRACT_SCALAR(c.data, '$.order_amount') AS FLOAT64) AS order_amount,
       JSON_EXTRACT_SCALAR(c.data, '$.contacted_at') AS contacted_at,
       JSON_EXTRACT_SCALAR(c.data, '$.booked_at') AS booked_at,
       JSON_EXTRACT_SCALAR(c.data, '$.won_at') AS won_at,
@@ -85,4 +93,6 @@ WHERE w.lead_id = l.lead_id
     OR (w.won_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.won_at), l.first_won_at) IS NOT NULL)
     OR (l.notes IS NOT NULL AND l.notes != '' AND COALESCE(w.notes, '') != l.notes)
     OR (l.booking_value IS NOT NULL AND COALESCE(w.booking_value, 0) != l.booking_value)
+    OR (l.quote_amount IS NOT NULL AND COALESCE(w.quote_amount, 0) != l.quote_amount)
+    OR (l.order_amount IS NOT NULL AND COALESCE(w.order_amount, 0) != l.order_amount)
   );

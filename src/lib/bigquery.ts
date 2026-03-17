@@ -45,6 +45,8 @@ interface LeadData {
   status?: string;
   notes?: string;
   booking_value?: number;
+  quote_amount?: number;
+  order_amount?: number;
   submitted_at: string;
   status_updated_at?: string;
   notes_updated_at?: string;

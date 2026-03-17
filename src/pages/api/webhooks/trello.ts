@@ -1,6 +1,19 @@
 import type { APIRoute } from 'astro';
 import { getFirestoreLead, updateFirestoreLead } from '../../../lib/firestore';
-import { LIST_STATUS_MAP, getLeadIdFromCard } from '../../../lib/trello';
+import {
+  LIST_STATUS_MAP,
+  getLeadIdFromCard,
+  CUSTOM_FIELD_QUOTE_AMOUNT,
+  CUSTOM_FIELD_ORDER_AMOUNT,
+} from '../../../lib/trello';
+import {
+  getGoogleAdsCredentials,
+  uploadClickConversion,
+  CONVERSION_ACTION_LEAD_QUALIFIED,
+  CONVERSION_ACTION_QUOTE,
+  CONVERSION_ACTION_PURCHASE,
+} from '../../../lib/google-ads';
+import { getGA4Credentials, sendGA4Event } from '../../../lib/ga4';
 
 export const prerender = false;
 
@@ -16,13 +29,17 @@ export const HEAD: APIRoute = async () => {
 /**
  * POST /api/webhooks/trello
  * Receives Trello webhook events and syncs changes to Firestore.
+ * Also uploads offline conversions to Google Ads when:
+ *   - Card reaches "Qualified" → Lead_Qualified conversion
+ *   - Order Amount custom field is set → Purchase conversion
  *
  * Firestore is the real-time operational layer. BigQuery gets updated
  * via the Firebase "Stream to BigQuery" extension (changelog) and a
- * scheduled reconciliation job.
+ * scheduled reconciliation job (every 6 hours).
  *
  * Handled events:
  * - updateCard (listAfter) - card moved between lists = status change
+ * - updateCustomFieldItem  - custom field value changed (quote/order amounts)
  * - commentCard - comment added = append to notes
  */
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -34,8 +51,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
           card?: { id: string; name: string };
           listAfter?: { id: string; name: string };
           listBefore?: { id: string; name: string };
-          text?: string; // comment text
+          text?: string;
           old?: { idList?: string };
+          customField?: { id: string; name: string };
+          customFieldItem?: {
+            value?: { number?: string };
+          };
         };
         memberCreator?: { fullName: string; username: string };
       };
@@ -54,10 +75,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
     // Get credentials
     const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
-    const trelloApiKey = runtime?.env?.TRELLO_API_KEY;
-    const trelloApiToken = runtime?.env?.TRELLO_API_TOKEN;
+    const env = runtime?.env || {};
+    const projectId = env.BIGQUERY_PROJECT_ID;
+    const fsCredentials = env.FIREBASE_CREDENTIALS;
+    const trelloApiKey = env.TRELLO_API_KEY;
+    const trelloApiToken = env.TRELLO_API_TOKEN;
 
     if (!projectId || !fsCredentials || !trelloApiKey || !trelloApiToken) {
       console.error('Missing required credentials for webhook processing');
@@ -105,19 +127,146 @@ export const POST: APIRoute = async ({ request, locals }) => {
         updates.won_at = new Date().toISOString();
       }
 
-      // Log offline conversion candidates (gclid check happens at reconciliation/export time)
-      if (newStatus === 'qualified') {
-        console.log(`📊 Lead ${leadId} qualified — eligible for Lead_Qualified offline conversion if gclid exists`);
-      }
-      if (newStatus === 'invoice_paid') {
-        console.log(`📊 Lead ${leadId} invoice paid — eligible for Purchase offline conversion if gclid exists`);
-      }
-
       const fsResult = await updateFirestoreLead(leadId, updates, projectId, fsCredentials);
       if (fsResult.success) {
         console.log(`✅ Firestore updated: ${newStatus}`);
       } else {
         console.error('❌ Firestore update failed:', fsResult.error);
+      }
+
+      // Send conversion events for key status changes
+      if (['qualified', 'lost', 'no_response'].includes(newStatus)) {
+        const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
+        const lead = leadResult.success ? leadResult.lead : null;
+
+        // Google Ads: Lead_Qualified conversion
+        if (newStatus === 'qualified' && lead?.gclid) {
+          const gadsCredentials = getGoogleAdsCredentials(env);
+          if (gadsCredentials) {
+            const result = await uploadClickConversion(gadsCredentials, {
+              gclid: lead.gclid,
+              conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
+              conversionValue: 100.0,
+            });
+            if (result.success) {
+              console.log(`✅ Lead_Qualified conversion uploaded for lead ${leadId}`);
+            } else {
+              console.error(`⚠️ Lead_Qualified upload failed: ${result.error || result.partialFailureError}`);
+            }
+          }
+        }
+
+        // GA4: lifecycle events
+        if (lead?.ga_client_id) {
+          const ga4Credentials = getGA4Credentials(env);
+          if (ga4Credentials) {
+            if (newStatus === 'qualified') {
+              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'qualify_lead', {
+                value: 100.0, currency: 'USD',
+              });
+            } else if (newStatus === 'lost') {
+              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'disqualify_lead', {
+                disqualified_lead_reason: 'Did not convert',
+              });
+            } else if (newStatus === 'no_response') {
+              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'close_unconvert_lead', {
+                unconvert_lead_reason: 'Never responded',
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // Handle: Custom field value changed (quote/order amounts)
+    if (actionType === 'updateCustomFieldItem' && action.data.customField) {
+      const fieldId = action.data.customField.id;
+      const rawValue = action.data.customFieldItem?.value?.number;
+      const numValue = rawValue ? parseFloat(rawValue) : null;
+
+      const fieldMap: Record<string, string> = {
+        [CUSTOM_FIELD_QUOTE_AMOUNT]: 'quote_amount',
+        [CUSTOM_FIELD_ORDER_AMOUNT]: 'order_amount',
+      };
+
+      const fieldName = fieldMap[fieldId];
+
+      if (fieldName) {
+        console.log(`💰 ${action.data.customField.name} set to ${numValue} on lead ${leadId}`);
+
+        const fsResult = await updateFirestoreLead(
+          leadId,
+          { [fieldName]: numValue } as { quote_amount?: number | null; order_amount?: number | null },
+          projectId,
+          fsCredentials
+        );
+        if (fsResult.success) {
+          console.log(`✅ Firestore ${fieldName} updated: ${numValue}`);
+        } else {
+          console.error(`❌ Firestore ${fieldName} update failed:`, fsResult.error);
+        }
+
+        // Send conversion events when quote/order amounts are set
+        if (numValue && numValue > 0) {
+          const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
+          const lead = leadResult.success ? leadResult.lead : null;
+
+          if (fieldName === 'quote_amount') {
+            // Google Ads: Quote conversion
+            if (lead?.gclid) {
+              const gadsCredentials = getGoogleAdsCredentials(env);
+              if (gadsCredentials) {
+                const result = await uploadClickConversion(gadsCredentials, {
+                  gclid: lead.gclid,
+                  conversionActionId: CONVERSION_ACTION_QUOTE,
+                  conversionValue: numValue,
+                });
+                if (result.success) {
+                  console.log(`✅ Quote conversion uploaded for lead ${leadId}: $${numValue}`);
+                } else {
+                  console.error(`⚠️ Quote upload failed: ${result.error || result.partialFailureError}`);
+                }
+              }
+            }
+            // GA4: working_lead (actively working the deal)
+            if (lead?.ga_client_id) {
+              const ga4Credentials = getGA4Credentials(env);
+              if (ga4Credentials) {
+                await sendGA4Event(ga4Credentials, lead.ga_client_id, 'working_lead', {
+                  value: numValue, currency: 'USD', lead_status: 'Quoted',
+                });
+              }
+            }
+          }
+
+          if (fieldName === 'order_amount') {
+            // Google Ads: Purchase conversion
+            if (lead?.gclid) {
+              const gadsCredentials = getGoogleAdsCredentials(env);
+              if (gadsCredentials) {
+                const result = await uploadClickConversion(gadsCredentials, {
+                  gclid: lead.gclid,
+                  conversionActionId: CONVERSION_ACTION_PURCHASE,
+                  conversionValue: numValue,
+                });
+                if (result.success) {
+                  console.log(`✅ Purchase conversion uploaded for lead ${leadId}: $${numValue}`);
+                } else {
+                  console.error(`⚠️ Purchase upload failed: ${result.error || result.partialFailureError}`);
+                }
+              }
+            }
+            // GA4: close_convert_lead (revenue confirmed)
+            if (lead?.ga_client_id) {
+              const ga4Credentials = getGA4Credentials(env);
+              if (ga4Credentials) {
+                await sendGA4Event(ga4Credentials, lead.ga_client_id, 'close_convert_lead', {
+                  value: numValue, currency: 'USD',
+                });
+              }
+            }
+          }
+        }
       }
     }
 

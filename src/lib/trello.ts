@@ -3,15 +3,19 @@
  * Used by the webhook handler and form submission flow
  *
  * Custom fields on Catering Leads board:
- *   - "Lead ID" (text)       — links card to BigQuery/Firestore lead
- *   - "Lead Received" (date) — submission timestamp for response time tracking
- *   - "Quote Sent" (date)    — when quote was sent
- *   - "Order" (text)         — order details
+ *   - "Lead ID" (text)         — links card to BigQuery/Firestore lead
+ *   - "Lead Received" (date)   — submission timestamp for response time tracking
+ *   - "Quote Sent" (date)      — when quote was sent
+ *   - "Quote Amount" (number)  — quoted dollar amount
+ *   - "Order Amount" (number)  — final order dollar amount
+ *   - "Order" (text)           — order details
  */
 
 // Custom Field IDs (Catering Leads board)
 export const CUSTOM_FIELD_LEAD_ID = '69b8d1b4dedc722fcd0b9bd1';
 export const CUSTOM_FIELD_LEAD_RECEIVED = '69a080be13db331102cbd35c';
+export const CUSTOM_FIELD_QUOTE_AMOUNT = '69b8dc01536673b6b8956f94';
+export const CUSTOM_FIELD_ORDER_AMOUNT = '69b8dc0bdd6e9dca576e0ef9';
 
 // Trello List ID → Lead Status mapping
 export const LIST_STATUS_MAP: Record<string, string> = {

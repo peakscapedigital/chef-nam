@@ -26,9 +26,13 @@ interface FirestoreLeadDocument {
   dietary_requirements: string[] | null;
   message: string | null;
   event_description: string | null;
+  gclid: string | null;
+  ga_client_id: string | null;
   status: string;
   notes: string;
   booking_value: number | null;
+  quote_amount: number | null;
+  order_amount: number | null;
   created_at: string;
   updated_at: string;
 }
@@ -254,6 +258,8 @@ export async function createFirestoreLead(
     dietary_requirements?: string[];
     message?: string;
     event_description?: string;
+    gclid?: string;
+    ga_client_id?: string;
   },
   projectId: string,
   base64Credentials: string
@@ -280,6 +286,8 @@ export async function createFirestoreLead(
       dietary_requirements: leadData.dietary_requirements || null,
       message: leadData.message || null,
       event_description: leadData.event_description || null,
+      gclid: leadData.gclid || null,
+      ga_client_id: leadData.ga_client_id || null,
       status: 'new',
       notes: '',
       booking_value: null,
@@ -331,6 +339,8 @@ export async function updateFirestoreLead(
     contacted_at?: string;
     booked_at?: string;
     won_at?: string;
+    quote_amount?: number | null;
+    order_amount?: number | null;
   },
   projectId: string,
   base64Credentials: string
@@ -373,6 +383,16 @@ export async function updateFirestoreLead(
     if (updates.won_at !== undefined) {
       updateMask.push('won_at');
       fields.won_at = toFirestoreValue(updates.won_at);
+    }
+
+    if (updates.quote_amount !== undefined) {
+      updateMask.push('quote_amount');
+      fields.quote_amount = toFirestoreValue(updates.quote_amount);
+    }
+
+    if (updates.order_amount !== undefined) {
+      updateMask.push('order_amount');
+      fields.order_amount = toFirestoreValue(updates.order_amount);
     }
 
     const url = `https://firestore.googleapis.com/v1/projects/${projectId}/databases/(default)/documents/leads/${leadId}?updateMask.fieldPaths=${updateMask.join('&updateMask.fieldPaths=')}`;
@@ -496,6 +516,8 @@ export function createFirestoreLeadData(formData: Record<string, unknown>, leadI
   dietary_requirements?: string[];
   message?: string;
   event_description?: string;
+  gclid?: string;
+  ga_client_id?: string;
 } {
   return {
     lead_id: leadId,
@@ -513,6 +535,8 @@ export function createFirestoreLeadData(formData: Record<string, unknown>, leadI
     budget_range: formData.budgetRange as string || undefined,
     dietary_requirements: formData.dietaryRequirements as string[] || undefined,
     message: formData.message as string || undefined,
-    event_description: formData.eventDescription as string || undefined
+    event_description: formData.eventDescription as string || undefined,
+    gclid: formData.gclid as string || undefined,
+    ga_client_id: formData.ga_client_id as string || undefined,
   };
 }
