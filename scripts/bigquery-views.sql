@@ -236,3 +236,157 @@ FROM `chef-nam-analytics.searchconsole.search_performance`
 GROUP BY query
 HAVING impressions > 10
 ORDER BY clicks DESC;
+
+-- ============================================================
+-- v_stage_dwell_time
+-- Time spent in each pipeline stage per lead
+-- Derived from Firestore changelog (works retroactively)
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_stage_dwell_time` AS
+WITH status_changes AS (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    timestamp AS entered_at,
+    LEAD(timestamp) OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp
+    ) AS exited_at
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE operation IN ('CREATE', 'UPDATE')
+    AND JSON_EXTRACT_SCALAR(data, '$.status') IS NOT NULL
+    AND JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+)
+SELECT
+  sc.lead_id,
+  w.first_name,
+  w.last_name,
+  sc.status,
+  sc.entered_at,
+  sc.exited_at,
+  ROUND(TIMESTAMP_DIFF(
+    COALESCE(sc.exited_at, CURRENT_TIMESTAMP()),
+    sc.entered_at,
+    HOUR
+  ) / 24.0, 1) AS days_in_stage,
+  sc.exited_at IS NULL AS is_current_stage
+FROM status_changes sc
+JOIN `chef-nam-analytics.leads.website_leads` w ON sc.lead_id = w.lead_id
+WHERE w.is_spam = FALSE AND w.is_test = FALSE;
+
+-- ============================================================
+-- v_pipeline_velocity
+-- End-to-end conversion timing: days between milestones
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_pipeline_velocity` AS
+SELECT
+  lead_id,
+  first_name,
+  last_name,
+  status,
+  submitted_at,
+  contacted_at,
+  qualified_at,
+  quoted_at,
+  booked_at,
+  won_at,
+  ROUND(TIMESTAMP_DIFF(contacted_at, submitted_at, HOUR) / 24.0, 1) AS days_to_contact,
+  ROUND(TIMESTAMP_DIFF(qualified_at, contacted_at, HOUR) / 24.0, 1) AS days_to_qualify,
+  ROUND(TIMESTAMP_DIFF(quoted_at, qualified_at, HOUR) / 24.0, 1) AS days_to_quote,
+  ROUND(TIMESTAMP_DIFF(booked_at, quoted_at, HOUR) / 24.0, 1) AS days_to_book,
+  ROUND(TIMESTAMP_DIFF(won_at, submitted_at, HOUR) / 24.0, 1) AS days_to_win
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE;
+
+-- ============================================================
+-- v_pipeline_velocity_summary
+-- Aggregate averages and medians for pipeline transitions
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_pipeline_velocity_summary` AS
+SELECT
+  'Submitted → Contacted' AS transition,
+  COUNT(contacted_at) AS leads,
+  ROUND(AVG(TIMESTAMP_DIFF(contacted_at, submitted_at, HOUR) / 24.0), 1) AS avg_days,
+  ROUND(APPROX_QUANTILES(TIMESTAMP_DIFF(contacted_at, submitted_at, HOUR) / 24.0, 100)[OFFSET(50)], 1) AS median_days
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE AND contacted_at IS NOT NULL
+
+UNION ALL
+
+SELECT
+  'Contacted → Qualified',
+  COUNT(qualified_at),
+  ROUND(AVG(TIMESTAMP_DIFF(qualified_at, contacted_at, HOUR) / 24.0), 1),
+  ROUND(APPROX_QUANTILES(TIMESTAMP_DIFF(qualified_at, contacted_at, HOUR) / 24.0, 100)[OFFSET(50)], 1)
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE AND qualified_at IS NOT NULL AND contacted_at IS NOT NULL
+
+UNION ALL
+
+SELECT
+  'Qualified → Quoted',
+  COUNT(quoted_at),
+  ROUND(AVG(TIMESTAMP_DIFF(quoted_at, qualified_at, HOUR) / 24.0), 1),
+  ROUND(APPROX_QUANTILES(TIMESTAMP_DIFF(quoted_at, qualified_at, HOUR) / 24.0, 100)[OFFSET(50)], 1)
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE AND quoted_at IS NOT NULL AND qualified_at IS NOT NULL
+
+UNION ALL
+
+SELECT
+  'Quoted → Booked',
+  COUNT(booked_at),
+  ROUND(AVG(TIMESTAMP_DIFF(booked_at, quoted_at, HOUR) / 24.0), 1),
+  ROUND(APPROX_QUANTILES(TIMESTAMP_DIFF(booked_at, quoted_at, HOUR) / 24.0, 100)[OFFSET(50)], 1)
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE AND booked_at IS NOT NULL AND quoted_at IS NOT NULL
+
+UNION ALL
+
+SELECT
+  'Submitted → Won',
+  COUNT(won_at),
+  ROUND(AVG(TIMESTAMP_DIFF(won_at, submitted_at, HOUR) / 24.0), 1),
+  ROUND(APPROX_QUANTILES(TIMESTAMP_DIFF(won_at, submitted_at, HOUR) / 24.0, 100)[OFFSET(50)], 1)
+FROM `chef-nam-analytics.leads.website_leads`
+WHERE is_spam = FALSE AND is_test = FALSE AND won_at IS NOT NULL;
+
+-- ============================================================
+-- v_stale_leads
+-- Active leads ordered by time in current stage (most stale first)
+-- ============================================================
+CREATE OR REPLACE VIEW `chef-nam-analytics.leads.v_stale_leads` AS
+WITH current_stage AS (
+  SELECT
+    JSON_EXTRACT_SCALAR(data, '$.lead_id') AS lead_id,
+    JSON_EXTRACT_SCALAR(data, '$.status') AS status,
+    timestamp AS last_change,
+    ROW_NUMBER() OVER (
+      PARTITION BY JSON_EXTRACT_SCALAR(data, '$.lead_id')
+      ORDER BY timestamp DESC
+    ) AS rn
+  FROM `chef-nam-analytics.leads.lead_status_changelog_raw_changelog`
+  WHERE operation IN ('CREATE', 'UPDATE')
+    AND JSON_EXTRACT_SCALAR(data, '$.status') IS NOT NULL
+    AND JSON_EXTRACT_SCALAR(data, '$.lead_id') IS NOT NULL
+)
+SELECT
+  cs.lead_id,
+  w.first_name,
+  w.last_name,
+  w.email,
+  w.phone,
+  cs.status,
+  cs.last_change,
+  DATE_DIFF(CURRENT_DATE(), DATE(cs.last_change), DAY) AS days_in_stage,
+  w.quote_amount,
+  w.order_amount,
+  w.event_date,
+  w.guest_count
+FROM current_stage cs
+JOIN `chef-nam-analytics.leads.website_leads` w ON cs.lead_id = w.lead_id
+WHERE cs.rn = 1
+  AND w.is_spam = FALSE
+  AND w.is_test = FALSE
+  AND cs.status NOT IN ('won', 'lost', 'no_response')
+ORDER BY days_in_stage DESC;

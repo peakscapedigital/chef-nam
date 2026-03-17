@@ -33,6 +33,14 @@ interface FirestoreLeadDocument {
   booking_value: number | null;
   quote_amount: number | null;
   order_amount: number | null;
+  contacted_at?: string;
+  qualified_at?: string;
+  quoted_at?: string;
+  tasting_at?: string;
+  invoice_sent_at?: string;
+  booked_at?: string;
+  invoice_paid_at?: string;
+  won_at?: string;
   created_at: string;
   updated_at: string;
 }
@@ -337,7 +345,12 @@ export async function updateFirestoreLead(
     notes?: string;
     booking_value?: number | null;
     contacted_at?: string;
+    qualified_at?: string;
+    quoted_at?: string;
+    tasting_at?: string;
+    invoice_sent_at?: string;
     booked_at?: string;
+    invoice_paid_at?: string;
     won_at?: string;
     quote_amount?: number | null;
     order_amount?: number | null;
@@ -370,19 +383,16 @@ export async function updateFirestoreLead(
       fields.booking_value = toFirestoreValue(updates.booking_value);
     }
 
-    if (updates.contacted_at !== undefined) {
-      updateMask.push('contacted_at');
-      fields.contacted_at = toFirestoreValue(updates.contacted_at);
-    }
-
-    if (updates.booked_at !== undefined) {
-      updateMask.push('booked_at');
-      fields.booked_at = toFirestoreValue(updates.booked_at);
-    }
-
-    if (updates.won_at !== undefined) {
-      updateMask.push('won_at');
-      fields.won_at = toFirestoreValue(updates.won_at);
+    // Milestone timestamps
+    const timestampFields = [
+      'contacted_at', 'qualified_at', 'quoted_at', 'tasting_at',
+      'invoice_sent_at', 'booked_at', 'invoice_paid_at', 'won_at',
+    ] as const;
+    for (const field of timestampFields) {
+      if (updates[field] !== undefined) {
+        updateMask.push(field);
+        fields[field] = toFirestoreValue(updates[field]);
+      }
     }
 
     if (updates.quote_amount !== undefined) {

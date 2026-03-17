@@ -10,13 +10,9 @@
 -- What it syncs:
 --   - status (latest from changelog)
 --   - status_updated_at (timestamp of latest status change)
---   - contacted_at (timestamp of first "contacted" status)
---   - booked_at (timestamp of first "booked" status)
---   - won_at (timestamp of first "won" status)
+--   - milestone timestamps (contacted_at through won_at)
 --   - notes (latest from changelog)
---   - booking_value (latest from changelog)
---   - quote_amount (latest from changelog)
---   - order_amount (latest from changelog)
+--   - booking_value, quote_amount, order_amount (latest from changelog)
 
 UPDATE `chef-nam-analytics.leads.website_leads` w
 SET
@@ -27,10 +23,35 @@ SET
     l.first_contacted_at,
     w.contacted_at
   ),
+  w.qualified_at = COALESCE(
+    SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.qualified_at),
+    l.first_qualified_at,
+    w.qualified_at
+  ),
+  w.quoted_at = COALESCE(
+    SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.quoted_at),
+    l.first_quoted_at,
+    w.quoted_at
+  ),
+  w.tasting_at = COALESCE(
+    SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.tasting_at),
+    l.first_tasting_at,
+    w.tasting_at
+  ),
+  w.invoice_sent_at = COALESCE(
+    SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.invoice_sent_at),
+    l.first_invoice_sent_at,
+    w.invoice_sent_at
+  ),
   w.booked_at = COALESCE(
     SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.booked_at),
     l.first_booked_at,
     w.booked_at
+  ),
+  w.invoice_paid_at = COALESCE(
+    SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.invoice_paid_at),
+    l.first_invoice_paid_at,
+    w.invoice_paid_at
   ),
   w.won_at = COALESCE(
     SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.won_at),
@@ -50,11 +71,21 @@ FROM (
     quote_amount,
     order_amount,
     contacted_at,
+    qualified_at,
+    quoted_at,
+    tasting_at,
+    invoice_sent_at,
     booked_at,
+    invoice_paid_at,
     won_at,
     changelog_timestamp,
     first_contacted_at,
+    first_qualified_at,
+    first_quoted_at,
+    first_tasting_at,
+    first_invoice_sent_at,
     first_booked_at,
+    first_invoice_paid_at,
     first_won_at
   FROM (
     SELECT
@@ -65,14 +96,29 @@ FROM (
       SAFE_CAST(JSON_EXTRACT_SCALAR(c.data, '$.quote_amount') AS FLOAT64) AS quote_amount,
       SAFE_CAST(JSON_EXTRACT_SCALAR(c.data, '$.order_amount') AS FLOAT64) AS order_amount,
       JSON_EXTRACT_SCALAR(c.data, '$.contacted_at') AS contacted_at,
+      JSON_EXTRACT_SCALAR(c.data, '$.qualified_at') AS qualified_at,
+      JSON_EXTRACT_SCALAR(c.data, '$.quoted_at') AS quoted_at,
+      JSON_EXTRACT_SCALAR(c.data, '$.tasting_at') AS tasting_at,
+      JSON_EXTRACT_SCALAR(c.data, '$.invoice_sent_at') AS invoice_sent_at,
       JSON_EXTRACT_SCALAR(c.data, '$.booked_at') AS booked_at,
+      JSON_EXTRACT_SCALAR(c.data, '$.invoice_paid_at') AS invoice_paid_at,
       JSON_EXTRACT_SCALAR(c.data, '$.won_at') AS won_at,
       c.timestamp AS changelog_timestamp,
       -- Derive milestone timestamps from status change history (fallback)
       MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'contacted' THEN c.timestamp END)
         OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_contacted_at,
+      MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'qualified' THEN c.timestamp END)
+        OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_qualified_at,
+      MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'quoted' THEN c.timestamp END)
+        OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_quoted_at,
+      MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'tasting' THEN c.timestamp END)
+        OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_tasting_at,
+      MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'invoice_sent' THEN c.timestamp END)
+        OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_invoice_sent_at,
       MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'booked' THEN c.timestamp END)
         OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_booked_at,
+      MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'invoice_paid' THEN c.timestamp END)
+        OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_invoice_paid_at,
       MIN(CASE WHEN JSON_EXTRACT_SCALAR(c.data, '$.status') = 'won' THEN c.timestamp END)
         OVER (PARTITION BY JSON_EXTRACT_SCALAR(c.data, '$.lead_id')) AS first_won_at,
       ROW_NUMBER() OVER (
@@ -89,7 +135,12 @@ WHERE w.lead_id = l.lead_id
   AND (
     w.status != l.status
     OR (w.contacted_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.contacted_at), l.first_contacted_at) IS NOT NULL)
+    OR (w.qualified_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.qualified_at), l.first_qualified_at) IS NOT NULL)
+    OR (w.quoted_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.quoted_at), l.first_quoted_at) IS NOT NULL)
+    OR (w.tasting_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.tasting_at), l.first_tasting_at) IS NOT NULL)
+    OR (w.invoice_sent_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.invoice_sent_at), l.first_invoice_sent_at) IS NOT NULL)
     OR (w.booked_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.booked_at), l.first_booked_at) IS NOT NULL)
+    OR (w.invoice_paid_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.invoice_paid_at), l.first_invoice_paid_at) IS NOT NULL)
     OR (w.won_at IS NULL AND COALESCE(SAFE.PARSE_TIMESTAMP('%Y-%m-%dT%H:%M:%E*SZ', l.won_at), l.first_won_at) IS NOT NULL)
     OR (l.notes IS NOT NULL AND l.notes != '' AND COALESCE(w.notes, '') != l.notes)
     OR (l.booking_value IS NOT NULL AND COALESCE(w.booking_value, 0) != l.booking_value)

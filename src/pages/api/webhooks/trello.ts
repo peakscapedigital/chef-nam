@@ -109,22 +109,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
       console.log(`📊 Status change: ${action.data.listBefore?.name} → ${action.data.listAfter.name} (${newStatus})`);
 
       // Build Firestore updates
-      const updates: {
-        status: string;
-        contacted_at?: string;
-        booked_at?: string;
-        won_at?: string;
-      } = { status: newStatus };
+      const STATUS_TIMESTAMP_MAP: Record<string, string> = {
+        contacted: 'contacted_at',
+        qualified: 'qualified_at',
+        quoted: 'quoted_at',
+        tasting: 'tasting_at',
+        invoice_sent: 'invoice_sent_at',
+        booked: 'booked_at',
+        invoice_paid: 'invoice_paid_at',
+        won: 'won_at',
+      };
 
-      // Milestone timestamps — set once per lead
-      if (newStatus === 'contacted') {
-        updates.contacted_at = new Date().toISOString();
-      }
-      if (newStatus === 'booked') {
-        updates.booked_at = new Date().toISOString();
-      }
-      if (newStatus === 'won') {
-        updates.won_at = new Date().toISOString();
+      const updates: Record<string, string> = { status: newStatus };
+
+      // Milestone timestamp — set once per lead per stage
+      const timestampField = STATUS_TIMESTAMP_MAP[newStatus];
+      if (timestampField) {
+        updates[timestampField] = new Date().toISOString();
       }
 
       const fsResult = await updateFirestoreLead(leadId, updates, projectId, fsCredentials);
