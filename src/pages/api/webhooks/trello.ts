@@ -14,6 +14,11 @@ import {
   CONVERSION_ACTION_PURCHASE,
 } from '../../../lib/google-ads';
 import { getGA4Credentials, sendGA4Event } from '../../../lib/ga4';
+import {
+  updateBrevoContactStatus,
+  NEW_LEADS_LIST_ID,
+  CUSTOMERS_LIST_ID,
+} from '../../../lib/brevo';
 
 export const prerender = false;
 
@@ -133,6 +138,31 @@ export const POST: APIRoute = async ({ request, locals }) => {
         console.log(`✅ Firestore updated: ${newStatus}`);
       } else {
         console.error('❌ Firestore update failed:', fsResult.error);
+      }
+
+      // Sync status to Brevo contact
+      const brevoApiKey = env.BREVO_API_KEY;
+      if (brevoApiKey) {
+        const leadForBrevo = await getFirestoreLead(leadId, projectId, fsCredentials);
+        const leadEmail = leadForBrevo.success ? leadForBrevo.lead?.email : null;
+
+        if (leadEmail) {
+          const brevoOptions = newStatus === 'won'
+            ? { addToList: CUSTOMERS_LIST_ID, removeFromList: NEW_LEADS_LIST_ID }
+            : undefined;
+
+          const brevoResult = await updateBrevoContactStatus(
+            leadEmail, newStatus, brevoApiKey, brevoOptions
+          );
+
+          if (brevoResult.success) {
+            console.log(`✅ Brevo status updated: ${newStatus}${newStatus === 'won' ? ' (moved to Customers list)' : ''}`);
+          } else {
+            console.error('⚠️ Brevo status update failed:', brevoResult.error);
+          }
+        } else {
+          console.log('⚠️ No email found for lead, skipping Brevo sync');
+        }
       }
 
       // Send conversion events for key status changes

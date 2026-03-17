@@ -2,7 +2,8 @@
 // Uses REST API v3 — docs: https://developers.brevo.com/reference
 
 const BREVO_API_URL = 'https://api.brevo.com/v3';
-const NEW_LEADS_LIST_ID = 7;
+export const NEW_LEADS_LIST_ID = 7;
+export const CUSTOMERS_LIST_ID = 8;
 
 interface BrevoContactData {
   email: string;
@@ -64,6 +65,50 @@ export async function upsertBrevoContact(
   if (response.status === 204) {
     // Contact existed and was updated
     return { success: true, created: false };
+  }
+
+  const errorText = await response.text();
+  return {
+    success: false,
+    error: `Brevo API ${response.status}: ${errorText}`,
+  };
+}
+
+/**
+ * Updates a contact's STATUS attribute and optionally moves them between lists.
+ * Used by the Trello webhook when a card changes pipeline stage.
+ */
+export async function updateBrevoContactStatus(
+  email: string,
+  status: string,
+  apiKey: string,
+  options?: { addToList?: number; removeFromList?: number }
+): Promise<BrevoResult> {
+  const encodedEmail = encodeURIComponent(email);
+
+  const body: Record<string, unknown> = {
+    attributes: { STATUS: status },
+  };
+
+  if (options?.addToList) {
+    body.listIds = [options.addToList];
+  }
+  if (options?.removeFromList) {
+    body.unlinkListIds = [options.removeFromList];
+  }
+
+  const response = await fetch(`${BREVO_API_URL}/contacts/${encodedEmail}`, {
+    method: 'PUT',
+    headers: {
+      'api-key': apiKey,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (response.status === 204) {
+    return { success: true };
   }
 
   const errorText = await response.text();
