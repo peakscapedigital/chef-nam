@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
-import { updateLead, getLeadById } from '../../../lib/bigquery';
-import { updateFirestoreLead } from '../../../lib/firestore';
+import { getFirestoreLead, updateFirestoreLead } from '../../../lib/firestore';
 import { LIST_STATUS_MAP, getLeadIdFromCard } from '../../../lib/trello';
 
 export const prerender = false;
@@ -16,7 +15,11 @@ export const HEAD: APIRoute = async () => {
 
 /**
  * POST /api/webhooks/trello
- * Receives Trello webhook events and syncs changes to Firestore + BigQuery.
+ * Receives Trello webhook events and syncs changes to Firestore.
+ *
+ * Firestore is the real-time operational layer. BigQuery gets updated
+ * via the Firebase "Stream to BigQuery" extension (changelog) and a
+ * scheduled reconciliation job.
  *
  * Handled events:
  * - updateCard (listAfter) - card moved between lists = status change
@@ -52,17 +55,16 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Get credentials
     const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
     const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const bqCredentials = runtime?.env?.BIGQUERY_CREDENTIALS;
     const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
     const trelloApiKey = runtime?.env?.TRELLO_API_KEY;
     const trelloApiToken = runtime?.env?.TRELLO_API_TOKEN;
 
-    if (!projectId || !bqCredentials || !trelloApiKey || !trelloApiToken) {
+    if (!projectId || !fsCredentials || !trelloApiKey || !trelloApiToken) {
       console.error('Missing required credentials for webhook processing');
       return new Response('ok', { status: 200 });
     }
 
-    // Look up lead ID from the Trello card description
+    // Look up lead ID from the Trello card's custom fields
     const leadId = await getLeadIdFromCard(cardId, trelloApiKey, trelloApiToken);
 
     if (!leadId) {
@@ -82,81 +84,40 @@ export const POST: APIRoute = async ({ request, locals }) => {
         return new Response('ok', { status: 200 });
       }
 
-      console.log(`📊 Status change: ${action.data.listBefore?.name} to ${action.data.listAfter.name} (${newStatus})`);
+      console.log(`📊 Status change: ${action.data.listBefore?.name} → ${action.data.listAfter.name} (${newStatus})`);
 
-      // Build updates
-      const updates: { status: string; contacted_at?: string; won_at?: string; booked_at?: string } = { status: newStatus };
+      // Build Firestore updates
+      const updates: {
+        status: string;
+        contacted_at?: string;
+        booked_at?: string;
+        won_at?: string;
+      } = { status: newStatus };
 
-      // If moving to "Contacted", set contacted_at (one-time milestone for response time tracking)
+      // Milestone timestamps — set once per lead
       if (newStatus === 'contacted') {
         updates.contacted_at = new Date().toISOString();
       }
-
-      // If moving to "Qualified", trigger Lead_Qualified offline conversion
-      if (newStatus === 'qualified') {
-        const leadResult = await getLeadById(leadId, projectId, bqCredentials);
-        if (leadResult.success && leadResult.lead?.gclid) {
-          console.log('📊 Qualified lead has gclid - Lead_Qualified conversion should fire');
-          console.log('Lead:', {
-            id: leadId,
-            gclid: leadResult.lead.gclid,
-            email_hash: leadResult.lead.email_hash,
-            phone_hash: leadResult.lead.phone_hash,
-          });
-          // TODO: Implement Google Ads Conversion API call
-          // Conversion action ID: 7350099303 (Lead_Qualified)
-          console.log('🔜 Google Ads Lead_Qualified offline conversion pending implementation');
-        }
-      }
-
-      // If moving to "Event Booked (Deposit)", set booked_at
       if (newStatus === 'booked') {
         updates.booked_at = new Date().toISOString();
       }
-
-      // If moving to "Invoice Paid", trigger Purchase offline conversion (full revenue confirmed)
-      if (newStatus === 'invoice_paid') {
-        const leadResult = await getLeadById(leadId, projectId, bqCredentials);
-        if (leadResult.success && leadResult.lead?.gclid) {
-          console.log('📊 Invoice paid lead has gclid - Purchase conversion should fire');
-          console.log('Lead:', {
-            id: leadId,
-            gclid: leadResult.lead.gclid,
-            booking_value: leadResult.lead.booking_value,
-            email_hash: leadResult.lead.email_hash,
-            phone_hash: leadResult.lead.phone_hash,
-          });
-          // TODO: Implement Google Ads Conversion API call
-          // Conversion action ID: 7350098097 (Purchase)
-          console.log('🔜 Google Ads Purchase offline conversion pending implementation');
-        }
-      }
-
-      // If moving to "Won", set won_at timestamp
       if (newStatus === 'won') {
         updates.won_at = new Date().toISOString();
       }
 
-      // Update BigQuery
-      const bqResult = await updateLead(leadId, updates, projectId, bqCredentials);
-      if (bqResult.success) {
-        console.log(`✅ BigQuery status updated: ${newStatus}`);
-      } else {
-        console.error('❌ BigQuery status update failed:', bqResult.error);
+      // Log offline conversion candidates (gclid check happens at reconciliation/export time)
+      if (newStatus === 'qualified') {
+        console.log(`📊 Lead ${leadId} qualified — eligible for Lead_Qualified offline conversion if gclid exists`);
+      }
+      if (newStatus === 'invoice_paid') {
+        console.log(`📊 Lead ${leadId} invoice paid — eligible for Purchase offline conversion if gclid exists`);
       }
 
-      // Update Firestore
-      if (fsCredentials) {
-        const fsUpdates: { status: string; contacted_at?: string } = { status: newStatus };
-        if (updates.contacted_at) {
-          fsUpdates.contacted_at = updates.contacted_at;
-        }
-        const fsResult = await updateFirestoreLead(leadId, fsUpdates, projectId, fsCredentials);
-        if (fsResult.success) {
-          console.log(`✅ Firestore status updated: ${newStatus}`);
-        } else {
-          console.error('⚠️ Firestore status update failed:', fsResult.error);
-        }
+      const fsResult = await updateFirestoreLead(leadId, updates, projectId, fsCredentials);
+      if (fsResult.success) {
+        console.log(`✅ Firestore updated: ${newStatus}`);
+      } else {
+        console.error('❌ Firestore update failed:', fsResult.error);
       }
     }
 
@@ -168,28 +129,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
       console.log(`💬 Comment by ${author}: ${commentText.substring(0, 50)}...`);
 
-      // Get existing notes to append
-      const leadResult = await getLeadById(leadId, projectId, bqCredentials);
+      // Get existing notes from Firestore to append
+      const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
       const existingNotes = leadResult.success ? (leadResult.lead?.notes || '') : '';
       const newNote = `[${timestamp} ${author}] ${commentText}`;
       const updatedNotes = existingNotes ? `${existingNotes}\n${newNote}` : newNote;
 
-      // Update BigQuery
-      const bqResult = await updateLead(leadId, { notes: updatedNotes }, projectId, bqCredentials);
-      if (bqResult.success) {
-        console.log('✅ BigQuery notes updated');
+      const fsResult = await updateFirestoreLead(leadId, { notes: updatedNotes }, projectId, fsCredentials);
+      if (fsResult.success) {
+        console.log('✅ Firestore notes updated');
       } else {
-        console.error('❌ BigQuery notes update failed:', bqResult.error);
-      }
-
-      // Update Firestore
-      if (fsCredentials) {
-        const fsResult = await updateFirestoreLead(leadId, { notes: updatedNotes }, projectId, fsCredentials);
-        if (fsResult.success) {
-          console.log('✅ Firestore notes updated');
-        } else {
-          console.error('⚠️ Firestore notes update failed:', fsResult.error);
-        }
+        console.error('❌ Firestore notes update failed:', fsResult.error);
       }
     }
 
