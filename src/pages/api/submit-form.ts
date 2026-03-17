@@ -12,6 +12,7 @@ import {
   createFirestoreLeadData
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
+import { upsertBrevoContact } from '../../lib/brevo';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -499,6 +500,36 @@ export const POST: APIRoute = async ({ request, locals }) => {
         // 5. CREATE TRELLO CARD (Lead Pipeline)
         // ========================================
         await sendToTrello(data, runtime?.env, leadId);
+
+        // ========================================
+        // 6. ADD CONTACT TO BREVO (Email Marketing)
+        // ========================================
+        const brevoApiKey = runtime?.env?.BREVO_API_KEY;
+        if (brevoApiKey) {
+          try {
+            const brevoResult = await upsertBrevoContact({
+              email: data.email,
+              firstName: data.firstName,
+              lastName: data.lastName,
+              eventType: data.eventType,
+              eventDate: data.eventDate,
+              guestCount: data.guestCount,
+              leadSource: data.lead_source || data.utm_source,
+              leadId,
+              submittedAt: new Date().toISOString(),
+            }, brevoApiKey);
+
+            if (brevoResult.success) {
+              console.log(`✅ Brevo contact ${brevoResult.created ? 'created' : 'updated'}:`, data.email);
+            } else {
+              console.error('⚠️ Brevo contact sync failed:', brevoResult.error);
+            }
+          } catch (brevoError) {
+            console.error('⚠️ Brevo exception:', brevoError);
+          }
+        } else {
+          console.log('ℹ️ BREVO_API_KEY not configured, skipping Brevo sync');
+        }
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
         // Still return success to user - we'll have logs to debug
