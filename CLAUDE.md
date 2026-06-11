@@ -4,7 +4,7 @@
 High-performance website for Chef Nam Catering, a women-owned Thai fusion catering business serving Ann Arbor, Michigan. Differentiates through authentic Thai heritage combined with American catering expertise.
 
 ## Tech Stack
-- **Frontend**: Astro 4.0 (SSR mode with islands architecture)
+- **Frontend**: Astro 5.12.9 (SSR/server mode with islands architecture). Astro 6 + own-account Cloudflare migration is planned but not yet executed.
 - **CMS**: Sanity.io (Project ID: yojbqnd7)
 - **Styling**: Tailwind CSS with custom brand theme
 - **Hosting**: Cloudflare Pages (auto-deploy from GitHub)
