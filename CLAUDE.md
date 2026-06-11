@@ -183,6 +183,15 @@ git push
 npx wrangler pages deployment list --project-name=chef-nam
 ```
 
+> **GOTCHA (verified 2026-06-11):** `git push` to `main` is all you need to deploy — do NOT
+> get stuck on wrangler. The stored wrangler OAuth login expires and every wrangler call then
+> fails with `Authentication error [code: 10000]` (whoami still prints scopes, so it looks
+> "logged in"). When that happens, don't try to fix wrangler — just `git push` (auto-deploys),
+> or drive Cloudflare directly via the API: `POST /accounts/090ff2bbc69fa3773a65881f1decb269/pages/projects/chef-nam/deployments`
+> with form field `branch=main` to trigger a production build, and GET `.../deployments/{id}`
+> to watch stages. `DEPLOY.md` (project `chef-nam-website`, manual-wrangler-first) is stale —
+> this section is authoritative.
+
 ### Manual Deployment (Only if needed)
 ```bash
 # Build locally

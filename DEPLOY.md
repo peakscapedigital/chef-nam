@@ -1,14 +1,31 @@
 # Deployment Instructions for Chef Nam Catering Website
 
+## ⚠️ How deployment actually works (verified 2026-06-11 via Cloudflare API)
+
+**This site auto-deploys from GitHub — you do NOT need wrangler.**
+
+- Cloudflare **Pages project: `chef-nam`** (NOT `chef-nam-website` — that name is wrong/legacy).
+- Connected to GitHub repo `peakscapedigital/chef-nam`, **production branch `main`**,
+  `production_deployments_enabled: true`. CF account ID `090ff2bbc69fa3773a65881f1decb269`.
+- **Pushing to `main` triggers a production build → deploys to chefnamcatering.com.**
+  Pushing any other branch creates a *preview* deploy (`<hash>.chef-nam.pages.dev`).
+- There is **no GitHub Actions workflow** — the integration lives in the Cloudflare Pages
+  dashboard, so don't look in `.github/workflows`.
+- **Do not rely on `wrangler pages deploy`** as the primary path: the local wrangler OAuth
+  login expires and fails with `Authentication error [code: 10000]`, and it would deploy a
+  *dirty* local tree. Git push is the clean, canonical method.
+- To trigger/inspect a build without wrangler, use the Cloudflare API
+  (`POST /accounts/{acct}/pages/projects/chef-nam/deployments` with form field `branch=main`).
+
 ## Project Details
 - **Live Site**: https://chefnamcatering.com
-- **Cloudflare Pages Project Name**: `chef-nam-website`
-- **Preview Domain**: https://chef-nam-website.pages.dev
+- **Cloudflare Pages Project Name**: `chef-nam`
+- **Preview Domain**: https://chef-nam.pages.dev
 
-## Prerequisites
+## Prerequisites (only for the manual wrangler fallback)
 1. Node.js and npm installed
-2. Cloudflare account with access to the chef-nam-website project
-3. Wrangler CLI authenticated (see Authentication section below)
+2. Cloudflare account with access to the `chef-nam` project
+3. Wrangler CLI authenticated — `wrangler login` (the stored token expires; re-login when it does)
 
 ## Authentication
 If not already authenticated, login to Cloudflare:
