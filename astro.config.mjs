@@ -22,8 +22,8 @@ export default defineConfig({
       serialize(item) {
         // Remove trailing slashes from URLs
         item.url = item.url.replace(/\/$/, '');
-        // Add last modified date
-        item.lastmod = new Date();
+        // Add last modified date (sitemap expects an ISO string, not a Date)
+        item.lastmod = new Date().toISOString();
         return item;
       },
     }),

@@ -133,10 +133,10 @@ const { testimonials = [
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     const track = document.getElementById('testimonialsTrack');
-    const prevBtn = document.getElementById('prevTestimonial');
-    const nextBtn = document.getElementById('nextTestimonial');
+    const prevBtn = document.getElementById('prevTestimonial') as HTMLButtonElement | null;
+    const nextBtn = document.getElementById('nextTestimonial') as HTMLButtonElement | null;
     const dots = document.querySelectorAll('.pagination-dot');
-    
+
     if (!track || !prevBtn || !nextBtn) return;
     
     const testimonials = track.children;
@@ -150,7 +150,7 @@ const { testimonials = [
       return 1; // sm: 1 item
     }
     
-    function updateCarousel() {
+    const updateCarousel = () => {
       const itemsPerView = getItemsPerView();
       const maxIndex = Math.max(0, totalTestimonials - itemsPerView);
       
@@ -189,23 +189,23 @@ const { testimonials = [
     }
     
     // Navigation functions
-    function goToNext() {
+    const goToNext = () => {
       const itemsPerView = getItemsPerView();
       const maxIndex = Math.max(0, totalTestimonials - itemsPerView);
       if (currentIndex < maxIndex) {
         currentIndex++;
         updateCarousel();
       }
-    }
-    
-    function goToPrev() {
+    };
+
+    const goToPrev = () => {
       if (currentIndex > 0) {
         currentIndex--;
         updateCarousel();
       }
-    }
-    
-    function goToIndex(index) {
+    };
+
+    const goToIndex = (index: number) => {
       const itemsPerView = getItemsPerView();
       const maxIndex = Math.max(0, totalTestimonials - itemsPerView);
       currentIndex = Math.min(index, maxIndex);

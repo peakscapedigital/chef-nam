@@ -268,18 +268,21 @@ import { Icon } from 'astro-icon/components';
 
 <script>
 // Short form submission for contact page
+// Window augmented with GTM's dataLayer (untyped third-party global).
+interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+
 document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('contact-form');
-  
+  const form = document.getElementById('contact-form') as HTMLFormElement | null;
+
   if (form) {
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      
-      const firstName = document.getElementById('firstName').value;
-      const lastName = document.getElementById('lastName').value;
-      const email = document.getElementById('email').value;
-      const phone = document.getElementById('phone').value;
-      const message = document.getElementById('message').value;
+
+      const firstName = (document.getElementById('firstName') as HTMLInputElement | null)?.value ?? '';
+      const lastName = (document.getElementById('lastName') as HTMLInputElement | null)?.value ?? '';
+      const email = (document.getElementById('email') as HTMLInputElement | null)?.value ?? '';
+      const phone = (document.getElementById('phone') as HTMLInputElement | null)?.value ?? '';
+      const message = (document.getElementById('message') as HTMLTextAreaElement | null)?.value ?? '';
       
       // Validate required fields
       if (!firstName || !lastName || !email || !phone) {
@@ -287,14 +290,16 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
       }
       
-      const submitButton = form.querySelector('button[type="submit"]');
-      const originalText = submitButton.textContent;
-      submitButton.textContent = 'Sending...';
-      submitButton.disabled = true;
-      
+      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      const originalText = submitButton?.textContent ?? '';
+      if (submitButton) {
+        submitButton.textContent = 'Sending...';
+        submitButton.disabled = true;
+      }
+
       try {
         // Get attribution data from localStorage (captured on landing)
-        const attribution = {
+        const attribution: Record<string, string | undefined> = {
           utm_source: localStorage.getItem('utm_source') || undefined,
           utm_medium: localStorage.getItem('utm_medium') || undefined,
           utm_campaign: localStorage.getItem('utm_campaign') || undefined,
@@ -335,8 +340,9 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success) {
           // Push lead generation event to GTM dataLayer for GA4 & Google Ads
           // Using 'generate_lead' (GA4 recommended event) for Business Objectives reporting
-          if (typeof window !== 'undefined' && window.dataLayer) {
-            window.dataLayer.push({
+          const w = window as DataLayerWindow;
+          if (typeof window !== 'undefined' && w.dataLayer) {
+            w.dataLayer.push({
               'event': 'generate_lead',
               'form_name': 'contact',
               'form_destination': '/api/submit-form',
@@ -365,8 +371,10 @@ document.addEventListener('DOMContentLoaded', function() {
         console.error('Error submitting form:', error);
         alert('Sorry, there was an error. Please try again or contact us directly.');
       } finally {
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
+        if (submitButton) {
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
+        }
       }
     });
   }

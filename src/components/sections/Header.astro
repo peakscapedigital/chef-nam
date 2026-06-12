@@ -213,6 +213,7 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
     }
 
     function toggleServices() {
+      if (!servicesMenu || !servicesArrow) return;
       const isOpen = !servicesMenu.classList.contains('hidden');
       if (isOpen) {
         servicesMenu.classList.add('hidden');
@@ -224,6 +225,7 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
     }
 
     function toggleMenus() {
+      if (!menusMenu || !menusArrow) return;
       const isOpen = !menusMenu.classList.contains('hidden');
       if (isOpen) {
         menusMenu.classList.add('hidden');
@@ -263,14 +265,15 @@ const { logoUrl, logoAlt = 'Chef Nam Catering' } = Astro.props;
     }
 
     // Close menu when clicking on navigation links
-    const navLinks = mobileMenu.querySelectorAll('a');
-    navLinks.forEach(link => {
-      link.addEventListener('click', closeMenu);
-    });
+    if (mobileMenu) {
+      mobileMenu.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeMenu);
+      });
+    }
 
     // Close menu on escape key
     document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
+      if (mobileMenu && e.key === 'Escape' && !mobileMenu.classList.contains('hidden')) {
         closeMenu();
       }
     });
