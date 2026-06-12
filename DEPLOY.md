@@ -1,146 +1,60 @@
-# Deployment Instructions for Chef Nam Catering Website
+# Deploying the Chef Nam Catering Website
 
-## ⚠️ How deployment actually works (verified 2026-06-11 via Cloudflare API)
+## How it works (one sentence)
 
-**This site auto-deploys from GitHub — you do NOT need wrangler.**
+**Push to GitHub → Cloudflare Pages builds and deploys automatically. There is no wrangler step.**
 
-- Cloudflare **Pages project: `chef-nam`** (NOT `chef-nam-website` — that name is wrong/legacy).
-- Connected to GitHub repo `peakscapedigital/chef-nam`, **production branch `main`**,
-  `production_deployments_enabled: true`. CF account ID `090ff2bbc69fa3773a65881f1decb269`.
-- **Pushing to `main` triggers a production build → deploys to chefnamcatering.com.**
-  Pushing any other branch creates a *preview* deploy (`<hash>.chef-nam.pages.dev`).
-- There is **no GitHub Actions workflow** — the integration lives in the Cloudflare Pages
-  dashboard, so don't look in `.github/workflows`.
-- **Do not rely on `wrangler pages deploy`** as the primary path: the local wrangler OAuth
-  login expires and fails with `Authentication error [code: 10000]`, and it would deploy a
-  *dirty* local tree. Git push is the clean, canonical method.
-- To trigger/inspect a build without wrangler, use the Cloudflare API
-  (`POST /accounts/{acct}/pages/projects/chef-nam/deployments` with form field `branch=main`).
+- Cloudflare **Pages project: `chef-nam`** (the old name `chef-nam-website` is wrong/legacy — ignore it).
+- GitHub repo `peakscapedigital/chef-nam`, **production branch `main`**, CF account `090ff2bbc69fa3773a65881f1decb269`.
+- **`git push` to `main` → production build → live at https://chefnamcatering.com.**
+- **`git push` of any other branch → a preview deploy** at `https://<branch-alias>.chef-nam.pages.dev` (does NOT touch production).
+- No GitHub Actions workflow — the integration lives in the Cloudflare Pages dashboard, not `.github/workflows`.
 
-## Project Details
-- **Live Site**: https://chefnamcatering.com
-- **Cloudflare Pages Project Name**: `chef-nam`
-- **Preview Domain**: https://chef-nam.pages.dev
+## Deploy (production)
 
-## Prerequisites (only for the manual wrangler fallback)
-1. Node.js and npm installed
-2. Cloudflare account with access to the `chef-nam` project
-3. Wrangler CLI authenticated — `wrangler login` (the stored token expires; re-login when it does)
-
-## Authentication
-If not already authenticated, login to Cloudflare:
 ```bash
-npx wrangler login
+git push origin main      # that's it — Pages builds and goes live
 ```
-This will open a browser window for OAuth authentication.
 
-## Deployment Process
+To watch or trigger a build without wrangler, use the Cloudflare API:
+`POST /accounts/090ff2bbc69fa3773a65881f1decb269/pages/projects/chef-nam/deployments` with form field `branch=main`,
+then `GET .../deployments/{id}` to watch stages.
 
-### 1. Install Dependencies
+## Preview a branch before going live
+
+```bash
+git push origin <your-branch>     # Pages auto-builds a preview at <alias>.chef-nam.pages.dev
+```
+
+## Environment variables / secrets
+
+Set in the **Cloudflare Pages dashboard**, per environment (Production vs Preview — they are separate).
+Server code reads them via `import { env } from 'cloudflare:workers'` (Astro 6; `Astro.locals.runtime.env` was removed).
+
+Production currently has (verified via CF API 2026-06-12): `BIGQUERY_PROJECT_ID`, `BIGQUERY_CREDENTIALS`,
+`FIREBASE_CREDENTIALS`, `TRELLO_API_KEY`, `TRELLO_API_TOKEN`, `BREVO_API_KEY`, `GA4_API_SECRET`,
+`GA4_MEASUREMENT_ID`, `GOOGLE_ADS_*`, `PUBLIC_SANITY_API_TOKEN`, `PUBLIC_SUPABASE_*`.
+**The Preview environment is empty** — a preview deploy renders but skips lead writes unless those are added to Preview.
+
+## Wrangler fallback (rarely needed)
+
+Git push is canonical. Only reach for wrangler if the GitHub integration is down — and note the local
+wrangler OAuth token expires (fails with `Authentication error [code: 10000]`); re-login with `npx wrangler login`.
+If you must: `npm run build && npx wrangler pages deploy dist --project-name chef-nam`.
+
+## Build / test locally
+
 ```bash
 npm install
+npm run build       # production build → dist/
+npm run preview     # run the built worker locally on workerd (http://localhost:4321)
+npm run dev         # dev server
 ```
 
-### 2. Build the Project
-```bash
-npm run build
-```
-This creates the production build in the `dist/` directory.
+## Custom domains
 
-### 3. Deploy to Cloudflare Pages
-```bash
-npx wrangler pages deploy dist --project-name chef-nam-website --commit-dirty=true
-```
-
-**Important Notes:**
-- Use `--commit-dirty=true` if you have uncommitted changes
-- The project name MUST be `chef-nam-website` (not chef-nam-catering)
-- Deployment will provide a preview URL for testing before going live
-
-### 4. Verify Deployment
-After deployment, you'll receive:
-- A preview URL (e.g., https://[hash].chef-nam-website.pages.dev)
-- The changes will automatically go live at https://chefnamcatering.com
-
-## Quick Deploy Script
-For convenience, you can run all steps with:
-```bash
-npm install && npm run build && npx wrangler pages deploy dist --project-name chef-nam-website --commit-dirty=true
-```
-
-## Viewing Existing Projects
-To see all Cloudflare Pages projects in your account:
-```bash
-npx wrangler pages project list
-```
-
-## Environment Variables
-The following environment variables are configured in Cloudflare Pages dashboard:
-- `SANITY_PROJECT_ID`
-- `SANITY_DATASET`
-- `SANITY_API_TOKEN`
-- `PUBLIC_SITE_URL`
-
-These are automatically available during the build process on Cloudflare Pages.
-
-## Custom Domains
-The following domains are configured:
 - chefnamcatering.com (primary)
-- www.chefnamcatering.com (redirects to primary)
-
-## Troubleshooting
-
-### Authentication Issues
-If you get an authentication error:
-```bash
-npx wrangler logout
-npx wrangler login
-```
-
-### Project Not Found Error
-If you get "Project not found" error, verify the project name:
-```bash
-npx wrangler pages project list
-```
-The correct project name is `chef-nam-website` (NOT chef-nam-catering).
-
-### Build Failures
-If the build fails locally but you want to deploy anyway:
-1. Check if `dist/` folder exists from a previous build
-2. If it exists and contains valid files, you can still deploy it
-3. Otherwise, fix build issues before deploying
-
-### Missing Dependencies
-If you encounter module errors like "Cannot find module":
-```bash
-rm -rf node_modules package-lock.json
-npm install
-```
-
-## Development Server
-For local development:
-```bash
-npm run dev                  # Default port (usually 4321)
-npm run dev -- --port 8080   # Custom port 8080
-```
-
-## Production Build Testing
-To test the production build locally:
-```bash
-npm run build
-npm run preview
-```
-
-## Deployment Frequency
-- Deployments can be made as frequently as needed
-- Each deployment creates a unique preview URL
-- Production updates are immediate after deployment
-- Cloudflare Pages handles caching and CDN distribution automatically
-
-## Contact for Issues
-For deployment issues specific to this project:
-- Check Cloudflare Pages dashboard for build logs
-- Review wrangler logs in `~/.wrangler/logs/`
+- www.chefnamcatering.com → redirects to primary
 
 ---
-*Last Updated: January 2025*
+*Last verified: 2026-06-12 (Astro 6 / @astrojs/cloudflare v13).*
