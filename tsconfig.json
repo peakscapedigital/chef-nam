@@ -1,5 +1,6 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist"]
+  "//": "chef-nam-catering is the Sanity Studio — a separate project with its own package.json + tsconfig; archive/ is a dead v0.dev Next.js mock. Neither is part of the site build; both are excluded so `astro check` only types the actual app.",
+  "exclude": ["dist", "chef-nam-catering", "archive"]
 }
