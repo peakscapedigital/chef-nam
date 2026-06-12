@@ -298,8 +298,7 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                               if (markDef && markDef._type === 'link') {
                                 element = (
                                   <a 
-                                    key={`${itemIndex}-${childIdx}`}
-                                    href={markDef.href} 
+                                                                       href={markDef.href} 
                                     class="text-brand-amber hover:text-brand-amber/80 underline transition-colors"
                                     target={markDef.href?.startsWith('http') && !markDef.href?.includes('chefnamcatering.com') ? '_blank' : undefined}
                                     rel={markDef.href?.startsWith('http') && !markDef.href?.includes('chefnamcatering.com') ? 'noopener noreferrer' : undefined}
@@ -310,16 +309,16 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                               } else {
                                 switch (mark) {
                                   case 'strong':
-                                    element = <strong key={`${itemIndex}-${childIdx}`}>{element}</strong>;
+                                    element = <strong>{element}</strong>;
                                     break;
                                   case 'em':
-                                    element = <em key={`${itemIndex}-${childIdx}`}>{element}</em>;
+                                    element = <em>{element}</em>;
                                     break;
                                   case 'underline':
-                                    element = <u key={`${itemIndex}-${childIdx}`}>{element}</u>;
+                                    element = <u>{element}</u>;
                                     break;
                                   case 'code':
-                                    element = <code key={`${itemIndex}-${childIdx}`} class="px-1 py-0.5 bg-gray-100 rounded text-sm">{element}</code>;
+                                    element = <code class="px-1 py-0.5 bg-gray-100 rounded text-sm">{element}</code>;
                                     break;
                                 }
                               }
@@ -334,13 +333,13 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                   };
                   
                   const content = renderChildren(item.children);
-                  return <li key={itemIndex} class="text-brand-indigo/80 leading-relaxed mb-2">{content}</li>;
+                  return <li class="text-brand-indigo/80 leading-relaxed mb-2">{content}</li>;
                 });
                 
                 if (block.listType === 'bullet') {
-                  return <ul key={index} class="list-disc list-inside mb-6 space-y-2 ml-4">{listItems}</ul>;
+                  return <ul class="list-disc list-inside mb-6 space-y-2 ml-4">{listItems}</ul>;
                 } else if (block.listType === 'number') {
-                  return <ol key={index} class="list-decimal list-inside mb-6 space-y-2 ml-4">{listItems}</ol>;
+                  return <ol class="list-decimal list-inside mb-6 space-y-2 ml-4">{listItems}</ol>;
                 }
               } else if (block._type === 'block') {
                 // Function to render children with marks (links, bold, italic, etc.)
@@ -361,8 +360,7 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                           if (markDef && markDef._type === 'link') {
                             element = (
                               <a 
-                                key={`${childIndex}-link`}
-                                href={markDef.href} 
+                                                               href={markDef.href} 
                                 class="text-brand-amber hover:text-brand-amber/80 underline transition-colors"
                                 target={markDef.href?.startsWith('http') && !markDef.href?.includes('chefnamcatering.com') ? '_blank' : undefined}
                                 rel={markDef.href?.startsWith('http') && !markDef.href?.includes('chefnamcatering.com') ? 'noopener noreferrer' : undefined}
@@ -374,16 +372,16 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                             // Simple text formatting marks
                             switch (mark) {
                               case 'strong':
-                                element = <strong key={`${childIndex}-strong`}>{element}</strong>;
+                                element = <strong>{element}</strong>;
                                 break;
                               case 'em':
-                                element = <em key={`${childIndex}-em`}>{element}</em>;
+                                element = <em>{element}</em>;
                                 break;
                               case 'underline':
-                                element = <u key={`${childIndex}-underline`}>{element}</u>;
+                                element = <u>{element}</u>;
                                 break;
                               case 'code':
-                                element = <code key={`${childIndex}-code`} class="px-1 py-0.5 bg-gray-100 rounded text-sm">{element}</code>;
+                                element = <code class="px-1 py-0.5 bg-gray-100 rounded text-sm">{element}</code>;
                                 break;
                             }
                           }
@@ -407,13 +405,13 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                     .replace(/-+/g, '-') // Replace multiple hyphens with single
                     .trim();
                   
-                  return <h2 key={index} id={`heading-${slug}`} class="text-3xl font-serif font-bold text-brand-indigo mt-12 mb-6 scroll-mt-32">{content}</h2>;
+                  return <h2 id={`heading-${slug}`} class="text-3xl font-serif font-bold text-brand-indigo mt-12 mb-6 scroll-mt-32">{content}</h2>;
                 } else if (block.style === 'h3') {
-                  return <h3 key={index} class="text-2xl font-serif font-semibold text-brand-indigo mt-10 mb-4 scroll-mt-32">{content}</h3>;
+                  return <h3 class="text-2xl font-serif font-semibold text-brand-indigo mt-10 mb-4 scroll-mt-32">{content}</h3>;
                 } else if (block.style === 'h4') {
-                  return <h4 key={index} class="text-xl font-serif font-semibold text-brand-indigo mt-8 mb-3 scroll-mt-32">{content}</h4>;
+                  return <h4 class="text-xl font-serif font-semibold text-brand-indigo mt-8 mb-3 scroll-mt-32">{content}</h4>;
                 } else {
-                  return <p key={index} class="text-brand-indigo/80 leading-relaxed mb-6">{content}</p>;
+                  return <p class="text-brand-indigo/80 leading-relaxed mb-6">{content}</p>;
                 }
               } else if (block._type === 'image') {
               return (
@@ -456,7 +454,7 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
                           const id = `heading-${slug}`;
                           
                           return (
-                            <li key={headerIndex}>
+                            <li>
                               <a 
                                 href={`#${id}`}
                                 class="text-brand-amber hover:text-brand-amber/80 transition-colors text-sm block py-1"
@@ -544,8 +542,8 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
   <script>
     function shareOnFacebook() {
       const url = window.location.href;
-      const title = document.querySelector('h1').textContent;
-      
+      const title = document.querySelector('h1')?.textContent ?? '';
+
       // Debug: log what we're trying to share
       console.log('Sharing URL:', url);
       console.log('Sharing Title:', title);
@@ -565,6 +563,7 @@ const featuredImageUrl = post.featuredImage ? urlFor(post.featuredImage.asset).w
       const url = window.location.href;
       navigator.clipboard.writeText(url).then(() => {
         const btn = document.getElementById('copy-link-btn');
+        if (!btn) return;
         const originalSvg = btn.innerHTML;
         
         // Show checkmark feedback
