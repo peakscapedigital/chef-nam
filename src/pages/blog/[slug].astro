@@ -2,7 +2,6 @@
 import Layout from '../../layouts/Layout.astro';
 import Card from '../../components/ui/Card.astro';
 import { getPost, getRelatedPosts, getPosts, urlFor } from '../../utils/sanity';
-import { PortableText } from '@portabletext/react';
 
 export async function getStaticPaths() {
   const posts = await getPosts();
