@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env as cfEnv } from 'cloudflare:workers';
 import { queryLeads } from '../../../../lib/bigquery';
 
 export const prerender = false;
@@ -15,12 +16,12 @@ export const prerender = false;
  * - orderDir: ASC or DESC (default DESC)
  * - includeTest: include test submissions (default false)
  */
-export const GET: APIRoute = async ({ url, locals }) => {
+export const GET: APIRoute = async ({ url }) => {
   try {
-    // Access Cloudflare env vars through runtime context
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
+    const env = cfEnv as Record<string, string | undefined>;
+    const projectId = env.BIGQUERY_PROJECT_ID;
+    const credentials = env.BIGQUERY_CREDENTIALS;
 
     if (!projectId || !credentials) {
       return new Response(

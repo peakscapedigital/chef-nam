@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env as cfEnv } from 'cloudflare:workers';
 import { updateLead, getLeadById } from '../../../../../lib/bigquery';
 import { updateFirestoreLead } from '../../../../../lib/firestore';
 
@@ -12,12 +13,12 @@ export const prerender = false;
  * - status: new | contacted | qualified | won | lost
  * - booking_value: number (required when status = won)
  */
-export const POST: APIRoute = async ({ params, request, locals }) => {
+export const POST: APIRoute = async ({ params, request }) => {
   try {
-    // Access Cloudflare env vars through runtime context
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
+    const env = cfEnv as Record<string, string | undefined>;
+    const projectId = env.BIGQUERY_PROJECT_ID;
+    const credentials = env.BIGQUERY_CREDENTIALS;
 
     if (!projectId || !credentials) {
       return new Response(
@@ -119,7 +120,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     console.log(`✅ Lead ${leadId} status updated to: ${status}`);
 
     // Sync to Firestore (non-blocking)
-    const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+    const fsCredentials = env.FIREBASE_CREDENTIALS;
     if (fsCredentials) {
       const fsUpdates: { status: string; booking_value?: number } = { status };
       if (booking_value !== undefined) fsUpdates.booking_value = booking_value;

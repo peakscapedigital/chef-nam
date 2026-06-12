@@ -1,4 +1,8 @@
 import type { APIRoute } from 'astro';
+// Astro 6 / @astrojs/cloudflare v13 removed Astro.locals.runtime.env;
+// Cloudflare bindings + secrets are now read from the cloudflare:workers
+// virtual module.
+import { env as cfEnv } from 'cloudflare:workers';
 import {
   insertLead as insertLeadBigQuery,
   createLeadData,
@@ -80,7 +84,7 @@ function fixCommonEmailTypos(email: string): string {
 }
 
 // Helper function to create a Trello card for new leads
-async function sendToTrello(data: any, env: Record<string, string> | undefined, leadId?: string) {
+async function sendToTrello(data: any, env: Record<string, string | undefined> | undefined, leadId?: string) {
   const apiKey = env?.TRELLO_API_KEY;
   const apiToken = env?.TRELLO_API_TOKEN;
 
@@ -273,7 +277,7 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     console.log('Form submission API called');
 
@@ -348,10 +352,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // Generate UUIDs for lead and potentially new contact
     const leadId = crypto.randomUUID();
 
-    // Access Cloudflare env vars through runtime context
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
+    const env = cfEnv as Record<string, string | undefined>;
+    const projectId = env.BIGQUERY_PROJECT_ID;
+    const credentials = env.BIGQUERY_CREDENTIALS;
 
     // Track contact info
     let contactId: string | undefined;
@@ -471,7 +475,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
         // ========================================
         // Firestore stores minimal fields for mobile CRM operations
         // BigQuery remains source of truth for analytics/attribution
-        const firestoreCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+        const firestoreCredentials = env.FIREBASE_CREDENTIALS;
 
         if (firestoreCredentials) {
           try {
@@ -499,12 +503,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
         // ========================================
         // 5. CREATE TRELLO CARD (Lead Pipeline)
         // ========================================
-        await sendToTrello(data, runtime?.env, leadId);
+        await sendToTrello(data, env, leadId);
 
         // ========================================
         // 6. ADD CONTACT TO BREVO (Email Marketing)
         // ========================================
-        const brevoApiKey = runtime?.env?.BREVO_API_KEY;
+        const brevoApiKey = env.BREVO_API_KEY;
         if (brevoApiKey) {
           try {
             const brevoResult = await upsertBrevoContact({

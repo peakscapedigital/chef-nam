@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env as cfEnv } from 'cloudflare:workers';
 import { updateLead } from '../../../../../lib/bigquery';
 import { updateFirestoreLead } from '../../../../../lib/firestore';
 
@@ -11,12 +12,12 @@ export const prerender = false;
  * Body:
  * - notes: string
  */
-export const POST: APIRoute = async ({ params, request, locals }) => {
+export const POST: APIRoute = async ({ params, request }) => {
   try {
-    // Access Cloudflare env vars through runtime context
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const projectId = runtime?.env?.BIGQUERY_PROJECT_ID;
-    const credentials = runtime?.env?.BIGQUERY_CREDENTIALS;
+    // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
+    const env = cfEnv as Record<string, string | undefined>;
+    const projectId = env.BIGQUERY_PROJECT_ID;
+    const credentials = env.BIGQUERY_CREDENTIALS;
 
     if (!projectId || !credentials) {
       return new Response(
@@ -56,7 +57,7 @@ export const POST: APIRoute = async ({ params, request, locals }) => {
     console.log(`✅ Lead ${leadId} notes updated`);
 
     // Sync to Firestore (non-blocking)
-    const fsCredentials = runtime?.env?.FIREBASE_CREDENTIALS;
+    const fsCredentials = env.FIREBASE_CREDENTIALS;
     if (fsCredentials) {
       updateFirestoreLead(leadId, { notes }, projectId, fsCredentials)
         .then(r => {

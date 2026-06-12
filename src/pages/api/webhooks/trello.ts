@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env as cfEnv } from 'cloudflare:workers';
 import { getFirestoreLead, updateFirestoreLead } from '../../../lib/firestore';
 import {
   LIST_STATUS_MAP,
@@ -47,7 +48,7 @@ export const HEAD: APIRoute = async () => {
  * - updateCustomFieldItem  - custom field value changed (quote/order amounts)
  * - commentCard - comment added = append to notes
  */
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json() as {
       action: {
@@ -78,9 +79,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
       return new Response('ok', { status: 200 });
     }
 
-    // Get credentials
-    const runtime = (locals as { runtime?: { env?: Record<string, string> } }).runtime;
-    const env = runtime?.env || {};
+    // Get credentials (Astro 6: from cloudflare:workers). Cast to the same
+    // Record<string,string> shape the original runtime.env provided; the
+    // helper calls below and their guards are unchanged.
+    const env = cfEnv as Record<string, string>;
     const projectId = env.BIGQUERY_PROJECT_ID;
     const fsCredentials = env.FIREBASE_CREDENTIALS;
     const trelloApiKey = env.TRELLO_API_KEY;
