@@ -73,6 +73,10 @@ export interface Post {
 }
 
 export interface HomePage {
+  logo?: {
+    asset: any
+    alt?: string
+  }
   hero: {
     headline: string
     subheading: string
@@ -123,8 +127,8 @@ export async function getPosts(limit?: number) {
     categories,
     author
   }`
-  
-  return await client.fetch(query)
+
+  return await client.fetch<Post[]>(query)
 }
 
 export async function getPost(slug: string) {
@@ -142,8 +146,8 @@ export async function getPost(slug: string) {
     categories,
     author
   }`
-  
-  return await client.fetch(query, { slug })
+
+  return await client.fetch<Post | null>(query, { slug })
 }
 
 export async function getRelatedPosts(categories: string[], excludeId: string, limit = 3) {
@@ -161,7 +165,7 @@ export async function getRelatedPosts(categories: string[], excludeId: string, l
     categories
   }`
   
-  const relatedPosts = await client.fetch(relatedQuery, { categories, excludeId })
+  const relatedPosts = await client.fetch<Post[]>(relatedQuery, { categories, excludeId })
   
   // If we have enough related posts, return them
   if (relatedPosts.length >= limit) {
@@ -182,7 +186,7 @@ export async function getRelatedPosts(categories: string[], excludeId: string, l
     categories
   }`
   
-  const recentPosts = await client.fetch(recentQuery, { excludeId })
+  const recentPosts = await client.fetch<Post[]>(recentQuery, { excludeId })
   
   // Combine related posts with recent posts, avoiding duplicates
   const combined = [...relatedPosts]
@@ -238,11 +242,22 @@ export async function getHomepage() {
       platform
     }
   }`
-  
-  return await client.fetch(query)
+
+  return await client.fetch<HomePage | null>(query)
 }
 
 // Gallery images query
+export interface GalleryImage {
+  _id: string
+  title?: string
+  image: {
+    asset: any
+    alt?: string
+  }
+  caption?: string
+  category?: string
+}
+
 export async function getGalleryImages(limit?: number) {
   const query = `*[_type == "gallery"] | order(_createdAt desc) ${limit ? `[0...${limit}]` : ''} {
     _id,
@@ -254,8 +269,8 @@ export async function getGalleryImages(limit?: number) {
     caption,
     category
   }`
-  
-  return await client.fetch(query)
+
+  return await client.fetch<GalleryImage[]>(query)
 }
 
 // Venue types
@@ -319,8 +334,8 @@ export async function getVenues() {
     featured,
     order
   }`
-  
-  return await client.fetch(query)
+
+  return await client.fetch<Venue[]>(query)
 }
 
 // Get featured venues
@@ -342,8 +357,8 @@ export async function getFeaturedVenues() {
     website,
     testimonial
   }`
-  
-  return await client.fetch(query)
+
+  return await client.fetch<Venue[]>(query)
 }
 
 // Get single venue by slug
@@ -371,6 +386,6 @@ export async function getVenue(slug: string) {
     testimonial,
     featured
   }`
-  
-  return await client.fetch(query, { slug })
+
+  return await client.fetch<Venue | null>(query, { slug })
 }

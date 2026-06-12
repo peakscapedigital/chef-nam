@@ -8,8 +8,27 @@ import { getVenues, urlFor, urlForOptimized } from '../utils/sanity';
 // Fetch venues from Sanity CMS
 const venues = await getVenues();
 
+// View shape the template renders. Both the Sanity Venue (which uses a
+// `featuredImage` asset) and the hardcoded fallback objects (which use an
+// `image` URL string) are assignable to this; the template reads whichever
+// is present. All fields optional so either source fits.
+interface DisplayVenue {
+  name: string;
+  category?: string;
+  capacity?: string;
+  description?: string;
+  features?: string[];
+  eventsCount?: number;
+  preferredMenus?: string[];
+  website?: string;
+  testimonial?: { quote?: string; author?: string; title?: string } | string;
+  featuredImage?: { asset: any; alt?: string };
+  image?: string;
+  coordinator?: string;
+}
+
 // If no venues in Sanity, use fallback data
-const featuredVenues = venues.length > 0 ? venues : [
+const featuredVenues: DisplayVenue[] = venues.length > 0 ? venues : [
   {
     name: "The Michigan League",
     category: "Historic",
@@ -91,8 +110,8 @@ const featuredVenues = venues.length > 0 ? venues : [
 ];
 
 // Calculate category counts dynamically from actual venue data
-const categoryCounts = featuredVenues.reduce((counts, venue) => {
-  const category = venue.category?.charAt(0).toUpperCase() + venue.category?.slice(1) || 'Other';
+const categoryCounts = featuredVenues.reduce<Record<string, number>>((counts, venue) => {
+  const category = venue.category ? venue.category.charAt(0).toUpperCase() + venue.category.slice(1) : 'Other';
   counts[category] = (counts[category] || 0) + 1;
   return counts;
 }, {});
@@ -192,7 +211,7 @@ const venueCategories = [
                 />
                 <div class="absolute top-4 left-4">
                   <span class="bg-brand-amber text-white px-3 py-1 rounded-full text-sm font-semibold">
-                    {venue.category?.charAt(0).toUpperCase() + venue.category?.slice(1) || 'Venue'}
+                    {venue.category ? venue.category.charAt(0).toUpperCase() + venue.category.slice(1) : 'Venue'}
                   </span>
                 </div>
                 {venue.eventsCount && venue.eventsCount > 0 && (
@@ -343,11 +362,12 @@ const venueCategories = [
 
           // Filter venues
           venueCards.forEach(card => {
-            const category = card.getAttribute('data-category');
+            const el = card as HTMLElement;
+            const category = el.getAttribute('data-category');
             if (filter === 'all' || category === filter) {
-              card.style.display = 'block';
+              el.style.display = 'block';
             } else {
-              card.style.display = 'none';
+              el.style.display = 'none';
             }
           });
         });

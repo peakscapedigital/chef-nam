@@ -176,7 +176,7 @@ const formatCategory = (category: string) => {
 
       filterButtons.forEach(button => {
         button.addEventListener('click', () => {
-          const filter = button.getAttribute('data-filter');
+          const filter = button.getAttribute('data-filter') ?? 'all';
           
           // Update active button - reset all to inactive state
           filterButtons.forEach(btn => {
@@ -190,11 +190,12 @@ const formatCategory = (category: string) => {
 
           // Filter posts
           postCards.forEach(card => {
-            const categories = card.getAttribute('data-categories');
+            const el = card as HTMLElement;
+            const categories = el.getAttribute('data-categories');
             if (filter === 'all' || categories?.includes(filter)) {
-              card.style.display = 'block';
+              el.style.display = 'block';
             } else {
-              card.style.display = 'none';
+              el.style.display = 'none';
             }
           });
         });
