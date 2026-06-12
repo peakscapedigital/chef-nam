@@ -404,12 +404,15 @@ import LandingPageLayout from '../../layouts/LandingPageLayout.astro';
 </LandingPageLayout>
 
 <script>
+// Window augmented with GTM's dataLayer (untyped third-party global).
+interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+
 // Form submission handling
 document.addEventListener('DOMContentLoaded', () => {
   const forms = document.querySelectorAll('#lp-quote-form, #lp-quote-form-mobile');
 
   // Spam detection
-  function hasSuspiciousMixedCase(text) {
+  function hasSuspiciousMixedCase(text: string) {
     if (!text || text.length < 5) return false;
     const transitions = text.match(/[a-z][A-Z]|[A-Z][a-z]/g);
     if (!transitions) return false;
@@ -432,8 +435,9 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
-      const formData = new FormData(form);
-      const data = Object.fromEntries(formData);
+      const formData = new FormData(form as HTMLFormElement);
+      // This form has only text inputs, so every entry is a string (not File).
+      const data = Object.fromEntries(formData) as Record<string, string>;
 
       // Honeypot check
       if (data.website && data.website.trim() !== '') {
@@ -447,10 +451,12 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const submitBtn = form.querySelector('button[type="submit"]');
-      const originalText = submitBtn.textContent;
-      submitBtn.textContent = 'Sending...';
-      submitBtn.disabled = true;
+      const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+      const originalText = submitBtn?.textContent ?? '';
+      if (submitBtn) {
+        submitBtn.textContent = 'Sending...';
+        submitBtn.disabled = true;
+      }
 
       // Get attribution data
       const attribution = {
@@ -490,8 +496,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (result.success) {
           // Push conversion event
-          if (window.dataLayer) {
-            window.dataLayer.push({
+          const w = window as DataLayerWindow;
+          if (w.dataLayer) {
+            w.dataLayer.push({
               event: 'generate_lead',
               form_name: 'lp_catering',
               form_type: 'landing_page_quote',
@@ -522,17 +529,20 @@ document.addEventListener('DOMContentLoaded', () => {
       } catch (error) {
         console.error('Form error:', error);
         alert('Sorry, there was an error. Please try again or call us directly.');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+        if (submitBtn) {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
       }
     });
   });
 
   // Smooth scroll for anchor links
   document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function(e) {
+    anchor.addEventListener('click', (e) => {
       e.preventDefault();
-      const target = document.querySelector(this.getAttribute('href'));
+      const href = anchor.getAttribute('href');
+      const target = href ? document.querySelector(href) : null;
       if (target) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }

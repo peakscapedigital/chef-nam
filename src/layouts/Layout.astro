@@ -20,7 +20,7 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
 const homepage = await getHomepage();
 // Use higher resolution for retina displays (2x the display size)
 // Logo displays at h-16 (64px) so we want 128px height for crisp display
-const logoUrl = homepage?.logo ? urlForOptimized(homepage.logo.asset, 384, 128).url() : null;
+const logoUrl = homepage?.logo ? urlForOptimized(homepage.logo.asset, 384, 128).url() : undefined;
 const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
 ---
 
@@ -216,8 +216,12 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
 
   <!-- Google Tag Manager - User Interaction Deferred -->
   <script>
+  // Window augmented with GTM's dataLayer (untyped third-party global).
+  interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+  const dlw = window as DataLayerWindow;
+
   // Initialize dataLayer immediately but defer GTM script loading
-  window.dataLayer = window.dataLayer || [];
+  dlw.dataLayer = dlw.dataLayer || [];
 
   // Load GTM only after user interaction or 3 seconds delay
   let gtmLoaded = false;
@@ -225,11 +229,14 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
     if (gtmLoaded) return;
     gtmLoaded = true;
 
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WCMPN842');
+    // Typed equivalent of the standard GTM snippet (id GTM-WCMPN842).
+    dlw.dataLayer = dlw.dataLayer || [];
+    dlw.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const f = document.getElementsByTagName('script')[0];
+    const j = document.createElement('script');
+    j.async = true;
+    j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WCMPN842';
+    f?.parentNode?.insertBefore(j, f);
   }
 
   // Load on user interaction
@@ -256,22 +263,26 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   
   <!-- Phone Click Tracking for GA4 -->
   <script>
+    // Window augmented with GTM's dataLayer (untyped third-party global).
+    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+    const dlw = window as DataLayerWindow;
+
     // Track all phone number clicks
     document.addEventListener('DOMContentLoaded', () => {
       const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
-      
+
       phoneLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          const phoneNumber = this.getAttribute('href').replace('tel:', '');
-          const linkText = this.textContent.trim();
-          const linkLocation = this.closest('section')?.className || 
-                             this.closest('footer') ? 'footer' : 
-                             this.closest('header') ? 'header' : 
-                             this.closest('.topbar') ? 'topbar' : 'unknown';
-          
+        link.addEventListener('click', () => {
+          const phoneNumber = link.getAttribute('href')?.replace('tel:', '') ?? '';
+          const linkText = link.textContent?.trim() ?? '';
+          const linkLocation = link.closest('section')?.className ||
+                             link.closest('footer') ? 'footer' :
+                             link.closest('header') ? 'header' :
+                             link.closest('.topbar') ? 'topbar' : 'unknown';
+
           // Push event to GTM dataLayer
-          if (typeof window !== 'undefined' && window.dataLayer) {
-            window.dataLayer.push({
+          if (dlw.dataLayer) {
+            dlw.dataLayer.push({
               'event': 'phone_click',
               'phone_number': phoneNumber,
               'link_text': linkText,
@@ -286,13 +297,13 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
       // Venue referral tracking
       const venueLinks = document.querySelectorAll('a[data-venue-name]');
       venueLinks.forEach(link => {
-        link.addEventListener('click', function() {
-          const venueName = this.getAttribute('data-venue-name');
-          const venueUrl = this.getAttribute('href');
+        link.addEventListener('click', () => {
+          const venueName = link.getAttribute('data-venue-name');
+          const venueUrl = link.getAttribute('href');
           const pageSource = window.location.pathname;
-          
-          if (typeof window !== 'undefined' && window.dataLayer) {
-            window.dataLayer.push({
+
+          if (dlw.dataLayer) {
+            dlw.dataLayer.push({
               'event': 'venue_referral',
               'venue_name': venueName,
               'venue_url': venueUrl,

@@ -529,26 +529,28 @@ import ServiceHero from '../components/sections/ServiceHero.astro';
           </div>
 
           <script>
-          document.getElementById('servicesLeadForm').addEventListener('submit', async function(e) {
+          document.getElementById('servicesLeadForm')?.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             // Get form data
-            const firstName = document.getElementById('firstName').value;
-            const lastName = document.getElementById('lastName').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const message = document.getElementById('message').value;
-            
+            const firstName = (document.getElementById('firstName') as HTMLInputElement | null)?.value ?? '';
+            const lastName = (document.getElementById('lastName') as HTMLInputElement | null)?.value ?? '';
+            const email = (document.getElementById('email') as HTMLInputElement | null)?.value ?? '';
+            const phone = (document.getElementById('phone') as HTMLInputElement | null)?.value ?? '';
+            const message = (document.getElementById('message') as HTMLTextAreaElement | null)?.value ?? '';
+
             // Validate required fields
             if (!firstName || !email) {
               alert('Please fill in required fields (Name and Email)');
               return;
             }
-            
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.textContent;
-            submitButton.textContent = 'Sending...';
-            submitButton.disabled = true;
+
+            const submitButton = this.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+            const originalText = submitButton?.textContent ?? '';
+            if (submitButton) {
+              submitButton.textContent = 'Sending...';
+              submitButton.disabled = true;
+            }
             
             try {
               // Submit initial lead capture to API
@@ -592,8 +594,10 @@ import ServiceHero from '../components/sections/ServiceHero.astro';
             } catch (error) {
               console.error('Error submitting form:', error);
               alert('Sorry, there was an error. Please try again or contact us directly.');
-              submitButton.textContent = originalText;
-              submitButton.disabled = false;
+              if (submitButton) {
+                submitButton.textContent = originalText;
+                submitButton.disabled = false;
+              }
             }
           });
           </script>

@@ -122,16 +122,22 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
 
   <!-- Google Tag Manager -->
   <script>
-  window.dataLayer = window.dataLayer || [];
+  // Window augmented with GTM's dataLayer (untyped third-party global).
+  interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+  const dlw = window as DataLayerWindow;
+  dlw.dataLayer = dlw.dataLayer || [];
   let gtmLoaded = false;
   function loadGTM() {
     if (gtmLoaded) return;
     gtmLoaded = true;
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-WCMPN842');
+    // Typed equivalent of the standard GTM snippet (id GTM-WCMPN842).
+    dlw.dataLayer = dlw.dataLayer || [];
+    dlw.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+    const f = document.getElementsByTagName('script')[0];
+    const j = document.createElement('script');
+    j.async = true;
+    j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WCMPN842';
+    f?.parentNode?.insertBefore(j, f);
   }
   ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event =>
     document.addEventListener(event, loadGTM, {once: true, passive: true})
@@ -148,13 +154,16 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
 
   <!-- Phone Click Tracking -->
   <script>
+    // Window augmented with GTM's dataLayer (untyped third-party global).
+    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+    const dlw = window as DataLayerWindow;
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('a[href^="tel:"]').forEach(link => {
-        link.addEventListener('click', function() {
-          if (window.dataLayer) {
-            window.dataLayer.push({
+        link.addEventListener('click', () => {
+          if (dlw.dataLayer) {
+            dlw.dataLayer.push({
               'event': 'phone_click',
-              'phone_number': this.getAttribute('href').replace('tel:', ''),
+              'phone_number': link.getAttribute('href')?.replace('tel:', '') ?? '',
               'event_category': 'engagement',
               'event_label': 'Phone Click - Landing Page'
             });
