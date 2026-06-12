@@ -166,16 +166,39 @@ export const prerender = false;
   </style>
 
   <script>
+    // Lead record from the /api/admin/leads endpoint (BigQuery-backed, loose
+    // schema — all fields optional).
+    interface Lead {
+      lead_id?: string;
+      first_name?: string;
+      last_name?: string;
+      email?: string;
+      phone?: string;
+      event_type?: string;
+      guest_count?: string | number;
+      event_date?: string;
+      submitted_at?: string | number;
+      status?: string;
+      booking_value?: string | number;
+      notes?: string;
+      is_test?: boolean | string;
+      gclid?: string;
+      fbclid?: string;
+      utm_source?: string;
+      utm_medium?: string;
+      lead_source?: string;
+    }
+
     // State
-    let leads = [];
+    let leads: Lead[] = [];
     let currentPage = 0;
     let totalCount = 0;
     const pageSize = 50;
     let currentFilter = 'all';
     let includeTest = false;
-    let currentNotesLeadId = null;
-    let currentWonLeadId = null;
-    let currentValueLeadId = null;
+    let currentNotesLeadId: string | null = null;
+    let currentWonLeadId: string | null = null;
+    let currentValueLeadId: string | null = null;
 
     // Elements
     const loading = document.getElementById('loading');
@@ -190,22 +213,23 @@ export const prerender = false;
     const wonModal = document.getElementById('wonModal');
     const valueModal = document.getElementById('valueModal');
 
-    function formatDate(dateStr) {
+    function formatDate(dateStr: string | number | undefined) {
       if (!dateStr) return '-';
       let date;
+      const str = String(dateStr);
       // BigQuery may return timestamps as scientific notation (Unix seconds) or ISO string
-      if (typeof dateStr === 'number' || /^[\d.]+[Ee]/.test(dateStr) || /^\d+\.?\d*$/.test(dateStr)) {
+      if (typeof dateStr === 'number' || /^[\d.]+[Ee]/.test(str) || /^\d+\.?\d*$/.test(str)) {
         // Unix timestamp in seconds (possibly scientific notation)
-        const seconds = parseFloat(dateStr);
+        const seconds = parseFloat(str);
         date = new Date(seconds * 1000);
       } else {
-        date = new Date(dateStr);
+        date = new Date(str);
       }
       if (isNaN(date.getTime())) return '-';
       return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
     }
 
-    function getSource(lead) {
+    function getSource(lead: Lead) {
       if (lead.gclid) return 'Google Ads';
       if (lead.fbclid) return 'Facebook';
       if (lead.utm_source) return lead.utm_source;
@@ -213,7 +237,7 @@ export const prerender = false;
       return lead.lead_source || 'Direct';
     }
 
-    function getStatusClass(status) {
+    function getStatusClass(status: string | undefined) {
       return `status-${status || 'new'}`;
     }
 
@@ -297,26 +321,26 @@ export const prerender = false;
       });
     }
 
-    async function handleStatusChange(e) {
-      const select = e.target;
+    async function handleStatusChange(e: Event) {
+      const select = e.target as HTMLSelectElement;
       const leadId = select.dataset.leadId;
       const newStatus = select.value;
       const oldStatus = select.dataset.currentStatus;
 
       if (newStatus === 'won') {
-        currentWonLeadId = leadId;
+        currentWonLeadId = leadId ?? null;
         wonModal?.classList.remove('hidden');
         document.getElementById('bookingValueInput')?.focus();
-        select.value = oldStatus;
+        select.value = oldStatus ?? '';
         return;
       }
 
-      await updateLeadStatus(leadId, newStatus);
+      if (leadId) await updateLeadStatus(leadId, newStatus);
     }
 
-    async function updateLeadStatus(leadId, status, bookingValue = null) {
+    async function updateLeadStatus(leadId: string, status: string, bookingValue: number | null = null) {
       try {
-        const body = { status };
+        const body: { status: string; booking_value?: number } = { status };
         if (bookingValue) body.booking_value = bookingValue;
 
         const response = await fetch(`/api/admin/leads/${leadId}/status`, {
@@ -334,17 +358,17 @@ export const prerender = false;
         await fetchLeads();
       } catch (err) {
         console.error('Error updating status:', err);
-        alert('Failed to update status: ' + err.message);
+        alert('Failed to update status: ' + (err instanceof Error ? err.message : String(err)));
         await fetchLeads();
       }
     }
 
-    function handleNotesClick(e) {
-      const btn = e.currentTarget;
-      currentNotesLeadId = btn.dataset.leadId;
+    function handleNotesClick(e: Event) {
+      const btn = e.currentTarget as HTMLElement;
+      currentNotesLeadId = btn.dataset.leadId ?? null;
       const leadNameEl = document.getElementById('notesLeadName');
-      const textareaEl = document.getElementById('notesTextarea');
-      if (leadNameEl) leadNameEl.textContent = btn.dataset.leadName;
+      const textareaEl = document.getElementById('notesTextarea') as HTMLTextAreaElement | null;
+      if (leadNameEl) leadNameEl.textContent = btn.dataset.leadName ?? '';
       if (textareaEl) textareaEl.value = btn.dataset.notes || '';
       notesModal?.classList.remove('hidden');
       textareaEl?.focus();
@@ -353,7 +377,7 @@ export const prerender = false;
     async function saveNotes() {
       if (!currentNotesLeadId) return;
 
-      const notes = document.getElementById('notesTextarea')?.value || '';
+      const notes = (document.getElementById('notesTextarea') as HTMLTextAreaElement | null)?.value || '';
 
       try {
         const response = await fetch(`/api/admin/leads/${currentNotesLeadId}/notes`, {
@@ -373,16 +397,16 @@ export const prerender = false;
         await fetchLeads();
       } catch (err) {
         console.error('Error saving notes:', err);
-        alert('Failed to save notes: ' + err.message);
+        alert('Failed to save notes: ' + (err instanceof Error ? err.message : String(err)));
       }
     }
 
-    function handleValueClick(e) {
-      const btn = e.currentTarget;
-      currentValueLeadId = btn.dataset.leadId;
+    function handleValueClick(e: Event) {
+      const btn = e.currentTarget as HTMLElement;
+      currentValueLeadId = btn.dataset.leadId ?? null;
       const leadNameEl = document.getElementById('valueLeadName');
       const inputEl = document.getElementById('editValueInput');
-      if (leadNameEl) leadNameEl.textContent = btn.dataset.leadName;
+      if (leadNameEl) leadNameEl.textContent = btn.dataset.leadName ?? '';
       if (inputEl) (inputEl as HTMLInputElement).value = btn.dataset.value || '';
       valueModal?.classList.remove('hidden');
       inputEl?.focus();
@@ -411,14 +435,14 @@ export const prerender = false;
         await fetchLeads();
       } catch (err) {
         console.error('Error saving value:', err);
-        alert('Failed to save value: ' + err.message);
+        alert('Failed to save value: ' + (err instanceof Error ? err.message : String(err)));
       }
     }
 
     async function confirmWon() {
       if (!currentWonLeadId) return;
 
-      const bookingValue = parseFloat(document.getElementById('bookingValueInput')?.value || '0');
+      const bookingValue = parseFloat((document.getElementById('bookingValueInput') as HTMLInputElement | null)?.value || '0');
 
       if (!bookingValue || bookingValue <= 0) {
         alert('Please enter a valid booking value');
@@ -429,7 +453,7 @@ export const prerender = false;
 
       wonModal?.classList.add('hidden');
       currentWonLeadId = null;
-      const input = document.getElementById('bookingValueInput');
+      const input = document.getElementById('bookingValueInput') as HTMLInputElement | null;
       if (input) input.value = '';
     }
 
@@ -468,8 +492,8 @@ export const prerender = false;
         if (showingEnd) showingEnd.textContent = String(Math.min((currentPage + 1) * pageSize, totalCount));
         if (showingTotal) showingTotal.textContent = String(totalCount);
 
-        const prevBtn = document.getElementById('prevBtn');
-        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn') as HTMLButtonElement | null;
+        const nextBtn = document.getElementById('nextBtn') as HTMLButtonElement | null;
         if (prevBtn) prevBtn.disabled = currentPage === 0;
         if (nextBtn) nextBtn.disabled = (currentPage + 1) * pageSize >= totalCount;
 
@@ -480,7 +504,7 @@ export const prerender = false;
         console.error('Error fetching leads:', err);
         loading?.classList.add('hidden');
         error?.classList.remove('hidden');
-        if (errorMessage) errorMessage.textContent = 'Failed to load leads: ' + err.message;
+        if (errorMessage) errorMessage.textContent = 'Failed to load leads: ' + (err instanceof Error ? err.message : String(err));
       }
     }
 
