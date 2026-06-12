@@ -129,6 +129,8 @@ import { Icon } from 'astro-icon/components';
 
   <!-- DataLayer push for form parameters + enhanced conversions + attribution data -->
   <script>
+    // Window augmented with GTM's dataLayer (untyped third-party global).
+    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
     (function () {
       var storage = window.localStorage;
       var session = window.sessionStorage;
@@ -166,8 +168,9 @@ import { Icon } from 'astro-icon/components';
         console.log('Test submission detected - skipping GA4/Google Ads tracking');
       } else {
         // Push ALL data to dataLayer for GTM tags
-        window.dataLayer = window.dataLayer || [];
-        window.dataLayer.push({
+        const dlw = window as DataLayerWindow;
+        dlw.dataLayer = dlw.dataLayer || [];
+        dlw.dataLayer.push({
           // Event name - GTM trigger should listen for this
           event: 'thank_you_loaded',
 

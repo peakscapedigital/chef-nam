@@ -389,7 +389,7 @@ export async function queryLeads(
         const fieldName = fields[i].name;
         lead[fieldName] = cell.v;
       });
-      return lead as LeadData;
+      return lead as unknown as LeadData;
     });
 
     const totalCount = countResult.rows?.[0]?.f?.[0]?.v
@@ -450,7 +450,7 @@ export async function getLeadById(
       lead[fields[i].name] = cell.v;
     });
 
-    return { success: true, lead: lead as LeadData };
+    return { success: true, lead: lead as unknown as LeadData };
   } catch (error) {
     console.error('BigQuery get lead exception:', error);
     return { success: false, error: String(error) };

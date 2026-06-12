@@ -299,6 +299,8 @@ export async function createFirestoreLead(
       status: 'new',
       notes: '',
       booking_value: null,
+      quote_amount: null,
+      order_amount: null,
       created_at: now,
       updated_at: now
     };
@@ -460,7 +462,7 @@ export async function getFirestoreLead(
     }
 
     const doc = await response.json() as Record<string, unknown>;
-    const lead = fromFirestoreDocument(doc) as FirestoreLeadDocument;
+    const lead = fromFirestoreDocument(doc) as unknown as FirestoreLeadDocument;
 
     return { success: true, lead };
   } catch (error) {
@@ -496,7 +498,7 @@ export async function listFirestoreLeads(
     }
 
     const result = await response.json() as { documents?: Record<string, unknown>[] };
-    const leads = (result.documents || []).map(doc => fromFirestoreDocument(doc) as FirestoreLeadDocument);
+    const leads = (result.documents || []).map(doc => fromFirestoreDocument(doc) as unknown as FirestoreLeadDocument);
 
     return { success: true, leads };
   } catch (error) {
