@@ -11,10 +11,11 @@ export default defineConfig({
   site: 'https://chefnamcatering.com',
   output: 'server', // Server mode required for API endpoints
   trailingSlash: 'never', // Redirect trailing slashes to non-trailing slash URLs
-  adapter: cloudflare({
-    mode: 'directory',
-    functionPerRoute: false
-  }),
+  // @astrojs/cloudflare v13 removed the `mode` and `functionPerRoute` options
+  // (v12-era). v13 builds a single directory Worker by default, so bare
+  // cloudflare() reproduces the prior mode:'directory' / functionPerRoute:false
+  // behavior. output:'server' stays — this site has API routes (submit-form).
+  adapter: cloudflare(),
   integrations: [
     sitemap({
       filter: (page) => !page.includes('/admin'),
