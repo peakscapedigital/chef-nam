@@ -1,0 +1,54 @@
+name: Preview Deploy (Workers)
+
+on:
+  push:
+    branches-ignore: [main]
+    paths-ignore:
+      - '*.md'
+      - 'docs/**'
+      - '.claude/**'
+
+concurrency:
+  group: preview-${{ github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check (astro check)
+        run: npx astro check
+
+      - name: Write .env
+        run: |
+          echo "${{ secrets.ENV_FILE }}" > .env
+          echo "" >> .env
+          echo "WORKER_ENV=preview" >> .env
+
+      - name: Build
+        run: npm run build
+
+      - name: Deploy preview to Cloudflare Workers
+        # --name override gives a separate preview Worker (chef-nam-preview) with
+        # its own auto-provisioned chef-nam-preview-session KV. Apex domain stays
+        # on the production Worker; preview is reachable only at its workers.dev URL.
+        run: npx wrangler deploy --name chef-nam-preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      - name: Push runtime secrets to the preview Worker
+        run: npx wrangler secret bulk .env --name chef-nam-preview
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
