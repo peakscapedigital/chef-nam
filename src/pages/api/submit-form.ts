@@ -277,7 +277,7 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
 
 export const prerender = false;
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, locals }) => {
   try {
     console.log('Form submission API called');
 
@@ -375,6 +375,12 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
+    // Run the full lead pipeline in the BACKGROUND so the visitor gets the
+    // confirmation immediately (was ~7s of serial third-party calls). Same
+    // success semantics — this endpoint already returns success regardless of
+    // downstream outcome; Cloudflare's waitUntil guarantees the work completes
+    // after the response. Locally (no cfContext) we await so it still runs.
+    const runPipeline = async () => {
     try {
       // ========================================
       // 1. CHECK FOR EXISTING CONTACT
@@ -545,6 +551,12 @@ export const POST: APIRoute = async ({ request }) => {
 
     // Send email notification
     await sendEmailNotification(data, false);
+    };
+
+    const cfCtx = (locals as { cfContext?: { waitUntil?: (p: Promise<unknown>) => void } }).cfContext;
+    const pipeline = runPipeline();
+    if (cfCtx?.waitUntil) cfCtx.waitUntil(pipeline);
+    else await pipeline;
 
     return new Response(
       JSON.stringify({
