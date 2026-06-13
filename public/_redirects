@@ -1,8 +1,7 @@
-# Redirect www to non-www
-https://www.chefnamcatering.com/* https://chefnamcatering.com/:splat 301!
-
-# Force redirect for all www requests
-www.chefnamcatering.com/* chefnamcatering.com/:splat 301!
+# Note: www → apex is handled by a zone-level Cloudflare Redirect Rule, NOT here.
+# Cloudflare Workers validates _redirects strictly (absolute URLs / bad status
+# codes are hard errors, unlike Pages which only warned), and per the site-deploy
+# standard www handling lives at the zone, not in _redirects.
 
 # Redirect old/non-existent blog posts to main blog page
 /blog/corporate-event-catering /blog 301
