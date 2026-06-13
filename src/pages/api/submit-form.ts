@@ -229,13 +229,22 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
       emailWasFixed: data.email !== fixedEmail
     });
 
-    const response = await fetch('https://chefnam-email-worker.jason-090.workers.dev', {
+    // Call the email worker via SERVICE BINDING — a Worker can't fetch another
+    // Worker on the same account by public URL (CF error 1042). Fall back to the
+    // public URL locally (no binding in `astro dev`).
+    const emailWorker = (cfEnv as { EMAIL_WORKER?: { fetch: (req: Request) => Promise<Response> } }).EMAIL_WORKER;
+    const emailReq = new Request('https://email-worker.internal/', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(emailData),
     });
+    const response = emailWorker
+      ? await emailWorker.fetch(emailReq)
+      : await fetch('https://chefnam-email-worker.jason-090.workers.dev', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(emailData),
+        });
 
     console.log('Email worker response status:', response.status);
     const responseData = await response.text();

@@ -6,6 +6,9 @@ name = "chef-nam"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-[env.production]
-# Environment variables are set in Cloudflare Pages dashboard
-# This file tells Cloudflare to make them available via runtime.env
+# Service binding to the lead-notification email worker. A Worker can't fetch
+# another Worker on the same account via its public URL (CF error 1042) — that
+# worked under Pages but breaks on Workers. Bind it and call EMAIL_WORKER.fetch().
+[[services]]
+binding = "EMAIL_WORKER"
+service = "chefnam-email-worker"
