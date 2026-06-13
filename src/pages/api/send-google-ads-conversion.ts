@@ -1,4 +1,7 @@
 import type { APIRoute } from 'astro';
+// Astro 6 / Approach C: read secrets at runtime from cloudflare:workers
+// (not baked into the bundle via import.meta.env).
+import { env as cfEnv } from 'cloudflare:workers';
 
 export const prerender = false;
 
@@ -84,10 +87,11 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Check if Google Ads is configured
-    const customerId = import.meta.env.GOOGLE_ADS_CUSTOMER_ID;
-    const developerToken = import.meta.env.GOOGLE_ADS_DEVELOPER_TOKEN;
-    const qualifiedConversionId = import.meta.env.GOOGLE_ADS_QUALIFIED_CONVERSION_ID;
-    const bookingConversionId = import.meta.env.GOOGLE_ADS_BOOKING_CONVERSION_ID;
+    const env = cfEnv as Record<string, string | undefined>;
+    const customerId = env.GOOGLE_ADS_CUSTOMER_ID;
+    const developerToken = env.GOOGLE_ADS_DEVELOPER_TOKEN;
+    const qualifiedConversionId = env.GOOGLE_ADS_QUALIFIED_CONVERSION_ID;
+    const bookingConversionId = env.GOOGLE_ADS_BOOKING_CONVERSION_ID;
 
     if (!customerId || !developerToken) {
       console.error('Google Ads credentials not configured');

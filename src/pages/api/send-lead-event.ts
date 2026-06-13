@@ -1,4 +1,7 @@
 import type { APIRoute } from 'astro';
+// Astro 6 / Approach C: read secrets at runtime from cloudflare:workers
+// (not baked into the bundle via import.meta.env).
+import { env as cfEnv } from 'cloudflare:workers';
 
 export const prerender = false;
 
@@ -45,8 +48,9 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Get GA4 credentials from environment
-    const measurementId = import.meta.env.GA4_MEASUREMENT_ID;
-    const apiSecret = import.meta.env.GA4_API_SECRET;
+    const env = cfEnv as Record<string, string | undefined>;
+    const measurementId = env.GA4_MEASUREMENT_ID;
+    const apiSecret = env.GA4_API_SECRET;
 
     if (!measurementId || !apiSecret) {
       console.error('GA4 credentials not configured');
