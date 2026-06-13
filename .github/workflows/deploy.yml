@@ -35,7 +35,11 @@ jobs:
       - name: Write .env
         # Single ENV_FILE secret = source of truth for both build-time PUBLIC
         # vars (read via import.meta.env) and the runtime secrets pushed below.
-        run: echo "${{ secrets.ENV_FILE }}" > .env
+        # Pass via env + printf (NOT inline ${{ }}) so values containing quotes
+        # — e.g. the service-account JSON — aren't mangled by shell interpolation.
+        run: printf '%s\n' "$ENV_FILE" > .env
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
 
       - name: Build
         run: npm run build

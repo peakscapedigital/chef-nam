@@ -30,10 +30,13 @@ jobs:
         run: npx astro check
 
       - name: Write .env
+        # Pass via env + printf (NOT inline ${{ }}) so quote-containing values
+        # (service-account JSON) aren't mangled by shell interpolation.
         run: |
-          echo "${{ secrets.ENV_FILE }}" > .env
-          echo "" >> .env
+          printf '%s\n' "$ENV_FILE" > .env
           echo "WORKER_ENV=preview" >> .env
+        env:
+          ENV_FILE: ${{ secrets.ENV_FILE }}
 
       - name: Build
         run: npm run build
