@@ -17,6 +17,7 @@ import {
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { upsertBrevoContact } from '../../lib/brevo';
+import { sendLeadEmails } from '../../lib/email';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -229,28 +230,11 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
       emailWasFixed: data.email !== fixedEmail
     });
 
-    // Call the email worker via SERVICE BINDING — a Worker can't fetch another
-    // Worker on the same account by public URL (CF error 1042). Fall back to the
-    // public URL locally (no binding in `astro dev`).
-    const emailWorker = (cfEnv as { EMAIL_WORKER?: { fetch: (req: Request) => Promise<Response> } }).EMAIL_WORKER;
-    const emailReq = new Request('https://email-worker.internal/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(emailData),
-    });
-    const response = emailWorker
-      ? await emailWorker.fetch(emailReq)
-      : await fetch('https://chefnam-email-worker.jason-090.workers.dev', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(emailData),
-        });
+    // Send directly via Resend (src/lib/email.ts) — no separate email worker
+    // (SYS-008). Returns { success, error } rather than throwing on Resend errors.
+    const result = await sendLeadEmails(emailData);
 
-    console.log('Email worker response status:', response.status);
-    const responseData = await response.text();
-    console.log('Email worker response:', responseData);
-
-    if (!response.ok) {
+    if (!result.success) {
       // Email failed - log prominently with user details so you can manually reach out
       console.error('❌❌❌ EMAIL NOTIFICATION FAILED ❌❌❌');
       console.error('Lead Details:', {
@@ -262,13 +246,13 @@ async function sendEmailNotification(data: any, isSpam: boolean = false) {
         guestCount: data.guestCount,
         preferredContact: data.preferredContact
       });
-      console.error('Error:', response.status, responseData);
+      console.error('Error:', result.error);
       console.error('❌❌❌ MANUAL FOLLOW-UP REQUIRED ❌❌❌');
 
-      throw new Error(`Email worker error: ${response.status} - ${responseData}`);
+      throw new Error(`Email send failed: ${result.error}`);
     }
 
-    console.log('✅ Email notification sent successfully via worker');
+    console.log('✅ Email notification sent successfully');
     return fixedEmail;
   } catch (emailError) {
     console.error('❌❌❌ CRITICAL: Email notification failed ❌❌❌');

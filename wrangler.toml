@@ -6,9 +6,6 @@ name = "chef-nam"
 compatibility_date = "2024-09-23"
 compatibility_flags = ["nodejs_compat"]
 
-# Service binding to the lead-notification email worker. A Worker can't fetch
-# another Worker on the same account via its public URL (CF error 1042) — that
-# worked under Pages but breaks on Workers. Bind it and call EMAIL_WORKER.fetch().
-[[services]]
-binding = "EMAIL_WORKER"
-service = "chefnam-email-worker"
+# Lead + confirmation emails are sent directly from the site Worker via the
+# Resend REST API (src/lib/email.ts), so no email-worker service binding is
+# needed. RESEND_API_KEY is a runtime secret (Approach C). (SYS-008)
