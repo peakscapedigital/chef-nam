@@ -7,6 +7,9 @@ on:
       - '*.md'
       - 'docs/**'
       - '.claude/**'
+      # Sanity Studio (nested app) deploys via `sanity deploy`, not the
+      # site Worker — keep Studio-only changes from triggering previews.
+      - 'chef-nam-catering/**'
 
 concurrency:
   group: preview-${{ github.ref_name }}

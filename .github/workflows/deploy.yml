@@ -8,6 +8,10 @@ on:
       - '*.md'
       - 'docs/**'
       - '.claude/**'
+      # The Sanity Studio is a separate app nested in this repo; it deploys
+      # via `sanity deploy`, not the site Worker. Studio-only changes must
+      # not trigger a live-site redeploy.
+      - 'chef-nam-catering/**'
 
 concurrency:
   group: deploy-production
