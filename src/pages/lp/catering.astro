@@ -404,6 +404,7 @@ import LandingPageLayout from '../../layouts/LandingPageLayout.astro';
 </LandingPageLayout>
 
 <script>
+import { getAttribution } from '@peakscape/site-kit/attribution';
 // Window augmented with GTM's dataLayer (untyped third-party global).
 interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
 
@@ -458,20 +459,9 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
       }
 
-      // Get attribution data
-      const attribution = {
-        utm_source: localStorage.getItem('utm_source') || undefined,
-        utm_medium: localStorage.getItem('utm_medium') || undefined,
-        utm_campaign: localStorage.getItem('utm_campaign') || undefined,
-        utm_term: localStorage.getItem('utm_term') || undefined,
-        utm_content: localStorage.getItem('utm_content') || undefined,
-        gclid: localStorage.getItem('gclid') || undefined,
-        fbclid: localStorage.getItem('fbclid') || undefined,
-        lead_source: localStorage.getItem('lead_source') || 'Direct',
-        referrer: localStorage.getItem('referrer') || undefined,
-        landing_page: localStorage.getItem('landing_page') || '/lp/catering',
-        ga_client_id: getGA4ClientId()
-      };
+      // Attribution from the first-party `ps_attr` cookie (SYS-007); the server
+      // re-reads the same cookie authoritatively at POST.
+      const attribution = { ...getAttribution(), ga_client_id: getGA4ClientId() };
 
       const payload = {
         firstName: data.firstName,

@@ -4,6 +4,7 @@ import TopBar from '../components/sections/TopBar.astro';
 import Header from '../components/sections/Header.astro';
 import Footer from '../components/sections/Footer.astro';
 import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
+import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
 
 export interface Props {
   title: string;
@@ -93,126 +94,11 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <!-- Additional head content from pages -->
   <slot name="head" />
   
-  <!-- UTM & Attribution Capture Script -->
-  <script is:inline>
-  // Capture UTM parameters and attribution data on page load
-  (function() {
-    try {
-      const urlParams = new URLSearchParams(window.location.search);
-      const storage = window.localStorage;
-
-      // Check if attribution already captured for this session
-      const isFirstVisit = !storage.getItem('_attribution_captured');
-
-      // Capture attribution for ALL first-time visitors
-      if (isFirstVisit) {
-
-        // Capture UTM parameters if present
-        const utmParams = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content', 'gclid', 'fbclid'];
-        utmParams.forEach(param => {
-          const value = urlParams.get(param);
-          if (value) storage.setItem(param, value);
-        });
-
-        // Always capture referrer (where they came from)
-        if (document.referrer) {
-          storage.setItem('referrer', document.referrer);
-        }
-
-        // Always capture landing page (first page visited)
-        storage.setItem('landing_page', window.location.pathname + window.location.search);
-
-        // Generate friendly lead source name based on available data
-        let leadSource = 'Direct';
-        const source = urlParams.get('utm_source');
-        const medium = urlParams.get('utm_medium');
-
-        // Priority 1: Paid traffic with click IDs
-        if (urlParams.get('gclid')) {
-          leadSource = 'Google Ads';
-        } else if (urlParams.get('fbclid')) {
-          leadSource = 'Facebook Ads';
-        }
-        // Priority 2: UTM parameters
-        else if (source && medium) {
-          if (medium === 'cpc') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Ads';
-          else if (medium === 'organic') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Search';
-          else if (medium === 'social') leadSource = source.charAt(0).toUpperCase() + source.slice(1) + ' Social';
-          else if (medium === 'email') leadSource = 'Email Campaign';
-          else if (medium === 'referral') leadSource = 'Referral - ' + source;
-          else leadSource = source.charAt(0).toUpperCase() + source.slice(1);
-        }
-        // Priority 3: Referrer-based attribution (organic search, social, referrals)
-        else if (document.referrer) {
-          try {
-            const refUrl = new URL(document.referrer);
-            const refDomain = refUrl.hostname.replace('www.', '').toLowerCase();
-
-            // Search engines - Organic Search
-            const searchEngines = {
-              'google.com': 'Google',
-              'google.co.uk': 'Google',
-              'bing.com': 'Bing',
-              'yahoo.com': 'Yahoo',
-              'duckduckgo.com': 'DuckDuckGo',
-              'baidu.com': 'Baidu',
-              'yandex.com': 'Yandex',
-              'ecosia.org': 'Ecosia'
-            };
-
-            // Social networks
-            const socialNetworks = {
-              'facebook.com': 'Facebook',
-              'fb.com': 'Facebook',
-              'instagram.com': 'Instagram',
-              'twitter.com': 'Twitter',
-              'x.com': 'Twitter',
-              'linkedin.com': 'LinkedIn',
-              'pinterest.com': 'Pinterest',
-              'tiktok.com': 'TikTok',
-              'youtube.com': 'YouTube',
-              'reddit.com': 'Reddit',
-              'nextdoor.com': 'Nextdoor'
-            };
-
-            // Check search engines
-            for (const [domain, name] of Object.entries(searchEngines)) {
-              if (refDomain === domain || refDomain.endsWith('.' + domain)) {
-                leadSource = 'Organic Search - ' + name;
-                break;
-              }
-            }
-
-            // Check social networks (if not already matched)
-            if (leadSource === 'Direct') {
-              for (const [domain, name] of Object.entries(socialNetworks)) {
-                if (refDomain === domain || refDomain.endsWith('.' + domain)) {
-                  leadSource = 'Social - ' + name;
-                  break;
-                }
-              }
-            }
-
-            // Otherwise it's a referral from another site
-            if (leadSource === 'Direct') {
-              leadSource = 'Referral - ' + refDomain;
-            }
-          } catch (e) {
-            leadSource = 'Referral';
-          }
-        }
-        // Priority 4: No referrer = Direct traffic
-        // leadSource already set to 'Direct'
-
-        storage.setItem('lead_source', leadSource);
-        storage.setItem('_attribution_captured', 'true');
-      }
-    } catch (e) {
-      console.warn('Attribution capture error:', e);
-    }
-  })();
-  </script>
-  <!-- End UTM Capture -->
+  <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
+  <!-- Writes utm_*/gclid/fbclid + referrer + lead_source into the `ps_attr` -->
+  <!-- first-party cookie (read server-side at form POST) and seeds dataLayer. -->
+  <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
+  <!-- End attribution capture -->
 
   <!-- Google Tag Manager - User Interaction Deferred -->
   <script>

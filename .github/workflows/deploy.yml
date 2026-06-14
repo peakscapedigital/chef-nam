@@ -22,11 +22,26 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+        with:
+          # Don't persist the default GITHUB_TOKEN http extraheader — it overrides
+          # the kit-token URL credentials and makes the private @peakscape/site-kit
+          # install fail "Repository not found" (actions/checkout #162).
+          persist-credentials: false
 
       - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
+
+      - name: Configure git auth for the private @peakscape/site-kit dependency
+        env:
+          SITE_KIT_TOKEN: ${{ secrets.SITE_KIT_TOKEN }}
+        run: |
+          # npm normalizes the git+https dep to git+ssh in the lockfile, so npm ci
+          # clones over ssh. Rewrite ONLY the kit repo's ssh URL to https+token.
+          git config --global \
+            url."https://x-access-token:${SITE_KIT_TOKEN}@github.com/peakscapedigital/peakscape-site-kit".insteadOf \
+            "ssh://git@github.com/peakscapedigital/peakscape-site-kit"
 
       - name: Install dependencies
         run: npm ci

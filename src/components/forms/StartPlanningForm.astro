@@ -768,17 +768,29 @@ document.addEventListener('DOMContentLoaded', function() {
         return undefined;
       }
 
+      // Attribution lives in the first-party `ps_attr` cookie written by the
+      // site-kit capture script (SYS-007). Read it here for the dataLayer push;
+      // the server re-reads the same cookie authoritatively at POST. This script
+      // is is:inline (define:vars) so it can't import site-kit — hence the inline
+      // cookie read (the classifier already ran in capture; we only parse here).
+      function readAttribution() {
+        try {
+          const m = document.cookie.match(/(?:^|; )ps_attr=([^;]*)/);
+          return m ? JSON.parse(decodeURIComponent(m[1])) : {};
+        } catch (e) { return {}; }
+      }
+      const attr = readAttribution();
       const attribution = {
-        utm_source: localStorage.getItem('utm_source') || undefined,
-        utm_medium: localStorage.getItem('utm_medium') || undefined,
-        utm_campaign: localStorage.getItem('utm_campaign') || undefined,
-        utm_term: localStorage.getItem('utm_term') || undefined,
-        utm_content: localStorage.getItem('utm_content') || undefined,
-        gclid: localStorage.getItem('gclid') || undefined,
-        fbclid: localStorage.getItem('fbclid') || undefined,
-        lead_source: localStorage.getItem('lead_source') || 'Direct',
-        referrer: localStorage.getItem('referrer') || undefined,
-        landing_page: localStorage.getItem('landing_page') || undefined,
+        utm_source: attr.utm_source || undefined,
+        utm_medium: attr.utm_medium || undefined,
+        utm_campaign: attr.utm_campaign || undefined,
+        utm_term: attr.utm_term || undefined,
+        utm_content: attr.utm_content || undefined,
+        gclid: attr.gclid || undefined,
+        fbclid: attr.fbclid || undefined,
+        lead_source: attr.lead_source || 'Direct',
+        referrer: attr.referrer || undefined,
+        landing_page: attr.landing_page || undefined,
         ga_client_id: getGA4ClientId()
       };
 

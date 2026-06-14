@@ -18,6 +18,7 @@ import {
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
+import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
 
 // Spam detection: Check for suspicious mixed case pattern
 function hasSuspiciousMixedCase(text: string): boolean {
@@ -303,6 +304,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
         }
       );
     }
+
+    // Server-authoritative attribution (SYS-007 first-party-cookie migration):
+    // read the `ps_attr` cookie set by the site-kit capture script and override
+    // any client-sent attribution fields, so we trust the cookie, not the body.
+    const attribution = parseAttributionCookie(request.headers.get('cookie'));
+    data = { ...data, ...attribution };
 
     // Check for spam
     const spamCheck = isLikelySpam(data);
