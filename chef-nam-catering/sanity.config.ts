@@ -4,6 +4,23 @@ import {visionTool} from '@sanity/vision'
 import {media} from 'sanity-plugin-media'
 import {schemaTypes} from './schemaTypes'
 
+// API version for client requests made from custom document actions.
+const STUDIO_API_VERSION = '2025-02-19'
+
+// Shape of the Lead document the custom actions read from. Sanity types the
+// action `doc` as an empty object, so we narrow it to the fields we use.
+interface LeadDoc {
+  _id: string
+  firstName?: string
+  lastName?: string
+  email?: string
+  phone?: string
+  eventType?: string
+  bookingValue?: number
+  analytics?: {ga_client_id?: string}
+  attribution?: {gclid?: string; lead_source?: string}
+}
+
 export default defineConfig({
   name: 'default',
   title: 'Chef Nam Catering',
@@ -30,7 +47,7 @@ export default defineConfig({
           // Action to qualify a lead
           (props) => {
             const {draft, published} = props
-            const doc = draft || published
+            const doc = (draft || published) as LeadDoc | null
 
             return {
               label: '✅ Mark as Qualified',
@@ -92,7 +109,7 @@ export default defineConfig({
 
                   if (ga4Result.success) {
                     // Update Sanity document
-                    await context.client
+                    await context.getClient({apiVersion: STUDIO_API_VERSION})
                       .patch(doc._id)
                       .set({
                         leadStatus: 'qualified',
@@ -122,7 +139,7 @@ export default defineConfig({
           // Action to mark as working
           (props) => {
             const {draft, published} = props
-            const doc = draft || published
+            const doc = (draft || published) as LeadDoc | null
 
             return {
               label: '💼 Mark as Working',
@@ -159,7 +176,7 @@ export default defineConfig({
                   const result = await response.json()
 
                   if (result.success) {
-                    await context.client
+                    await context.getClient({apiVersion: STUDIO_API_VERSION})
                       .patch(doc._id)
                       .set({
                         leadStatus: 'working',
@@ -183,7 +200,7 @@ export default defineConfig({
           // Action to convert a lead
           (props) => {
             const {draft, published} = props
-            const doc = draft || published
+            const doc = (draft || published) as LeadDoc | null
 
             return {
               label: '🎉 Mark as Converted',
@@ -245,7 +262,7 @@ export default defineConfig({
                   }
 
                   // Update Sanity document
-                  await context.client
+                  await context.getClient({apiVersion: STUDIO_API_VERSION})
                     .patch(doc._id)
                     .set({
                       leadStatus: 'converted',

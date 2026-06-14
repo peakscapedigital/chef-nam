@@ -964,16 +964,25 @@ export const lead = {
       source: 'attribution.lead_source',
       date: 'createdAt'
     },
-    prepare(selection: any) {
+    prepare(selection: {
+      firstName?: string
+      lastName?: string
+      email?: string
+      status?: string
+      eventType?: string
+      source?: string
+      date?: string
+    }) {
       const { firstName, lastName, email, status, eventType, source, date } = selection;
       const dateStr = date ? new Date(date).toLocaleDateString() : '';
-      const statusEmoji = {
+      const statusEmojis: Record<string, string> = {
         'new': '🆕',
         'qualified': '✅',
         'working': '💼',
         'converted': '🎉',
         'lost': '❌'
-      }[status] || '';
+      };
+      const statusEmoji = statusEmojis[status ?? ''] || '';
 
       return {
         title: `${statusEmoji} ${firstName} ${lastName}`,
