@@ -37,9 +37,13 @@ jobs:
         # (service-account JSON) aren't mangled by shell interpolation.
         run: |
           printf '%s\n' "$ENV_FILE" > .env
+          printf 'RESEND_API_KEY=%s\n' "$RESEND_API_KEY" >> .env
           echo "WORKER_ENV=preview" >> .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
+          # Discrete rotatable secret (site-deploy-standard rule 3) for the
+          # lead/confirmation emails sent directly via Resend (SYS-008).
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
 
       - name: Build
         run: npm run build
