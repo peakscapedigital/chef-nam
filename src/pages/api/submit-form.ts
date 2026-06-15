@@ -16,6 +16,7 @@ import {
   createFirestoreLeadData
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
+import { createAirtableLead } from '../../lib/airtable';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
 import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
@@ -539,6 +540,32 @@ export const POST: APIRoute = async ({ request, locals }) => {
           }
         } else {
           console.log('ℹ️ BREVO_API_KEY not configured, skipping Brevo sync');
+        }
+
+        // ========================================
+        // 7. CREATE AIRTABLE LEAD (Kanban — parallel track)
+        // ========================================
+        // Non-blocking mirror of the Trello/Firestore write. Gated on the PAT
+        // so the existing pipeline is untouched when AIRTABLE_API_KEY is unset.
+        const airtableApiKey = env.AIRTABLE_API_KEY;
+        if (airtableApiKey) {
+          try {
+            const airtableResult = await createAirtableLead(
+              data,
+              leadId,
+              airtableApiKey,
+              { emailHash, phoneHash }
+            );
+            if (airtableResult.success) {
+              console.log('✅ Airtable lead created:', airtableResult.recordId);
+            } else {
+              console.error('⚠️ Airtable lead create failed:', airtableResult.error);
+            }
+          } catch (airtableError) {
+            console.error('⚠️ Airtable exception:', airtableError);
+          }
+        } else {
+          console.log('ℹ️ AIRTABLE_API_KEY not configured, skipping Airtable sync');
         }
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
