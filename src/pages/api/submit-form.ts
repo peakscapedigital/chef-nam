@@ -17,6 +17,7 @@ import {
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { createAirtableLead } from '../../lib/airtable';
+import { isSolicitationSpam } from '../../lib/spam';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
 import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
@@ -54,6 +55,12 @@ function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
   // Check message for suspicious mixed case
   if (data.message && hasSuspiciousMixedCase(data.message)) {
     return { isSpam: true, reason: 'Suspicious mixed case in message' };
+  }
+
+  // Solicitation / marketing spam that passes honeypot + mixed-case (shared with
+  // the backfill so patterns stay in sync — see src/lib/spam.ts)
+  if (isSolicitationSpam(data.email, `${data.message || ''} ${data.eventDescription || ''}`)) {
+    return { isSpam: true, reason: `Solicitation spam: ${data.email}` };
   }
 
   return { isSpam: false };

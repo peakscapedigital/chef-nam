@@ -17,6 +17,7 @@ import {
   AIRTABLE_LEADS_TABLE,
   AIRTABLE_STATUS,
 } from '../src/lib/airtable';
+import { isSolicitationSpam } from '../src/lib/spam';
 
 const AIRTABLE_API_URL = 'https://api.airtable.com/v0';
 const PAGE = 100; // BigQuery page size
@@ -82,10 +83,7 @@ function str(v: unknown): string | undefined {
  */
 function isSpamLead(l: Record<string, unknown>): boolean {
   if (String(l.is_spam) === 'true') return true;
-  const email = String(l.email || '').toLowerCase();
-  if (email.endsWith('@cachehelper.com') || email.includes('webdigital')) return true;
-  const text = `${l.message || ''} ${l.event_description || ''}`.toLowerCase();
-  return /re:\s*(seo report|drop traffic)|i (visited|checked|came across) your (website|site)/.test(text);
+  return isSolicitationSpam(String(l.email || ''), `${l.message || ''} ${l.event_description || ''}`);
 }
 
 /** Map a BigQuery lead row onto Airtable Leads field names. */
