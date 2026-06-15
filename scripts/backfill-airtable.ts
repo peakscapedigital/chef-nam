@@ -96,6 +96,8 @@ function mapBqLead(l: Record<string, unknown>): Record<string, unknown> {
     'Event Description': str(l.event_description),
     Notes: str(l.notes),
     'Booking Value': num(l.booking_value),
+    'Order Amount': num(l.order_amount),
+    'Quote Amount': num(l.quote_amount),
     'Lead Received': coerceTimestamp(l.submitted_at),
     'Created At': coerceTimestamp(l.submitted_at),
     'Won At': coerceTimestamp(l.won_at),
