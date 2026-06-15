@@ -74,6 +74,20 @@ function str(v: unknown): string | undefined {
   return String(v);
 }
 
+/**
+ * Solicitation/marketing spam that slips past the form's honeypot+mixedcase
+ * filter (so is_spam stays FALSE in BQ). Pattern-based because the analytics SA
+ * can't write is_spam to BQ (CN-004 auth gap). Known signatures as of 2026-06-15:
+ * cachehelper.com domain, *webdigital* emails, "Re: SEO Report"/"Re: Drop Traffic".
+ */
+function isSpamLead(l: Record<string, unknown>): boolean {
+  if (String(l.is_spam) === 'true') return true;
+  const email = String(l.email || '').toLowerCase();
+  if (email.endsWith('@cachehelper.com') || email.includes('webdigital')) return true;
+  const text = `${l.message || ''} ${l.event_description || ''}`.toLowerCase();
+  return /re:\s*(seo report|drop traffic)|i (visited|checked|came across) your (website|site)/.test(text);
+}
+
 /** Map a BigQuery lead row onto Airtable Leads field names. */
 function mapBqLead(l: Record<string, unknown>): Record<string, unknown> {
   const fullName = `${l.first_name || ''} ${l.last_name || ''}`.trim();
@@ -206,6 +220,7 @@ async function main() {
     for (const lead of leads as unknown as Record<string, unknown>[]) {
       const id = String(lead.lead_id || '');
       if (!id || handled.has(id)) continue;
+      if (isSpamLead(lead)) continue; // queryLeads filters is_test, not is_spam/solicitation
       handled.add(id);
       const fields = mapBqLead(lead);
       const recordId = existing.get(id);
