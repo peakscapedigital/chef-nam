@@ -100,7 +100,15 @@ function mapBqLead(l: Record<string, unknown>): Record<string, unknown> {
     'Quote Amount': num(l.quote_amount),
     'Lead Received': coerceTimestamp(l.submitted_at),
     'Created At': coerceTimestamp(l.submitted_at),
+    'Contacted At': coerceTimestamp(l.contacted_at),
+    'Qualified At': coerceTimestamp(l.qualified_at),
+    'Quoted At': coerceTimestamp(l.quoted_at),
+    'Tasting At': coerceTimestamp(l.tasting_at),
+    'Invoice Sent At': coerceTimestamp(l.invoice_sent_at),
+    'Booked At': coerceTimestamp(l.booked_at),
+    'Invoice Paid At': coerceTimestamp(l.invoice_paid_at),
     'Won At': coerceTimestamp(l.won_at),
+    'Updated At': coerceTimestamp(l.status_updated_at),
     GCLID: str(l.gclid),
     'GA Client ID': str(l.ga_client_id),
     FBCLID: str(l.fbclid),
@@ -122,9 +130,9 @@ function mapBqLead(l: Record<string, unknown>): Record<string, unknown> {
   return fields;
 }
 
-/** Fetch every existing Lead ID already in Airtable (for idempotency). */
-async function existingLeadIds(): Promise<Set<string>> {
-  const ids = new Set<string>();
+/** Map every existing Lead ID already in Airtable → its record id (for upsert). */
+async function existingLeadMap(): Promise<Map<string, string>> {
+  const map = new Map<string, string>();
   let offset: string | undefined;
   do {
     const params = new URLSearchParams({ pageSize: '100', 'fields[]': 'Lead ID' });
@@ -135,13 +143,13 @@ async function existingLeadIds(): Promise<Set<string>> {
     );
     if (!res.ok) throw new Error(`Airtable list ${res.status}: ${await res.text()}`);
     const data = (await res.json()) as {
-      records: Array<{ fields: { 'Lead ID'?: string } }>;
+      records: Array<{ id: string; fields: { 'Lead ID'?: string } }>;
       offset?: string;
     };
-    for (const r of data.records) if (r.fields['Lead ID']) ids.add(r.fields['Lead ID']);
+    for (const r of data.records) if (r.fields['Lead ID']) map.set(r.fields['Lead ID'], r.id);
     offset = data.offset;
   } while (offset);
-  return ids;
+  return map;
 }
 
 async function createBatch(records: Array<{ fields: Record<string, unknown> }>) {
@@ -156,15 +164,32 @@ async function createBatch(records: Array<{ fields: Record<string, unknown> }>) 
   if (!res.ok) throw new Error(`Airtable create ${res.status}: ${await res.text()}`);
 }
 
+async function updateBatch(records: Array<{ id: string; fields: Record<string, unknown> }>) {
+  const res = await fetch(
+    `${AIRTABLE_API_URL}/${AIRTABLE_BASE_ID}/${AIRTABLE_LEADS_TABLE}`,
+    {
+      method: 'PATCH',
+      headers: authHeaders,
+      body: JSON.stringify({ records, typecast: true }),
+    }
+  );
+  if (!res.ok) throw new Error(`Airtable update ${res.status}: ${await res.text()}`);
+}
+
 async function main() {
-  console.log('Fetching existing Airtable Lead IDs...');
-  const seen = await existingLeadIds();
-  console.log(`  ${seen.size} already in Airtable`);
+  console.log('Mapping existing Airtable records...');
+  const existing = await existingLeadMap(); // leadId -> recordId
+  console.log(`  ${existing.size} already in Airtable`);
 
   const toCreate: Array<{ fields: Record<string, unknown> }> = [];
+  const toUpdate: Array<{ id: string; fields: Record<string, unknown> }> = [];
+  const handled = new Set<string>();
   let offset = 0;
 
   // Page through all BigQuery leads (includeTest:false matches the admin view).
+  // Upsert: existing leads are PATCHed (keeps amounts/status/timestamps current),
+  // new leads are created. Idempotent — safe to re-run as an interim BQ→Airtable
+  // sync until the Phase-2 webhook lands (CN-006).
   for (;;) {
     const result = await queryLeads(projectId!, bqCredentials!, {
       status: 'all',
@@ -180,21 +205,29 @@ async function main() {
 
     for (const lead of leads as unknown as Record<string, unknown>[]) {
       const id = String(lead.lead_id || '');
-      if (!id || seen.has(id)) continue;
-      seen.add(id);
-      toCreate.push({ fields: mapBqLead(lead) });
+      if (!id || handled.has(id)) continue;
+      handled.add(id);
+      const fields = mapBqLead(lead);
+      const recordId = existing.get(id);
+      if (recordId) toUpdate.push({ id: recordId, fields });
+      else toCreate.push({ fields });
     }
     offset += PAGE;
     if (leads.length < PAGE) break;
   }
 
-  console.log(`Creating ${toCreate.length} new Airtable records...`);
-  for (let i = 0; i < toCreate.length; i += BATCH) {
-    const batch = toCreate.slice(i, i + BATCH);
-    await createBatch(batch);
-    console.log(`  ${Math.min(i + BATCH, toCreate.length)}/${toCreate.length}`);
+  console.log(`Updating ${toUpdate.length} existing records...`);
+  for (let i = 0; i < toUpdate.length; i += BATCH) {
+    await updateBatch(toUpdate.slice(i, i + BATCH));
+    console.log(`  upd ${Math.min(i + BATCH, toUpdate.length)}/${toUpdate.length}`);
   }
-  console.log('✅ Backfill complete.');
+
+  console.log(`Creating ${toCreate.length} new records...`);
+  for (let i = 0; i < toCreate.length; i += BATCH) {
+    await createBatch(toCreate.slice(i, i + BATCH));
+    console.log(`  new ${Math.min(i + BATCH, toCreate.length)}/${toCreate.length}`);
+  }
+  console.log('✅ Upsert complete.');
 }
 
 main().catch((e) => {
