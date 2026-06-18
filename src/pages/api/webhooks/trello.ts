@@ -10,11 +10,14 @@ import {
 import {
   getGoogleAdsCredentials,
   uploadClickConversion,
+  getGa4Credentials,
+  sendGa4Event,
+} from '@peakscape/site-kit/analytics';
+import {
   CONVERSION_ACTION_LEAD_QUALIFIED,
   CONVERSION_ACTION_QUOTE,
   CONVERSION_ACTION_PURCHASE,
-} from '../../../lib/google-ads';
-import { getGA4Credentials, sendGA4Event } from '../../../lib/ga4';
+} from '../../../lib/conversion-actions';
 import {
   updateBrevoContactStatus,
   NEW_LEADS_LIST_ID,
@@ -181,7 +184,7 @@ export const POST: APIRoute = async ({ request }) => {
               conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
               conversionValue: 100.0,
             });
-            if (result.success) {
+            if (result.ok) {
               console.log(`✅ Lead_Qualified conversion uploaded for lead ${leadId}`);
             } else {
               console.error(`⚠️ Lead_Qualified upload failed: ${result.error || result.partialFailureError}`);
@@ -191,18 +194,18 @@ export const POST: APIRoute = async ({ request }) => {
 
         // GA4: lifecycle events
         if (lead?.ga_client_id) {
-          const ga4Credentials = getGA4Credentials(env);
+          const ga4Credentials = getGa4Credentials(env);
           if (ga4Credentials) {
             if (newStatus === 'qualified') {
-              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'qualify_lead', {
+              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'qualify_lead', {
                 value: 100.0, currency: 'USD',
               });
             } else if (newStatus === 'lost') {
-              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'disqualify_lead', {
+              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'disqualify_lead', {
                 disqualified_lead_reason: 'Did not convert',
               });
             } else if (newStatus === 'no_response') {
-              await sendGA4Event(ga4Credentials, lead.ga_client_id, 'close_unconvert_lead', {
+              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'close_unconvert_lead', {
                 unconvert_lead_reason: 'Never responded',
               });
             }
@@ -254,7 +257,7 @@ export const POST: APIRoute = async ({ request }) => {
                   conversionActionId: CONVERSION_ACTION_QUOTE,
                   conversionValue: numValue,
                 });
-                if (result.success) {
+                if (result.ok) {
                   console.log(`✅ Quote conversion uploaded for lead ${leadId}: $${numValue}`);
                 } else {
                   console.error(`⚠️ Quote upload failed: ${result.error || result.partialFailureError}`);
@@ -263,9 +266,9 @@ export const POST: APIRoute = async ({ request }) => {
             }
             // GA4: working_lead (actively working the deal)
             if (lead?.ga_client_id) {
-              const ga4Credentials = getGA4Credentials(env);
+              const ga4Credentials = getGa4Credentials(env);
               if (ga4Credentials) {
-                await sendGA4Event(ga4Credentials, lead.ga_client_id, 'working_lead', {
+                await sendGa4Event(ga4Credentials, lead.ga_client_id, 'working_lead', {
                   value: numValue, currency: 'USD', lead_status: 'Quoted',
                 });
               }
@@ -282,7 +285,7 @@ export const POST: APIRoute = async ({ request }) => {
                   conversionActionId: CONVERSION_ACTION_PURCHASE,
                   conversionValue: numValue,
                 });
-                if (result.success) {
+                if (result.ok) {
                   console.log(`✅ Purchase conversion uploaded for lead ${leadId}: $${numValue}`);
                 } else {
                   console.error(`⚠️ Purchase upload failed: ${result.error || result.partialFailureError}`);
@@ -291,9 +294,9 @@ export const POST: APIRoute = async ({ request }) => {
             }
             // GA4: close_convert_lead (revenue confirmed)
             if (lead?.ga_client_id) {
-              const ga4Credentials = getGA4Credentials(env);
+              const ga4Credentials = getGa4Credentials(env);
               if (ga4Credentials) {
-                await sendGA4Event(ga4Credentials, lead.ga_client_id, 'close_convert_lead', {
+                await sendGa4Event(ga4Credentials, lead.ga_client_id, 'close_convert_lead', {
                   value: numValue, currency: 'USD',
                 });
               }
