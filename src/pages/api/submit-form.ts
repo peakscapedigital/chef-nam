@@ -17,23 +17,12 @@ import {
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { createAirtableLead } from '../../lib/airtable';
-import { isSolicitationSpam } from '../../lib/spam';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
 import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
-
-// Spam detection: Check for suspicious mixed case pattern
-function hasSuspiciousMixedCase(text: string): boolean {
-  if (!text || text.length < 5) return false;
-
-  // Count transitions between lowercase and uppercase (e.g., "aB" or "Ba")
-  const transitions = text.match(/[a-z][A-Z]|[A-Z][a-z]/g);
-  if (!transitions) return false;
-
-  // If more than 30% of characters are case transitions, likely spam
-  // Example: "IBImNNRqxTBytPGqxYt" has excessive transitions
-  return transitions.length > text.length * 0.3;
-}
+// Spam signatures are shared across all sites via the kit (was lib/spam.ts +
+// a local hasSuspiciousMixedCase — both byte-identical to these, now de-forked).
+import { isSolicitationSpam, hasSuspiciousMixedCase } from '@peakscape/site-kit/forms';
 
 // Check if submission is likely spam
 function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
@@ -57,8 +46,8 @@ function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
     return { isSpam: true, reason: 'Suspicious mixed case in message' };
   }
 
-  // Solicitation / marketing spam that passes honeypot + mixed-case (shared with
-  // the backfill so patterns stay in sync — see src/lib/spam.ts)
+  // Solicitation / marketing spam that passes honeypot + mixed-case. Signatures
+  // shared with the backfill via @peakscape/site-kit/forms so they can't drift.
   if (isSolicitationSpam(data.email, `${data.message || ''} ${data.eventDescription || ''}`)) {
     return { isSpam: true, reason: `Solicitation spam: ${data.email}` };
   }

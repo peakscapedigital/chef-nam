@@ -17,7 +17,7 @@ import {
   AIRTABLE_LEADS_TABLE,
   AIRTABLE_STATUS,
 } from '../src/lib/airtable';
-import { isSolicitationSpam } from '../src/lib/spam';
+import { isSolicitationSpam } from '@peakscape/site-kit/forms';
 
 const AIRTABLE_API_URL = 'https://api.airtable.com/v0';
 const PAGE = 100; // BigQuery page size
