@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
+import { consentBootstrapScript, consentBannerScript } from '@peakscape/site-kit/consent';
 
 export interface Props {
   title: string;
@@ -59,6 +60,9 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <!-- Additional head content -->
   <slot name="head" />
 
+  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
+  <script is:inline set:html={consentBootstrapScript()} />
+
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
 
@@ -91,6 +95,14 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <!-- GTM noscript -->
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCMPN842"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+  <!-- Cookie consent banner — @peakscape/site-kit/consent -->
+  <script is:inline set:html={consentBannerScript({
+    accent: '#2C3E50',
+    accentText: '#FFFEFA',
+    background: '#FFFEFA',
+    text: '#2C3E50',
+  })} />
 
   <slot />
 

@@ -5,6 +5,7 @@ import Header from '../components/sections/Header.astro';
 import Footer from '../components/sections/Footer.astro';
 import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
+import { consentBootstrapScript, consentBannerScript } from '@peakscape/site-kit/consent';
 
 export interface Props {
   title: string;
@@ -94,6 +95,9 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <!-- Additional head content from pages -->
   <slot name="head" />
   
+  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
+  <script is:inline set:html={consentBootstrapScript()} />
+
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <!-- Writes utm_*/gclid/fbclid + referrer + lead_source into the `ps_attr` -->
   <!-- first-party cookie (read server-side at form POST) and seeds dataLayer. -->
@@ -140,6 +144,15 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCMPN842"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
+
+  <!-- Cookie consent banner — @peakscape/site-kit/consent -->
+  <script is:inline set:html={consentBannerScript({
+    accent: '#2C3E50',
+    accentText: '#FFFEFA',
+    background: '#FFFEFA',
+    text: '#2C3E50',
+  })} />
+
   <div class="sticky top-0 z-50">
     <TopBar />
     <Header logoUrl={logoUrl} logoAlt={logoAlt} />
