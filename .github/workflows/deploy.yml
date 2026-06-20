@@ -59,11 +59,14 @@ jobs:
         run: |
           printf '%s\n' "$ENV_FILE" > .env
           printf 'RESEND_API_KEY=%s\n' "$RESEND_API_KEY" >> .env
+          printf 'SHEETS_CREDENTIALS=%s\n' "$SHEETS_CREDENTIALS" >> .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
           # Discrete rotatable secret (site-deploy-standard rule 3) for the
           # lead/confirmation emails sent directly via Resend (SYS-008).
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          # Service-account key (base64) for the Google Sheet lead hub.
+          SHEETS_CREDENTIALS: ${{ secrets.SHEETS_CREDENTIALS }}
 
       - name: Build
         run: npm run build
