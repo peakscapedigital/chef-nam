@@ -631,8 +631,7 @@ import { Icon } from 'astro-icon/components';
 
 <script>
 // Short form submission for /menus page
-// Window augmented with GTM's dataLayer (untyped third-party global).
-interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+import { trackGenerateLead } from '../lib/tracking';
 
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('menus-contact-form');
@@ -680,19 +679,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = await response.json();
         
         if (result.success) {
-          // Push lead generation event to GTM dataLayer for GA4 & Google Ads
-          // Using 'generate_lead' (GA4 recommended event) for Business Objectives reporting
-          const w = window as DataLayerWindow;
-          if (typeof window !== 'undefined' && w.dataLayer) {
-            w.dataLayer.push({
-              event: 'generate_lead',
-              form_name: 'menus_contact',
-              form_destination: '/api/submit-form',
-              form_type: 'lead_capture',
-              event_category: 'engagement',
-              event_label: 'Menus Contact Form'
-            });
-          }
+          // Lead conversion via the shared kit (attribution auto-attached)
+          trackGenerateLead({
+            form_name: 'menus_contact',
+            form_destination: '/api/submit-form',
+            form_type: 'lead_capture',
+            event_label: 'Menus Contact Form',
+          });
           // Persist identity for Enhanced Conversions on thank-you
           try {
             sessionStorage.setItem('sp_lead_email', email || '');

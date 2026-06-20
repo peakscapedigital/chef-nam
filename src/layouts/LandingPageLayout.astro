@@ -108,20 +108,14 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
 
   <!-- Phone Click Tracking -->
   <script>
-    // Window augmented with GTM's dataLayer (untyped third-party global).
-    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
-    const dlw = window as DataLayerWindow;
+    import { trackPhoneClick } from '../lib/tracking';
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('a[href^="tel:"]').forEach(link => {
         link.addEventListener('click', () => {
-          if (dlw.dataLayer) {
-            dlw.dataLayer.push({
-              'event': 'phone_click',
-              'phone_number': link.getAttribute('href')?.replace('tel:', '') ?? '',
-              'event_category': 'engagement',
-              'event_label': 'Phone Click - Landing Page'
-            });
-          }
+          trackPhoneClick({
+            phone_number: link.getAttribute('href')?.replace('tel:', '') ?? '',
+            event_label: 'Phone Click - Landing Page',
+          });
         });
       });
     });

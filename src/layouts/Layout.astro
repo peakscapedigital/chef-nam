@@ -162,58 +162,36 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   
   <!-- Phone Click Tracking for GA4 -->
   <script>
-    // Window augmented with GTM's dataLayer (untyped third-party global).
-    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
-    const dlw = window as DataLayerWindow;
+    import { trackPhoneClick, trackVenueReferral } from '../lib/tracking';
 
-    // Track all phone number clicks
     document.addEventListener('DOMContentLoaded', () => {
-      const phoneLinks = document.querySelectorAll('a[href^="tel:"]');
-
-      phoneLinks.forEach(link => {
+      // Phone number clicks
+      document.querySelectorAll('a[href^="tel:"]').forEach(link => {
         link.addEventListener('click', () => {
-          const phoneNumber = link.getAttribute('href')?.replace('tel:', '') ?? '';
           const linkText = link.textContent?.trim() ?? '';
           const linkLocation = link.closest('section')?.className ||
                              link.closest('footer') ? 'footer' :
                              link.closest('header') ? 'header' :
                              link.closest('.topbar') ? 'topbar' : 'unknown';
-
-          // Push event to GTM dataLayer
-          if (dlw.dataLayer) {
-            dlw.dataLayer.push({
-              'event': 'phone_click',
-              'phone_number': phoneNumber,
-              'link_text': linkText,
-              'link_location': linkLocation,
-              'event_category': 'engagement',
-              'event_label': 'Phone Click - ' + linkText
-            });
-          }
+          trackPhoneClick({
+            phone_number: link.getAttribute('href')?.replace('tel:', '') ?? '',
+            link_text: linkText,
+            link_location: linkLocation,
+            event_label: 'Phone Click - ' + linkText,
+          });
         });
       });
 
-      // Venue referral tracking
-      const venueLinks = document.querySelectorAll('a[data-venue-name]');
-      venueLinks.forEach(link => {
+      // Venue-partner referral clicks
+      document.querySelectorAll('a[data-venue-name]').forEach(link => {
         link.addEventListener('click', () => {
-          const venueName = link.getAttribute('data-venue-name');
-          const venueUrl = link.getAttribute('href');
-          const pageSource = window.location.pathname;
-
-          if (dlw.dataLayer) {
-            dlw.dataLayer.push({
-              'event': 'venue_referral',
-              'venue_name': venueName,
-              'venue_url': venueUrl,
-              'referral_source': pageSource,
-              'event_category': 'partnership',
-              'event_label': 'Venue Referral - ' + venueName
-            });
-          }
+          trackVenueReferral({
+            venue_name: link.getAttribute('data-venue-name'),
+            venue_url: link.getAttribute('href'),
+            referral_source: window.location.pathname,
+          });
         });
       });
-
     });
   </script>
 </body>

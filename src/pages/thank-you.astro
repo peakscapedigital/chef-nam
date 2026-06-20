@@ -129,10 +129,8 @@ import { Icon } from 'astro-icon/components';
 
   <!-- DataLayer push for form parameters + enhanced conversions + attribution data -->
   <script>
-    // Window augmented with GTM's dataLayer (untyped third-party global).
-    interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+    import { trackThankYouLoaded } from '../lib/tracking';
     (function () {
-      var storage = window.localStorage;
       var session = window.sessionStorage;
 
       // Read user-provided fields from sessionStorage (stored during form submission)
@@ -147,58 +145,20 @@ import { Icon } from 'astro-icon/components';
         isTest = session.getItem('sp_is_test') === 'true';
       } catch (e) {}
 
-      // Read attribution data from localStorage (stored on first visit)
-      var utmSource, utmMedium, utmCampaign, utmTerm, utmContent;
-      var gclid, fbclid, leadSource, referrer, landingPage;
-      try {
-        utmSource = storage.getItem('utm_source') || undefined;
-        utmMedium = storage.getItem('utm_medium') || undefined;
-        utmCampaign = storage.getItem('utm_campaign') || undefined;
-        utmTerm = storage.getItem('utm_term') || undefined;
-        utmContent = storage.getItem('utm_content') || undefined;
-        gclid = storage.getItem('gclid') || undefined;
-        fbclid = storage.getItem('fbclid') || undefined;
-        leadSource = storage.getItem('lead_source') || 'Direct';
-        referrer = storage.getItem('referrer') || undefined;
-        landingPage = storage.getItem('landing_page') || undefined;
-      } catch (e) {}
-
-      // Skip dataLayer push for test submissions (don't send to GA4/Google Ads)
+      // Skip for test submissions (don't send to GA4/Google Ads)
       if (isTest) {
         console.log('Test submission detected - skipping GA4/Google Ads tracking');
       } else {
-        // Push ALL data to dataLayer for GTM tags
-        const dlw = window as DataLayerWindow;
-        dlw.dataLayer = dlw.dataLayer || [];
-        dlw.dataLayer.push({
-          // Event name - GTM trigger should listen for this
-          event: 'thank_you_loaded',
-
-          // Form context
-          form_type: formType,
+        // Lead conversion + Enhanced-Conversions data via the shared kit.
+        // Attribution + page_location auto-attach from the ps_attr cookie, so the
+        // old hand-rolled localStorage attribution read is no longer needed.
+        trackThankYouLoaded({
+          form_type: formType || 'start_planning',
           form_name: formName,
-          form_destination: '/thank-you',
-
-          // User data (for Enhanced Conversions)
           email: email,
-          phone_number: phone,
-          first_name: firstName,
-          last_name: lastName,
-
-          // Attribution data (for GA4 event parameters)
-          utm_source: utmSource,
-          utm_medium: utmMedium,
-          utm_campaign: utmCampaign,
-          utm_term: utmTerm,
-          utm_content: utmContent,
-          gclid: gclid,
-          fbclid: fbclid,
-          lead_source: leadSource,
-          referrer: referrer,
-          landing_page: landingPage,
-
-          // Page context
-          page_location: window.location.href
+          phone: phone,
+          firstName: firstName,
+          lastName: lastName,
         });
       }
 

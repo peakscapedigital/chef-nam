@@ -34,6 +34,9 @@ const { className = '', source = 'start-planning', showSidebar = true } = Astro.
 
           <form id="planning-form" action="#" method="POST" class="space-y-8">
 
+            <!-- Source page for attribution (read by the bundled tracking script) -->
+            <input type="hidden" id="formSource" value={source} />
+
             <!-- Honeypot field (hidden from users, bots will fill it) -->
             <input
               type="text"
@@ -485,8 +488,14 @@ const { className = '', source = 'start-planning', showSidebar = true } = Astro.
   </div>
 </section>
 
-<script define:vars={{ source }}>
+<script>
+// @ts-nocheck — legacy form-behavior script (multi-step engine, validation,
+// submit) predating TS. Bundled (not is:inline) so it can import the kit tracking
+// adapter; body preserved as-is. Tracking now routes through @peakscape/site-kit.
+import { trackFormStart, trackGenerateLead } from '../../lib/tracking';
+
 document.addEventListener('DOMContentLoaded', function() {
+  const source = document.getElementById('formSource')?.value || 'start-planning';
   const form = document.getElementById('planning-form');
   const eventDetails = document.getElementById('eventDetails');
   const messageTitle = document.getElementById('messageTitle');
@@ -597,9 +606,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function fireFormStart() {
     if (formStartFired) return;
     formStartFired = true;
-    if (window.dataLayer) {
-      window.dataLayer.push({ event: 'form_start', form_name: 'start_planning', form_destination: '/api/submit-form' });
-    }
+    trackFormStart({ form_name: 'start_planning', form_destination: '/api/submit-form' });
   }
 
   function renderStepping() {
@@ -769,10 +776,10 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       // Attribution lives in the first-party `ps_attr` cookie written by the
-      // site-kit capture script (SYS-007). Read it here for the dataLayer push;
-      // the server re-reads the same cookie authoritatively at POST. This script
-      // is is:inline (define:vars) so it can't import site-kit — hence the inline
-      // cookie read (the classifier already ran in capture; we only parse here).
+      // site-kit capture script (SYS-007). The dataLayer events now route through
+      // the kit (which auto-attaches attribution), so this inline read remains only
+      // to build the POST body sent to /api/submit-form. The server re-reads the
+      // same cookie authoritatively, so this body copy is belt-and-suspenders.
       function readAttribution() {
         try {
           const m = document.cookie.match(/(?:^|; )ps_attr=([^;]*)/);
@@ -846,26 +853,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (result.success) {
           const hasEvent = hasEventSelected?.value;
 
-          if (typeof window !== 'undefined' && window.dataLayer) {
-            window.dataLayer.push({
-              event: 'generate_lead',
-              form_name: 'start_planning',
-              form_destination: '/api/submit-form',
-              form_type: hasEvent === 'yes' ? 'event_inquiry' : 'general_inquiry',
-              event_category: 'engagement',
-              event_label: 'Start Planning Form',
-              utm_source: attribution.utm_source,
-              utm_medium: attribution.utm_medium,
-              utm_campaign: attribution.utm_campaign,
-              utm_term: attribution.utm_term,
-              utm_content: attribution.utm_content,
-              gclid: attribution.gclid,
-              fbclid: attribution.fbclid,
-              lead_source: attribution.lead_source,
-              referrer: attribution.referrer,
-              landing_page: attribution.landing_page
-            });
-          }
+          // Lead conversion via the shared kit (attribution auto-attached)
+          trackGenerateLead({
+            form_name: 'start_planning',
+            form_destination: '/api/submit-form',
+            form_type: hasEvent === 'yes' ? 'event_inquiry' : 'general_inquiry',
+            event_label: 'Start Planning Form',
+          });
 
           try {
             sessionStorage.setItem('sp_lead_email', formData.email || '');

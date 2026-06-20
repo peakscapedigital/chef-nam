@@ -405,8 +405,7 @@ import LandingPageLayout from '../../layouts/LandingPageLayout.astro';
 
 <script>
 import { getAttribution } from '@peakscape/site-kit/attribution';
-// Window augmented with GTM's dataLayer (untyped third-party global).
-interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+import { trackGenerateLead } from '../../lib/tracking';
 
 // Form submission handling
 document.addEventListener('DOMContentLoaded', () => {
@@ -485,17 +484,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const result = await response.json();
 
         if (result.success) {
-          // Push conversion event
-          const w = window as DataLayerWindow;
-          if (w.dataLayer) {
-            w.dataLayer.push({
-              event: 'generate_lead',
-              form_name: 'lp_catering',
-              form_type: 'landing_page_quote',
-              event_category: 'engagement',
-              ...attribution
-            });
-          }
+          // Lead conversion via the shared kit (attribution auto-attached)
+          trackGenerateLead({
+            form_name: 'lp_catering',
+            form_type: 'landing_page_quote',
+          });
 
           // Store for enhanced conversions
           try {

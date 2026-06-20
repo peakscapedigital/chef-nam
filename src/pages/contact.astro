@@ -268,8 +268,7 @@ import { Icon } from 'astro-icon/components';
 
 <script>
 // Short form submission for contact page
-// Window augmented with GTM's dataLayer (untyped third-party global).
-interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
+import { trackGenerateLead } from '../lib/tracking';
 
 document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('contact-form') as HTMLFormElement | null;
@@ -319,28 +318,22 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = await response.json();
         
         if (result.success) {
-          // Push lead generation event to GTM dataLayer for GA4 & Google Ads
-          // Using 'generate_lead' (GA4 recommended event) for Business Objectives reporting
-          const w = window as DataLayerWindow;
-          if (typeof window !== 'undefined' && w.dataLayer) {
-            w.dataLayer.push({
-              'event': 'generate_lead',
-              'form_name': 'contact',
-              'form_destination': '/api/submit-form',
-              'form_type': 'contact_inquiry',
-              'event_category': 'engagement',
-              'event_label': 'Contact Form',
-              // Enhanced conversions data for Google Ads
-              'user_data': {
-                'email_address': email,
-                'phone_number': phone,
-                'address': {
-                  'first_name': firstName,
-                  'last_name': lastName
-                }
-              }
-            });
-          }
+          // Lead conversion via the shared kit (attribution auto-attached);
+          // preserves contact's nested user_data for Enhanced Conversions.
+          trackGenerateLead({
+            form_name: 'contact',
+            form_destination: '/api/submit-form',
+            form_type: 'contact_inquiry',
+            event_label: 'Contact Form',
+            user_data: {
+              email_address: email,
+              phone_number: phone,
+              address: {
+                first_name: firstName,
+                last_name: lastName,
+              },
+            },
+          });
           
           // Show success message and reset form
           alert('Thank you for your message! We\'ll get back to you within 24 hours.');
