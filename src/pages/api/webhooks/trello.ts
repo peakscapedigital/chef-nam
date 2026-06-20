@@ -12,6 +12,7 @@ import {
   uploadClickConversion,
   getGa4Credentials,
   sendGa4Event,
+  recordPurchase,
 } from '@peakscape/site-kit/analytics';
 import {
   CONVERSION_ACTION_LEAD_QUALIFIED,
@@ -292,7 +293,7 @@ export const POST: APIRoute = async ({ request }) => {
                 }
               }
             }
-            // GA4: close_convert_lead (revenue confirmed)
+            // GA4: close_convert_lead (lead-lifecycle funnel) + purchase (ecommerce revenue)
             if (lead?.ga_client_id) {
               const ga4Credentials = getGa4Credentials(env);
               if (ga4Credentials) {
@@ -300,6 +301,15 @@ export const POST: APIRoute = async ({ request }) => {
                   value: numValue, currency: 'USD',
                 });
               }
+              // GA4 `purchase` so the won booking lands in purchaseRevenue/transactions —
+              // only `purchase` populates GA4 ecommerce revenue. Offline close means no
+              // client-side purchase, so this is the sole purchase event (no double-count).
+              // transaction_id = leadId dedupes re-fires if Order Amount is edited.
+              // GA4-only (no gclid): the Ads purchase OCI already fires above.
+              await recordPurchase(env, {
+                gaClientId: lead.ga_client_id,
+                purchase: { transaction_id: leadId, value: numValue, currency: 'USD' },
+              });
             }
           }
         }
