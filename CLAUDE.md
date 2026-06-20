@@ -7,7 +7,7 @@ High-performance website for Chef Nam Catering, a women-owned Thai fusion cateri
 - **Frontend**: Astro 6.4.x (SSR/server mode) on `@astrojs/cloudflare` v13. Migrated from Astro 5 in June 2026. Server endpoints read Cloudflare env/secrets via `import { env } from 'cloudflare:workers'` — `Astro.locals.runtime.env` was removed in Astro 6.
 - **CMS**: Sanity.io (Project ID: yojbqnd7)
 - **Styling**: Tailwind CSS with custom brand theme
-- **Hosting**: Cloudflare Pages (auto-deploy from GitHub)
+- **Hosting**: Cloudflare Workers (Workers static assets + SSR), auto-deployed from GitHub via Actions. (Migrated off Cloudflare Pages; reconciled 2026-06-20.)
 - **Email**: Cloudflare Workers + Resend API
 - **Language**: TypeScript throughout
 - **Analytics**: Google Tag Manager (GTM-WCMPN842)
@@ -17,7 +17,7 @@ High-performance website for Chef Nam Catering, a women-owned Thai fusion cateri
 ### Domains & Hosting
 - **Production**: https://chefnamcatering.com
 - **www**: https://www.chefnamcatering.com
-- **Cloudflare Pages Project**: `chef-nam` (NOT chef-nam-website)
+- **Cloudflare Worker**: `chef-nam` (prod) · `chef-nam-preview` (preview). Not a Pages project.
 - **GitHub Repo**: peakscapedigital/chef-nam
 
 ### Key URLs
@@ -162,45 +162,39 @@ The PHASE-2-PLAN.md outlines future integration:
 
 ## Deployment Workflow
 
-### Standard Deployment (GitHub Auto-Deploy)
-**PREFERRED METHOD** - Cloudflare Pages automatically builds and deploys from GitHub:
+### Standard Deployment (GitHub Actions → Cloudflare Workers)
+**PREFERRED METHOD** — push to `main`; GitHub Actions (`.github/workflows/deploy.yml`)
+runs `astro check` (blocking quality gate) → `npm run build` → `wrangler deploy`, then
+pushes runtime secrets to the Worker. Pushes to any non-`main` branch deploy a preview
+Worker (`chef-nam-preview`) via `.github/workflows/preview.yml`. (Migrated off Cloudflare
+Pages; reconciled 2026-06-20.)
 
 ```bash
 # 1. Make changes and test locally
 npm run dev
 
-# 2. Commit to GitHub
+# 2. Commit + push (branch off main, then merge/push to main to deploy prod)
 git add .
 git commit -m "Description of changes
 
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
 Co-Authored-By: Claude <noreply@anthropic.com>"
-git push
+git push origin HEAD:main   # fast-forward main → triggers the prod deploy workflow
 
-# 3. Cloudflare Pages automatically builds and deploys
-# Check deployment status:
-npx wrangler pages deployment list --project-name=chef-nam
+# 3. Watch the deploy
+gh run list -R peakscapedigital/chef-nam --branch main --limit 3
 ```
 
-> **GOTCHA (verified 2026-06-11):** `git push` to `main` is all you need to deploy — do NOT
-> get stuck on wrangler. The stored wrangler OAuth login expires and every wrangler call then
-> fails with `Authentication error [code: 10000]` (whoami still prints scopes, so it looks
-> "logged in"). When that happens, don't try to fix wrangler — just `git push` (auto-deploys),
-> or drive Cloudflare directly via the API: `POST /accounts/090ff2bbc69fa3773a65881f1decb269/pages/projects/chef-nam/deployments`
-> with form field `branch=main` to trigger a production build, and GET `.../deployments/{id}`
-> to watch stages. `DEPLOY.md` (project `chef-nam-website`, manual-wrangler-first) is stale —
-> this section is authoritative.
+> **NOTE (reconciled 2026-06-20):** Deploy is GitHub-Actions-driven `wrangler deploy` to the
+> **Worker** `chef-nam`, NOT Cloudflare Pages. `wrangler pages …` commands and the Pages
+> deployments API do not apply (the Pages project no longer exists). Doc-only commits are
+> path-filtered out of the prod build. `DEPLOY.md` (project `chef-nam-website`,
+> manual-wrangler-first, Pages-era) is stale — this section is authoritative.
 
 ### Manual Deployment (Only if needed)
 ```bash
-# Build locally
+# Build locally, then deploy the Worker
 npm run build
-
-# Deploy manually (rarely needed)
-npx wrangler pages deploy dist --project-name=chef-nam
-
-# CRITICAL: Project name is "chef-nam" NOT "chef-nam-website"
+npx wrangler deploy --name chef-nam
 ```
 
 ### Email Worker Deployment
@@ -401,14 +395,12 @@ npm run dev              # Start dev server
 npm run build            # Build for production
 npm run preview          # Preview production build
 
-# Deployment
-git push                 # Auto-deploys via Cloudflare Pages
+# Deployment (Cloudflare Workers via GitHub Actions)
+git push origin HEAD:main                                  # prod deploy (deploy.yml: astro check → build → wrangler deploy)
 
-# Check deployments
-npx wrangler pages deployment list --project-name=chef-nam
-
-# List all Cloudflare projects
-npx wrangler pages project list
+# Check deploys
+gh run list -R peakscapedigital/chef-nam --branch main --limit 3
+npx wrangler deployments list --name chef-nam              # if wrangler auth is live
 
 # Image optimization
 magick convert input.jpg -quality 85 -resize 1920x1080^ -gravity center -extent 1920x1080 output.jpg
@@ -455,6 +447,6 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 
 ---
 
-**Last Updated**: 2026-01-17
+**Last Updated**: 2026-06-20 (deployment section reconciled: Cloudflare Pages → Workers)
 **Project Status**: LIVE in production with auto-deployment
 **Current Phase**: Ongoing content expansion and optimization; Phase 2 CRM integration planned
