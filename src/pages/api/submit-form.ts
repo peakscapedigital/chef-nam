@@ -16,7 +16,7 @@ import {
   createFirestoreLeadData
 } from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
-import { createAirtableLead } from '../../lib/airtable';
+import { createSheetLead } from '../../lib/sheets';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
 import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
@@ -457,6 +457,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
       const emailHash = data.email ? await sha256Hash(data.email) : undefined;
       const phoneHash = data.phone ? await sha256Hash(data.phone) : undefined;
 
+      // ========================================
+      // LEAD STORE: GOOGLE SHEET (the hub)
+      // ========================================
+      // The Sheet is the system of record going forward; the Trello webhook reads
+      // GCLID / writes status from it. Written independently of BigQuery so it does
+      // not depend on the legacy store. BigQuery + Firestore stay as a temporary
+      // safety net until the Sheet hub is verified on real leads, then get removed.
+      const sheetsCredentials = env.SHEETS_CREDENTIALS;
+      if (sheetsCredentials) {
+        try {
+          const sheetResult = await createSheetLead(data, leadId, sheetsCredentials, { emailHash, phoneHash });
+          if (sheetResult.success) {
+            console.log('✅ Lead written to Sheet:', leadId);
+          } else {
+            console.error('⚠️ Sheet lead write failed:', sheetResult.error);
+          }
+        } catch (sheetError) {
+          console.error('⚠️ Sheet exception:', sheetError);
+        }
+      } else {
+        console.log('ℹ️ SHEETS_CREDENTIALS not configured, skipping Sheet write');
+      }
+
       const leadData = createLeadData({
         ...data,
         email_hash: emailHash,
@@ -538,31 +561,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
           console.log('ℹ️ BREVO_API_KEY not configured, skipping Brevo sync');
         }
 
-        // ========================================
-        // 7. CREATE AIRTABLE LEAD (Kanban — parallel track)
-        // ========================================
-        // Non-blocking mirror of the Trello/Firestore write. Gated on the PAT
-        // so the existing pipeline is untouched when AIRTABLE_API_KEY is unset.
-        const airtableApiKey = env.AIRTABLE_API_KEY;
-        if (airtableApiKey) {
-          try {
-            const airtableResult = await createAirtableLead(
-              data,
-              leadId,
-              airtableApiKey,
-              { emailHash, phoneHash }
-            );
-            if (airtableResult.success) {
-              console.log('✅ Airtable lead created:', airtableResult.recordId);
-            } else {
-              console.error('⚠️ Airtable lead create failed:', airtableResult.error);
-            }
-          } catch (airtableError) {
-            console.error('⚠️ Airtable exception:', airtableError);
-          }
-        } else {
-          console.log('ℹ️ AIRTABLE_API_KEY not configured, skipping Airtable sync');
-        }
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
         // Still return success to user - we'll have logs to debug

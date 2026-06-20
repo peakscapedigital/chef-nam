@@ -1,6 +1,11 @@
 import type { APIRoute } from 'astro';
 import { env as cfEnv } from 'cloudflare:workers';
-import { getFirestoreLead, updateFirestoreLead } from '../../../lib/firestore';
+import {
+  getSheetLead,
+  updateSheetLead,
+  STATUS_DISPLAY,
+  STATUS_TIMESTAMP_COLUMN,
+} from '../../../lib/sheets';
 import {
   LIST_STATUS_MAP,
   getLeadIdFromCard,
@@ -29,8 +34,7 @@ export const prerender = false;
 
 /**
  * HEAD /api/webhooks/trello
- * Trello sends a HEAD request to verify the webhook URL exists.
- * Must return 200.
+ * Trello sends a HEAD request to verify the webhook URL exists. Must return 200.
  */
 export const HEAD: APIRoute = async () => {
   return new Response(null, { status: 200 });
@@ -38,19 +42,21 @@ export const HEAD: APIRoute = async () => {
 
 /**
  * POST /api/webhooks/trello
- * Receives Trello webhook events and syncs changes to Firestore.
- * Also uploads offline conversions to Google Ads when:
+ * Receives Trello webhook events. The Google Sheet (Leads tab) is the lead store:
+ * this handler reads GCLID / GA Client ID / Email from the Sheet and writes the
+ * lead's Status, milestone timestamps, quote/order amounts, and notes back to it.
+ * It also uploads offline conversions to Google Ads + GA4 when:
  *   - Card reaches "Qualified" → Lead_Qualified conversion
+ *   - Quote Amount custom field is set → Quote conversion
  *   - Order Amount custom field is set → Purchase conversion
  *
- * Firestore is the real-time operational layer. BigQuery gets updated
- * via the Firebase "Stream to BigQuery" extension (changelog) and a
- * scheduled reconciliation job (every 6 hours).
+ * Trello remains the human kanban + the trigger. (Firestore/BigQuery/Airtable are
+ * being retired; this handler no longer reads or writes them.)
  *
  * Handled events:
- * - updateCard (listAfter) - card moved between lists = status change
- * - updateCustomFieldItem  - custom field value changed (quote/order amounts)
- * - commentCard - comment added = append to notes
+ * - updateCard (listAfter)  - card moved between lists = status change
+ * - updateCustomFieldItem   - custom field value changed (quote/order amounts)
+ * - commentCard             - comment added = append to notes
  */
 export const POST: APIRoute = async ({ request }) => {
   try {
@@ -83,16 +89,13 @@ export const POST: APIRoute = async ({ request }) => {
       return new Response('ok', { status: 200 });
     }
 
-    // Get credentials (Astro 6: from cloudflare:workers). Cast to the same
-    // Record<string,string> shape the original runtime.env provided; the
-    // helper calls below and their guards are unchanged.
+    // Credentials (Astro 6: from cloudflare:workers).
     const env = cfEnv as Record<string, string>;
-    const projectId = env.BIGQUERY_PROJECT_ID;
-    const fsCredentials = env.FIREBASE_CREDENTIALS;
+    const sheetsCredentials = env.SHEETS_CREDENTIALS;
     const trelloApiKey = env.TRELLO_API_KEY;
     const trelloApiToken = env.TRELLO_API_TOKEN;
 
-    if (!projectId || !fsCredentials || !trelloApiKey || !trelloApiToken) {
+    if (!sheetsCredentials || !trelloApiKey || !trelloApiToken) {
       console.error('Missing required credentials for webhook processing');
       return new Response('ok', { status: 200 });
     }
@@ -119,69 +122,56 @@ export const POST: APIRoute = async ({ request }) => {
 
       console.log(`📊 Status change: ${action.data.listBefore?.name} → ${action.data.listAfter.name} (${newStatus})`);
 
-      // Build Firestore updates
-      const STATUS_TIMESTAMP_MAP: Record<string, string> = {
-        contacted: 'contacted_at',
-        qualified: 'qualified_at',
-        quoted: 'quoted_at',
-        tasting: 'tasting_at',
-        invoice_sent: 'invoice_sent_at',
-        booked: 'booked_at',
-        invoice_paid: 'invoice_paid_at',
-        won: 'won_at',
-      };
-
-      const updates: Record<string, string> = { status: newStatus };
-
-      // Milestone timestamp — set once per lead per stage
-      const timestampField = STATUS_TIMESTAMP_MAP[newStatus];
-      if (timestampField) {
-        updates[timestampField] = new Date().toISOString();
+      // Update the Sheet: Status + milestone timestamp (set once per stage)
+      const updates: Record<string, string> = { Status: STATUS_DISPLAY[newStatus] || newStatus };
+      const timestampCol = STATUS_TIMESTAMP_COLUMN[newStatus];
+      if (timestampCol) {
+        updates[timestampCol] = new Date().toISOString();
       }
 
-      const fsResult = await updateFirestoreLead(leadId, updates, projectId, fsCredentials);
-      if (fsResult.success) {
-        console.log(`✅ Firestore updated: ${newStatus}`);
+      const sheetResult = await updateSheetLead(leadId, updates, sheetsCredentials);
+      if (sheetResult.success) {
+        console.log(`✅ Sheet updated: ${newStatus}`);
       } else {
-        console.error('❌ Firestore update failed:', fsResult.error);
+        console.error('❌ Sheet update failed:', sheetResult.error);
       }
+
+      // Read the lead once for Brevo + conversions (GCLID / GA Client ID / Email)
+      const leadResult = await getSheetLead(leadId, sheetsCredentials);
+      const lead = leadResult.success ? leadResult.lead : null;
 
       // Sync status to Brevo contact
       const brevoApiKey = env.BREVO_API_KEY;
-      if (brevoApiKey) {
-        const leadForBrevo = await getFirestoreLead(leadId, projectId, fsCredentials);
-        const leadEmail = leadForBrevo.success ? leadForBrevo.lead?.email : null;
+      const leadEmail = lead?.['Email'];
+      if (brevoApiKey && leadEmail) {
+        const brevoOptions = newStatus === 'won'
+          ? { addToList: CUSTOMERS_LIST_ID, removeFromList: NEW_LEADS_LIST_ID }
+          : undefined;
 
-        if (leadEmail) {
-          const brevoOptions = newStatus === 'won'
-            ? { addToList: CUSTOMERS_LIST_ID, removeFromList: NEW_LEADS_LIST_ID }
-            : undefined;
+        const brevoResult = await updateBrevoContactStatus(
+          leadEmail, newStatus, brevoApiKey, brevoOptions
+        );
 
-          const brevoResult = await updateBrevoContactStatus(
-            leadEmail, newStatus, brevoApiKey, brevoOptions
-          );
-
-          if (brevoResult.success) {
-            console.log(`✅ Brevo status updated: ${newStatus}${newStatus === 'won' ? ' (moved to Customers list)' : ''}`);
-          } else {
-            console.error('⚠️ Brevo status update failed:', brevoResult.error);
-          }
+        if (brevoResult.success) {
+          console.log(`✅ Brevo status updated: ${newStatus}${newStatus === 'won' ? ' (moved to Customers list)' : ''}`);
         } else {
-          console.log('⚠️ No email found for lead, skipping Brevo sync');
+          console.error('⚠️ Brevo status update failed:', brevoResult.error);
         }
+      } else if (brevoApiKey) {
+        console.log('⚠️ No email found for lead, skipping Brevo sync');
       }
 
       // Send conversion events for key status changes
       if (['qualified', 'lost', 'no_response'].includes(newStatus)) {
-        const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
-        const lead = leadResult.success ? leadResult.lead : null;
+        const gclid = lead?.['GCLID'];
+        const gaClientId = lead?.['GA Client ID'];
 
         // Google Ads: Lead_Qualified conversion
-        if (newStatus === 'qualified' && lead?.gclid) {
+        if (newStatus === 'qualified' && gclid) {
           const gadsCredentials = getGoogleAdsCredentials(env);
           if (gadsCredentials) {
             const result = await uploadClickConversion(gadsCredentials, {
-              gclid: lead.gclid,
+              gclid,
               conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
               conversionValue: 100.0,
             });
@@ -194,19 +184,19 @@ export const POST: APIRoute = async ({ request }) => {
         }
 
         // GA4: lifecycle events
-        if (lead?.ga_client_id) {
+        if (gaClientId) {
           const ga4Credentials = getGa4Credentials(env);
           if (ga4Credentials) {
             if (newStatus === 'qualified') {
-              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'qualify_lead', {
+              await sendGa4Event(ga4Credentials, gaClientId, 'qualify_lead', {
                 value: 100.0, currency: 'USD',
               });
             } else if (newStatus === 'lost') {
-              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'disqualify_lead', {
+              await sendGa4Event(ga4Credentials, gaClientId, 'disqualify_lead', {
                 disqualified_lead_reason: 'Did not convert',
               });
             } else if (newStatus === 'no_response') {
-              await sendGa4Event(ga4Credentials, lead.ga_client_id, 'close_unconvert_lead', {
+              await sendGa4Event(ga4Credentials, gaClientId, 'close_unconvert_lead', {
                 unconvert_lead_reason: 'Never responded',
               });
             }
@@ -221,40 +211,42 @@ export const POST: APIRoute = async ({ request }) => {
       const rawValue = action.data.customFieldItem?.value?.number;
       const numValue = rawValue ? parseFloat(rawValue) : null;
 
+      // Trello custom field -> Sheet column
       const fieldMap: Record<string, string> = {
-        [CUSTOM_FIELD_QUOTE_AMOUNT]: 'quote_amount',
-        [CUSTOM_FIELD_ORDER_AMOUNT]: 'order_amount',
+        [CUSTOM_FIELD_QUOTE_AMOUNT]: 'Quote Amount',
+        [CUSTOM_FIELD_ORDER_AMOUNT]: 'Order Amount',
       };
 
-      const fieldName = fieldMap[fieldId];
+      const sheetCol = fieldMap[fieldId];
 
-      if (fieldName) {
+      if (sheetCol) {
         console.log(`💰 ${action.data.customField.name} set to ${numValue} on lead ${leadId}`);
 
-        const fsResult = await updateFirestoreLead(
+        const sheetResult = await updateSheetLead(
           leadId,
-          { [fieldName]: numValue } as { quote_amount?: number | null; order_amount?: number | null },
-          projectId,
-          fsCredentials
+          { [sheetCol]: numValue },
+          sheetsCredentials
         );
-        if (fsResult.success) {
-          console.log(`✅ Firestore ${fieldName} updated: ${numValue}`);
+        if (sheetResult.success) {
+          console.log(`✅ Sheet ${sheetCol} updated: ${numValue}`);
         } else {
-          console.error(`❌ Firestore ${fieldName} update failed:`, fsResult.error);
+          console.error(`❌ Sheet ${sheetCol} update failed:`, sheetResult.error);
         }
 
         // Send conversion events when quote/order amounts are set
         if (numValue && numValue > 0) {
-          const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
+          const leadResult = await getSheetLead(leadId, sheetsCredentials);
           const lead = leadResult.success ? leadResult.lead : null;
+          const gclid = lead?.['GCLID'];
+          const gaClientId = lead?.['GA Client ID'];
 
-          if (fieldName === 'quote_amount') {
+          if (sheetCol === 'Quote Amount') {
             // Google Ads: Quote conversion
-            if (lead?.gclid) {
+            if (gclid) {
               const gadsCredentials = getGoogleAdsCredentials(env);
               if (gadsCredentials) {
                 const result = await uploadClickConversion(gadsCredentials, {
-                  gclid: lead.gclid,
+                  gclid,
                   conversionActionId: CONVERSION_ACTION_QUOTE,
                   conversionValue: numValue,
                 });
@@ -266,23 +258,23 @@ export const POST: APIRoute = async ({ request }) => {
               }
             }
             // GA4: working_lead (actively working the deal)
-            if (lead?.ga_client_id) {
+            if (gaClientId) {
               const ga4Credentials = getGa4Credentials(env);
               if (ga4Credentials) {
-                await sendGa4Event(ga4Credentials, lead.ga_client_id, 'working_lead', {
+                await sendGa4Event(ga4Credentials, gaClientId, 'working_lead', {
                   value: numValue, currency: 'USD', lead_status: 'Quoted',
                 });
               }
             }
           }
 
-          if (fieldName === 'order_amount') {
+          if (sheetCol === 'Order Amount') {
             // Google Ads: Purchase conversion
-            if (lead?.gclid) {
+            if (gclid) {
               const gadsCredentials = getGoogleAdsCredentials(env);
               if (gadsCredentials) {
                 const result = await uploadClickConversion(gadsCredentials, {
-                  gclid: lead.gclid,
+                  gclid,
                   conversionActionId: CONVERSION_ACTION_PURCHASE,
                   conversionValue: numValue,
                 });
@@ -294,10 +286,10 @@ export const POST: APIRoute = async ({ request }) => {
               }
             }
             // GA4: close_convert_lead (lead-lifecycle funnel) + purchase (ecommerce revenue)
-            if (lead?.ga_client_id) {
+            if (gaClientId) {
               const ga4Credentials = getGa4Credentials(env);
               if (ga4Credentials) {
-                await sendGa4Event(ga4Credentials, lead.ga_client_id, 'close_convert_lead', {
+                await sendGa4Event(ga4Credentials, gaClientId, 'close_convert_lead', {
                   value: numValue, currency: 'USD',
                 });
               }
@@ -307,7 +299,7 @@ export const POST: APIRoute = async ({ request }) => {
               // transaction_id = leadId dedupes re-fires if Order Amount is edited.
               // GA4-only (no gclid): the Ads purchase OCI already fires above.
               await recordPurchase(env, {
-                gaClientId: lead.ga_client_id,
+                gaClientId,
                 purchase: { transaction_id: leadId, value: numValue, currency: 'USD' },
               });
             }
@@ -324,17 +316,17 @@ export const POST: APIRoute = async ({ request }) => {
 
       console.log(`💬 Comment by ${author}: ${commentText.substring(0, 50)}...`);
 
-      // Get existing notes from Firestore to append
-      const leadResult = await getFirestoreLead(leadId, projectId, fsCredentials);
-      const existingNotes = leadResult.success ? (leadResult.lead?.notes || '') : '';
+      // Append to the Sheet's Notes column
+      const leadResult = await getSheetLead(leadId, sheetsCredentials);
+      const existingNotes = leadResult.success ? (leadResult.lead?.['Notes'] || '') : '';
       const newNote = `[${timestamp} ${author}] ${commentText}`;
       const updatedNotes = existingNotes ? `${existingNotes}\n${newNote}` : newNote;
 
-      const fsResult = await updateFirestoreLead(leadId, { notes: updatedNotes }, projectId, fsCredentials);
-      if (fsResult.success) {
-        console.log('✅ Firestore notes updated');
+      const sheetResult = await updateSheetLead(leadId, { Notes: updatedNotes }, sheetsCredentials);
+      if (sheetResult.success) {
+        console.log('✅ Sheet notes updated');
       } else {
-        console.error('❌ Firestore notes update failed:', fsResult.error);
+        console.error('❌ Sheet notes update failed:', sheetResult.error);
       }
     }
 

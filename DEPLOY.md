@@ -40,11 +40,13 @@ Production currently has (verified via CF API 2026-06-12): `BIGQUERY_PROJECT_ID`
 `FIREBASE_CREDENTIALS`, `TRELLO_API_KEY`, `TRELLO_API_TOKEN`, `BREVO_API_KEY`, `GA4_API_SECRET`,
 `GA4_MEASUREMENT_ID`, `GOOGLE_ADS_*`, `PUBLIC_SANITY_API_TOKEN`, `PUBLIC_SUPABASE_*`.
 
-`AIRTABLE_API_KEY` (Airtable PAT, value in `~/.claude/mcp-secrets.env`) is the **activation switch** for the
-Airtable lead-pipeline parallel track (CN-006). Until it is set, the Airtable write in `submit-form.ts` is
-skipped and the existing BigQuery/Firestore/Trello path is unchanged. Set it in Production to start mirroring
-new leads into the Airtable `Leads` kanban.
-**The Preview environment is empty** — a preview deploy renders but skips lead writes unless those are added to Preview.
+`SHEETS_CREDENTIALS` (claude-automation service-account key JSON or base64, Editor on the Leads Sheet) is the
+**activation switch** for the Google Sheet lead hub. When set, `submit-form.ts` writes each lead to the
+`Chef Nam Catering - Operations` / `Leads` tab and the Trello webhook (`/api/webhooks/trello`) reads GCLID /
+writes Status+amounts from that Sheet (firing the Google Ads + GA4 offline conversions). The Sheet is the lead
+store going forward; Airtable has been removed, and BigQuery + Firestore are written but no longer read (kept
+as a temporary safety net until the Sheet hub is verified, then to be removed).
+**The Preview environment needs `SHEETS_CREDENTIALS` too** to exercise the lead write/webhook path.
 
 ## Wrangler fallback (rarely needed)
 
