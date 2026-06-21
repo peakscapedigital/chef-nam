@@ -106,8 +106,8 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <!-- End attribution capture -->
 
   <!-- Google Tag Manager — production-hostname-gated loader (@peakscape/site-kit/analytics).
-       Lazy-loads on interaction / 3s; no-ops on previews + localhost so GA4 stays clean. -->
-  <script is:inline set:html={gtmLoaderScript({ containerId: 'GTM-WCMPN842', hostnames: ['chefnamcatering.com', 'www.chefnamcatering.com'] })} />
+       Eager load (GA4 best practice — don't undercount quick bounces); no-ops on previews + localhost. -->
+  <script is:inline set:html={gtmLoaderScript({ containerId: 'GTM-WCMPN842', hostnames: ['chefnamcatering.com', 'www.chefnamcatering.com'], strategy: 'immediate' })} />
   <!-- End Google Tag Manager -->
 </head>
 <body class="bg-brand-white text-brand-indigo">
