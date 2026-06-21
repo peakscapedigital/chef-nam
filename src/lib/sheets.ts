@@ -12,6 +12,7 @@
  */
 
 import { getGoogleAccessToken } from './google-auth';
+import { normalizePhone } from '@peakscape/site-kit/commerce';
 
 const SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets';
 const SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
@@ -122,7 +123,7 @@ function mapLeadFields(
     'Lead ID': leadId,
     Status: STATUS_DISPLAY.new,
     Email: data.email,
-    Phone: data.phone,
+    Phone: normalizePhone(data.phone),
     'Preferred Contact': data.preferredContact,
     'Event Type': data.eventType,
     'Event Date': data.eventDate,
