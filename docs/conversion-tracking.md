@@ -1,5 +1,15 @@
 # Conversion Tracking Implementation Guide
 
+> **STATUS (2026-06-21): partially superseded — read this caveat first.**
+> Server-side conversions (lead lifecycle + Google Ads OCI) now fire from the
+> **Trello webhook** (`src/pages/api/webhooks/trello.ts`) via the kit
+> `recordLeadEvent` (`@peakscape/site-kit/analytics` ≥v0.16.2, Ads API v21).
+> The **Sanity lead-CRM** path described in parts of this doc — the Studio
+> "Mark as Qualified/Working/Converted" actions and the `/api/send-lead-event`
+> + `/api/send-google-ads-conversion` routes — was **RETIRED** (routes deleted,
+> Studio is content-only). Treat any reference to those routes/actions below as
+> historical. The GTM/GA4 client-side capture sections remain accurate. (SH-014)
+
 ## Overview
 This document outlines the conversion tracking implementation for Chef Nam Catering website, including form submissions and phone click tracking through Google Tag Manager (GTM) and Google Analytics 4 (GA4).
 

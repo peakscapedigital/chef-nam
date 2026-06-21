@@ -374,10 +374,13 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - **Trello card movement → Sheet** (`src/pages/api/webhooks/trello.ts`): moving a card
   between lists updates the Sheet Status + stage timestamp; setting a Trello custom field
   (e.g. Order Amount) writes to the Sheet column; also syncs status to Brevo and fires
-  conversion events on key stages. Trello is the human UI; the Sheet is the record.
+  the lifecycle conversions. Trello is the human UI; the Sheet is the record.
 - Email notifications via Resend API (Cloudflare Worker)
-- Lead lifecycle + booking events → GA4 server-side via **Measurement Protocol**
-  (`src/pages/api/send-lead-event.ts`; there is NO sGTM — client-side is a standard GTM web container)
+- Lead lifecycle + booking events → GA4 (Measurement Protocol) + Google Ads OCI, fired
+  server-side from the Trello webhook via the kit `recordLeadEvent`
+  (`@peakscape/site-kit/analytics`, ≥v0.16.2). The legacy bespoke routes
+  `send-lead-event.ts` / `send-google-ads-conversion.ts` + the Sanity lead-CRM Studio
+  actions were retired 2026-06-21 (SH-014). No sGTM — client-side is a standard GTM web container
 - UTM tracking + GCLID capture for attribution
 - Google Ads conversion tracking (offline conversions via GCLID)
 
