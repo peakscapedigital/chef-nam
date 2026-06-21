@@ -214,11 +214,18 @@ npm run deploy
   - `/services/social` - Social events
 - `/menus` - Menus overview
   - `/menus/charcuterie` - Charcuterie boards & grazing tables
+- `/graduation-catering` - Graduation catering (seasonal landing page)
 - `/venues` - Venue partnerships
 - `/blog` - Blog posts
-- `/start-planning` - Contact/quote form
+  - `/blog/[slug]` - Individual blog posts
+- `/start-planning` - Primary quote/contact form (lead capture)
+- `/contact` - Contact page
+- `/lp/catering` - Paid-search landing page
 - `/thank-you` - Form submission confirmation
 - `/admin` - Sanity Studio CMS
+  - `/admin/leads` - Internal leads CRM dashboard
+
+> `src/pages/_drafts/` (office-catering, private-parties) are unbuilt drafts, not live routes.
 
 ### Navigation Structure
 - **Services** (dropdown)
@@ -356,11 +363,23 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Key Integrations
 
 ### Forms & Lead Tracking
-- Form submissions → `/api/submit-form`
-- Data stored in Sanity CMS
+- Form submissions → `/api/submit-form`, which fans ONE lead out to 5 destinations
+  (verified vs `origin/main` 2026-06-21 — see `src/pages/api/submit-form.ts`):
+  - **Trello card** — Nam's frontend pipeline kanban (with LEAD_ID + LEAD_RECEIVED custom fields)
+  - **Google Sheet** (`Leads` tab, `LEADS_SHEET_ID`) — store of record / lead-count truth
+  - **BigQuery** `leads.website_leads` — analytics/attribution store (gclid + utm + booking_value)
+  - **Firestore** — legacy CRM convenience for `/admin/leads` (non-blocking, being phased out)
+  - **Brevo** contact — email lifecycle
+  - (NOT Sanity — Sanity is content/CMS only)
+- **Trello card movement → Sheet** (`src/pages/api/webhooks/trello.ts`): moving a card
+  between lists updates the Sheet Status + stage timestamp; setting a Trello custom field
+  (e.g. Order Amount) writes to the Sheet column; also syncs status to Brevo and fires
+  conversion events on key stages. Trello is the human UI; the Sheet is the record.
 - Email notifications via Resend API (Cloudflare Worker)
+- Lead lifecycle + booking events → GA4 server-side via **Measurement Protocol**
+  (`src/pages/api/send-lead-event.ts`; there is NO sGTM — client-side is a standard GTM web container)
 - UTM tracking + GCLID capture for attribution
-- Google Ads conversion tracking
+- Google Ads conversion tracking (offline conversions via GCLID)
 
 ### Analytics Stack
 - Google Tag Manager (GTM-WCMPN842)
@@ -447,6 +466,6 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 
 ---
 
-**Last Updated**: 2026-06-20 (deployment section reconciled: Cloudflare Pages → Workers)
+**Last Updated**: 2026-06-21 (reconciled against `origin/main`: added missing live pages /graduation-catering, /contact, /lp/catering, /admin/leads; corrected lead storage Sanity → BigQuery/Firestore/Sheets)
 **Project Status**: LIVE in production with auto-deployment
 **Current Phase**: Ongoing content expansion and optimization; Phase 2 CRM integration planned
