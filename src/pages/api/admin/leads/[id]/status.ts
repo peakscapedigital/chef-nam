@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { env as cfEnv } from 'cloudflare:workers';
+import { serverEnv } from '@peakscape/site-kit/cloudflare';
 import { updateLead, getLeadById } from '../../../../../lib/bigquery';
 import { updateFirestoreLead } from '../../../../../lib/firestore';
 
@@ -16,7 +16,7 @@ export const prerender = false;
 export const POST: APIRoute = async ({ params, request }) => {
   try {
     // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
-    const env = cfEnv as Record<string, string | undefined>;
+    const env = serverEnv();
     const projectId = env.BIGQUERY_PROJECT_ID;
     const credentials = env.BIGQUERY_CREDENTIALS;
 

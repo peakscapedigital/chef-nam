@@ -6,7 +6,7 @@
 //
 // Uses the REST endpoint (not the `resend` SDK) to avoid a dependency.
 // RESEND_API_KEY is a runtime secret read from cloudflare:workers (Approach C).
-import { env as cfEnv } from 'cloudflare:workers';
+import { serverEnv } from '@peakscape/site-kit/cloudflare';
 
 export interface LeadEmailData {
   firstName?: string;
@@ -170,7 +170,7 @@ function buildConfirmationHtml(data: LeadEmailData): string {
 export async function sendLeadEmails(
   data: LeadEmailData
 ): Promise<{ success: boolean; error?: string }> {
-  const apiKey = (cfEnv as { RESEND_API_KEY?: string }).RESEND_API_KEY;
+  const apiKey = serverEnv().RESEND_API_KEY;
   if (!apiKey) {
     return { success: false, error: 'RESEND_API_KEY not configured' };
   }

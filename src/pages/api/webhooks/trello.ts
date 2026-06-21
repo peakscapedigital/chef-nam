@@ -1,5 +1,5 @@
 import type { APIRoute } from 'astro';
-import { env as cfEnv } from 'cloudflare:workers';
+import { serverEnv } from '@peakscape/site-kit/cloudflare';
 import {
   getSheetLead,
   updateSheetLead,
@@ -90,7 +90,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Credentials (Astro 6: from cloudflare:workers).
-    const env = cfEnv as Record<string, string>;
+    const env = serverEnv();
     const sheetsCredentials = env.SHEETS_CREDENTIALS;
     const trelloApiKey = env.TRELLO_API_KEY;
     const trelloApiToken = env.TRELLO_API_TOKEN;

@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 // Astro 6 / @astrojs/cloudflare v13 removed Astro.locals.runtime.env;
 // Cloudflare bindings + secrets are now read from the cloudflare:workers
 // virtual module.
-import { env as cfEnv } from 'cloudflare:workers';
+import { serverEnv } from '@peakscape/site-kit/cloudflare';
 import {
   insertLead as insertLeadBigQuery,
   createLeadData,
@@ -350,7 +350,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const leadId = crypto.randomUUID();
 
     // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
-    const env = cfEnv as Record<string, string | undefined>;
+    const env = serverEnv();
     const projectId = env.BIGQUERY_PROJECT_ID;
     const credentials = env.BIGQUERY_CREDENTIALS;
 
