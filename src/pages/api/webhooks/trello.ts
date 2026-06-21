@@ -13,11 +13,9 @@ import {
   CUSTOM_FIELD_ORDER_AMOUNT,
 } from '../../../lib/trello';
 import {
-  getGoogleAdsCredentials,
-  uploadClickConversion,
-  getGa4Credentials,
-  sendGa4Event,
+  recordLeadEvent,
   recordPurchase,
+  LeadEvent,
 } from '@peakscape/site-kit/analytics';
 import {
   CONVERSION_ACTION_LEAD_QUALIFIED,
@@ -161,46 +159,29 @@ export const POST: APIRoute = async ({ request }) => {
         console.log('⚠️ No email found for lead, skipping Brevo sync');
       }
 
-      // Send conversion events for key status changes
+      // Lifecycle conversions via the kit sink. recordLeadEvent fans to GA4
+      // (recommended event on gaClientId) + Google Ads OCI (gclid + action id);
+      // each sink no-ops if its inputs are missing. qualify carries the Ads
+      // Lead_Qualified action; lost/no_response are GA4-only (no action id).
       if (['qualified', 'lost', 'no_response'].includes(newStatus)) {
         const gclid = lead?.['GCLID'];
         const gaClientId = lead?.['GA Client ID'];
 
-        // Google Ads: Lead_Qualified conversion
-        if (newStatus === 'qualified' && gclid) {
-          const gadsCredentials = getGoogleAdsCredentials(env);
-          if (gadsCredentials) {
-            const result = await uploadClickConversion(gadsCredentials, {
-              gclid,
-              conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
-              conversionValue: 100.0,
-            });
-            if (result.ok) {
-              console.log(`✅ Lead_Qualified conversion uploaded for lead ${leadId}`);
-            } else {
-              console.error(`⚠️ Lead_Qualified upload failed: ${result.error || result.partialFailureError}`);
-            }
-          }
-        }
-
-        // GA4: lifecycle events
-        if (gaClientId) {
-          const ga4Credentials = getGa4Credentials(env);
-          if (ga4Credentials) {
-            if (newStatus === 'qualified') {
-              await sendGa4Event(ga4Credentials, gaClientId, 'qualify_lead', {
-                value: 100.0, currency: 'USD',
-              });
-            } else if (newStatus === 'lost') {
-              await sendGa4Event(ga4Credentials, gaClientId, 'disqualify_lead', {
-                disqualified_lead_reason: 'Did not convert',
-              });
-            } else if (newStatus === 'no_response') {
-              await sendGa4Event(ga4Credentials, gaClientId, 'close_unconvert_lead', {
-                unconvert_lead_reason: 'Never responded',
-              });
-            }
-          }
+        if (newStatus === 'qualified') {
+          const r = await recordLeadEvent(env, LeadEvent.Qualify, {
+            gaClientId, gclid,
+            conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
+            value: 100.0, currency: 'USD',
+          });
+          console.log(`📈 qualify_lead (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
+        } else if (newStatus === 'lost') {
+          await recordLeadEvent(env, LeadEvent.Disqualify, {
+            gaClientId, leadParams: { disqualified_lead_reason: 'Did not convert' },
+          });
+        } else if (newStatus === 'no_response') {
+          await recordLeadEvent(env, LeadEvent.Unconvert, {
+            gaClientId, leadParams: { unconvert_lead_reason: 'Never responded' },
+          });
         }
       }
     }
@@ -241,68 +222,33 @@ export const POST: APIRoute = async ({ request }) => {
           const gaClientId = lead?.['GA Client ID'];
 
           if (sheetCol === 'Quote Amount') {
-            // Google Ads: Quote conversion
-            if (gclid) {
-              const gadsCredentials = getGoogleAdsCredentials(env);
-              if (gadsCredentials) {
-                const result = await uploadClickConversion(gadsCredentials, {
-                  gclid,
-                  conversionActionId: CONVERSION_ACTION_QUOTE,
-                  conversionValue: numValue,
-                });
-                if (result.ok) {
-                  console.log(`✅ Quote conversion uploaded for lead ${leadId}: $${numValue}`);
-                } else {
-                  console.error(`⚠️ Quote upload failed: ${result.error || result.partialFailureError}`);
-                }
-              }
-            }
-            // GA4: working_lead (actively working the deal)
-            if (gaClientId) {
-              const ga4Credentials = getGa4Credentials(env);
-              if (ga4Credentials) {
-                await sendGa4Event(ga4Credentials, gaClientId, 'working_lead', {
-                  value: numValue, currency: 'USD', lead_status: 'Quoted',
-                });
-              }
-            }
+            // Quote set → working_lead (GA4) + Quote OCI (Ads) via the kit sink.
+            const r = await recordLeadEvent(env, LeadEvent.Working, {
+              gaClientId, gclid,
+              conversionActionId: CONVERSION_ACTION_QUOTE,
+              value: numValue, currency: 'USD',
+              leadParams: { lead_status: 'Quoted' },
+            });
+            console.log(`📈 working_lead $${numValue} (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
           }
 
           if (sheetCol === 'Order Amount') {
-            // Google Ads: Purchase conversion
-            if (gclid) {
-              const gadsCredentials = getGoogleAdsCredentials(env);
-              if (gadsCredentials) {
-                const result = await uploadClickConversion(gadsCredentials, {
-                  gclid,
-                  conversionActionId: CONVERSION_ACTION_PURCHASE,
-                  conversionValue: numValue,
-                });
-                if (result.ok) {
-                  console.log(`✅ Purchase conversion uploaded for lead ${leadId}: $${numValue}`);
-                } else {
-                  console.error(`⚠️ Purchase upload failed: ${result.error || result.partialFailureError}`);
-                }
-              }
-            }
-            // GA4: close_convert_lead (lead-lifecycle funnel) + purchase (ecommerce revenue)
-            if (gaClientId) {
-              const ga4Credentials = getGa4Credentials(env);
-              if (ga4Credentials) {
-                await sendGa4Event(ga4Credentials, gaClientId, 'close_convert_lead', {
-                  value: numValue, currency: 'USD',
-                });
-              }
-              // GA4 `purchase` so the won booking lands in purchaseRevenue/transactions —
-              // only `purchase` populates GA4 ecommerce revenue. Offline close means no
-              // client-side purchase, so this is the sole purchase event (no double-count).
-              // transaction_id = leadId dedupes re-fires if Order Amount is edited.
-              // GA4-only (no gclid): the Ads purchase OCI already fires above.
-              await recordPurchase(env, {
-                gaClientId,
-                purchase: { transaction_id: leadId, value: numValue, currency: 'USD' },
-              });
-            }
+            // Order set → close_convert_lead (GA4) + Purchase OCI (Ads) via the kit sink.
+            const r = await recordLeadEvent(env, LeadEvent.Convert, {
+              gaClientId, gclid,
+              conversionActionId: CONVERSION_ACTION_PURCHASE,
+              value: numValue, currency: 'USD',
+            });
+            console.log(`📈 close_convert_lead $${numValue} (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
+            // Plus GA4 `purchase` so the won booking lands in purchaseRevenue/transactions —
+            // only `purchase` populates GA4 ecommerce revenue. Offline close means no
+            // client-side purchase, so this is the sole purchase event (no double-count).
+            // transaction_id = leadId dedupes re-fires if Order Amount is edited.
+            // No-ops without gaClientId.
+            await recordPurchase(env, {
+              gaClientId,
+              purchase: { transaction_id: leadId, value: numValue, currency: 'USD' },
+            });
           }
         }
       }
