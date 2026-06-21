@@ -5,6 +5,7 @@ import Header from '../components/sections/Header.astro';
 import Footer from '../components/sections/Footer.astro';
 import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
+import { gtmLoaderScript } from '@peakscape/site-kit/analytics';
 import { consentBootstrapScript, consentBannerScript } from '@peakscape/site-kit/consent';
 
 export interface Props {
@@ -104,39 +105,9 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
   <!-- End attribution capture -->
 
-  <!-- Google Tag Manager - User Interaction Deferred -->
-  <script>
-  // Window augmented with GTM's dataLayer (untyped third-party global).
-  interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
-  const dlw = window as DataLayerWindow;
-
-  // Initialize dataLayer immediately but defer GTM script loading
-  dlw.dataLayer = dlw.dataLayer || [];
-
-  // Load GTM only after user interaction or 3 seconds delay
-  let gtmLoaded = false;
-  function loadGTM() {
-    if (gtmLoaded) return;
-    gtmLoaded = true;
-
-    // Typed equivalent of the standard GTM snippet (id GTM-WCMPN842).
-    dlw.dataLayer = dlw.dataLayer || [];
-    dlw.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    const f = document.getElementsByTagName('script')[0];
-    const j = document.createElement('script');
-    j.async = true;
-    j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WCMPN842';
-    f?.parentNode?.insertBefore(j, f);
-  }
-
-  // Load on user interaction
-  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event =>
-    document.addEventListener(event, loadGTM, {once: true, passive: true})
-  );
-
-  // Fallback: load after 3 seconds
-  setTimeout(loadGTM, 3000);
-  </script>
+  <!-- Google Tag Manager — production-hostname-gated loader (@peakscape/site-kit/analytics).
+       Lazy-loads on interaction / 3s; no-ops on previews + localhost so GA4 stays clean. -->
+  <script is:inline set:html={gtmLoaderScript({ containerId: 'GTM-WCMPN842', hostnames: ['chefnamcatering.com', 'www.chefnamcatering.com'] })} />
   <!-- End Google Tag Manager -->
 </head>
 <body class="bg-brand-white text-brand-indigo">
