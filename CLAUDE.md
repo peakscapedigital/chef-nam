@@ -222,8 +222,7 @@ npm run deploy
 - `/contact` - Contact page
 - `/lp/catering` - Paid-search landing page
 - `/thank-you` - Form submission confirmation
-- `/admin` - Sanity Studio CMS
-  - `/admin/leads` - Internal leads CRM dashboard
+- `/admin` - Sanity Studio CMS (content only — blog/homepage/gallery/venue)
 
 > `src/pages/_drafts/` (office-catering, private-parties) are unbuilt drafts, not live routes.
 
@@ -363,14 +362,16 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Key Integrations
 
 ### Forms & Lead Tracking
-- Form submissions → `/api/submit-form`, which fans ONE lead out to 5 destinations
-  (verified vs `origin/main` 2026-06-21 — see `src/pages/api/submit-form.ts`):
+- Form submissions → `/api/submit-form`, which fans ONE lead out to 4 destinations
+  (see `src/pages/api/submit-form.ts`):
   - **Trello card** — Nam's frontend pipeline kanban (with LEAD_ID + LEAD_RECEIVED custom fields)
   - **Google Sheet** (`Leads` tab, `LEADS_SHEET_ID`) — store of record / lead-count truth
-  - **BigQuery** `leads.website_leads` — analytics/attribution store (gclid + utm + booking_value)
-  - **Firestore** — legacy CRM convenience for `/admin/leads` (non-blocking, being phased out)
+  - **BigQuery** `leads.website_leads` — source of truth for contact dedup, returning-customer
+    detection, and lead-id generation (required; submit-form 500s without it). Headless now —
+    the `/admin/leads` dashboard was retired 2026-06-22; a Sheet-only migration of this contact
+    model is a separate ticket.
   - **Brevo** contact — email lifecycle
-  - (NOT Sanity — Sanity is content/CMS only)
+  - (Firestore + the `/admin/leads` dashboard retired 2026-06-22, SH-014. NOT Sanity — content/CMS only.)
 - **Trello card movement → Sheet** (`src/pages/api/webhooks/trello.ts`): moving a card
   between lists updates the Sheet Status + stage timestamp; setting a Trello custom field
   (e.g. Order Amount) writes to the Sheet column; also syncs status to Brevo and fires
