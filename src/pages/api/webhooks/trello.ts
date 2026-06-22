@@ -16,10 +16,10 @@ import {
   recordLeadEvent,
   recordPurchase,
   LeadEvent,
+  leadEventForStage,
 } from '@peakscape/site-kit/analytics';
 import {
   CONVERSION_ACTION_LEAD_QUALIFIED,
-  CONVERSION_ACTION_QUOTE,
   CONVERSION_ACTION_PURCHASE,
 } from '../../../lib/conversion-actions';
 import {
@@ -29,6 +29,15 @@ import {
 } from '../../../lib/brevo';
 
 export const prerender = false;
+
+// Trello list status → canonical funnel stage (the kit maps stage → GA4 event
+// via leadEventForStage). Only these list moves fire a funnel event; the deeper
+// operational stages (contacted/tasting/invoice/booked) are kanban-only.
+const STATUS_TO_STAGE: Record<string, string> = {
+  qualified: 'working',      // "Qualified (Customer Respond)" list = first two-way reply
+  lost: 'lost',              // real lead that didn't book → close_unconvert_lead
+  no_response: 'disqualified', // never engaged → disqualify_lead
+};
 
 /**
  * HEAD /api/webhooks/trello
@@ -159,30 +168,25 @@ export const POST: APIRoute = async ({ request }) => {
         console.log('⚠️ No email found for lead, skipping Brevo sync');
       }
 
-      // Lifecycle conversions via the kit sink. recordLeadEvent fans to GA4
-      // (recommended event on gaClientId) + Google Ads OCI (gclid + action id);
-      // each sink no-ops if its inputs are missing. qualify carries the Ads
-      // Lead_Qualified action; lost/no_response are GA4-only (no action id).
-      if (['qualified', 'lost', 'no_response'].includes(newStatus)) {
-        const gclid = lead?.['GCLID'];
+      // Trello list status → canonical funnel stage (the per-client adapter).
+      // The "Qualified (Customer Respond)" list = first two-way reply =
+      // working_lead. Lost = a real lead that didn't book (unconvert). No
+      // Response = never engaged (disqualify). All GA4-only — the qualifying
+      // signal Ads optimizes toward is the QUOTE, handled on the field below.
+      const stage = STATUS_TO_STAGE[newStatus];
+      if (stage) {
         const gaClientId = lead?.['GA Client ID'];
-
-        if (newStatus === 'qualified') {
-          const r = await recordLeadEvent(env, LeadEvent.Qualify, {
-            gaClientId, gclid,
-            conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
-            value: 100.0, currency: 'USD',
-          });
-          console.log(`📈 qualify_lead (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
-        } else if (newStatus === 'lost') {
-          await recordLeadEvent(env, LeadEvent.Disqualify, {
-            gaClientId, leadParams: { disqualified_lead_reason: 'Did not convert' },
-          });
-        } else if (newStatus === 'no_response') {
-          await recordLeadEvent(env, LeadEvent.Unconvert, {
-            gaClientId, leadParams: { unconvert_lead_reason: 'Never responded' },
-          });
-        }
+        const event = leadEventForStage(stage)!;
+        const reason = newStatus === 'lost' ? 'Did not convert'
+          : newStatus === 'no_response' ? 'Never responded' : undefined;
+        const r = await recordLeadEvent(env, event, {
+          gaClientId,
+          leadParams: {
+            unconvert_lead_reason: event === LeadEvent.Unconvert ? reason : undefined,
+            disqualified_lead_reason: event === LeadEvent.Disqualify ? reason : undefined,
+          },
+        });
+        console.log(`📈 ${event} (GA4 ${r.ga4.ok ? '✅' : '–'})`);
       }
     }
 
@@ -222,14 +226,15 @@ export const POST: APIRoute = async ({ request }) => {
           const gaClientId = lead?.['GA Client ID'];
 
           if (sheetCol === 'Quote Amount') {
-            // Quote set → working_lead (GA4) + Quote OCI (Ads) via the kit sink.
-            const r = await recordLeadEvent(env, LeadEvent.Working, {
+            // Quote sent = the qualifying act → qualify_lead + Ads Lead_Qualified
+            // (the QUALIFIED_LEAD action Ads optimizes toward). Value = quote amount.
+            const r = await recordLeadEvent(env, LeadEvent.Qualify, {
               gaClientId, gclid,
-              conversionActionId: CONVERSION_ACTION_QUOTE,
+              conversionActionId: CONVERSION_ACTION_LEAD_QUALIFIED,
               value: numValue, currency: 'USD',
               leadParams: { lead_status: 'Quoted' },
             });
-            console.log(`📈 working_lead $${numValue} (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
+            console.log(`📈 qualify_lead $${numValue} (GA4 ${r.ga4.ok ? '✅' : '–'}, Ads ${r.googleAds.ok ? '✅' : '–'})`);
           }
 
           if (sheetCol === 'Order Amount') {
