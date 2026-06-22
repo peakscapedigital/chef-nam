@@ -11,10 +11,6 @@ import {
   createContact,
   updateContactForNewLead
 } from '../../lib/bigquery';
-import {
-  createFirestoreLead,
-  createFirestoreLeadData
-} from '../../lib/firestore';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { createSheetLead } from '../../lib/sheets';
 import { upsertBrevoContact } from '../../lib/brevo';
@@ -461,9 +457,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // LEAD STORE: GOOGLE SHEET (the hub)
       // ========================================
       // The Sheet is the system of record going forward; the Trello webhook reads
-      // GCLID / writes status from it. Written independently of BigQuery so it does
-      // not depend on the legacy store. BigQuery + Firestore stay as a temporary
-      // safety net until the Sheet hub is verified on real leads, then get removed.
+      // GCLID / writes status from it. Written independently of BigQuery, which is
+      // retained for contact dedup / returning-customer detection + lead-id
+      // generation (Firestore + the /admin dashboard were retired 2026-06-22).
       const sheetsCredentials = env.SHEETS_CREDENTIALS;
       if (sheetsCredentials) {
         try {
@@ -497,42 +493,12 @@ export const POST: APIRoute = async ({ request, locals }) => {
         });
 
         // ========================================
-        // 4. INSERT TO FIRESTORE (CRM Lite)
-        // ========================================
-        // Firestore stores minimal fields for mobile CRM operations
-        // BigQuery remains source of truth for analytics/attribution
-        const firestoreCredentials = env.FIREBASE_CREDENTIALS;
-
-        if (firestoreCredentials) {
-          try {
-            const firestoreLeadData = createFirestoreLeadData(data, leadId);
-            const firestoreResult = await createFirestoreLead(
-              firestoreLeadData,
-              projectId, // Same GCP project
-              firestoreCredentials
-            );
-
-            if (firestoreResult.success) {
-              console.log('✅ Lead inserted to Firestore (CRM):', leadId);
-            } else {
-              console.error('⚠️ Firestore insert failed:', firestoreResult.error);
-              // Non-blocking: BigQuery is source of truth, Firestore is for CRM convenience
-            }
-          } catch (firestoreError) {
-            console.error('⚠️ Firestore exception:', firestoreError);
-            // Non-blocking: continue without Firestore
-          }
-        } else {
-          console.log('ℹ️ FIREBASE_CREDENTIALS not configured, skipping Firestore write');
-        }
-
-        // ========================================
-        // 5. CREATE TRELLO CARD (Lead Pipeline)
+        // 4. CREATE TRELLO CARD (Lead Pipeline)
         // ========================================
         await sendToTrello(data, env, leadId);
 
         // ========================================
-        // 6. ADD CONTACT TO BREVO (Email Marketing)
+        // 5. ADD CONTACT TO BREVO (Email Marketing)
         // ========================================
         const brevoApiKey = env.BREVO_API_KEY;
         if (brevoApiKey) {

@@ -3,10 +3,10 @@
  *
  * Mints a short-lived OAuth access token from a service-account key by signing
  * a JWT with WebCrypto (RS256) and exchanging it at the token endpoint. This is
- * the same flow firestore.ts / bigquery.ts use inline; extracted here so the
- * Sheets adapter (and, later, those two) share one implementation.
+ * the same flow bigquery.ts uses inline; extracted here so the Sheets adapter
+ * (and, later, bigquery.ts) share one implementation.
  *
- * Accepts the credential as raw JSON or base64-encoded JSON, like firestore.ts.
+ * Accepts the credential as raw JSON or base64-encoded JSON.
  * Tokens are cached per-scope until ~1 min before expiry.
  */
 
