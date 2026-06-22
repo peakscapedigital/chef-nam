@@ -378,9 +378,14 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - Email notifications via Resend API (Cloudflare Worker)
 - Lead lifecycle + booking events → GA4 (Measurement Protocol) + Google Ads OCI, fired
   server-side from the Trello webhook via the kit `recordLeadEvent`
-  (`@peakscape/site-kit/analytics`, ≥v0.16.2). The legacy bespoke routes
-  `send-lead-event.ts` / `send-google-ads-conversion.ts` + the Sanity lead-CRM Studio
-  actions were retired 2026-06-21 (SH-014). No sGTM — client-side is a standard GTM web container
+  (`@peakscape/site-kit/analytics`, ≥v0.16.3). Canonical funnel (shared with SH via the
+  kit `STAGE_TO_LEAD_EVENT`): **"Qualified (Customer Respond)" list → `working_lead`**
+  (first two-way reply, GA4-only); **Quote Amount set → `qualify_lead`** + Ads
+  Lead_Qualified (the quote is the qualifying act); **Order Amount set →
+  `close_convert_lead`** + Ads Purchase; **Lost → `close_unconvert_lead`**; **No Response
+  → `disqualify_lead`**. The legacy bespoke routes `send-lead-event.ts` /
+  `send-google-ads-conversion.ts` + the Sanity lead-CRM Studio actions were retired
+  2026-06-21 (SH-014). No sGTM — client-side is a standard GTM web container
 - UTM tracking + GCLID capture for attribution
 - Google Ads conversion tracking (offline conversions via GCLID)
 
