@@ -3,6 +3,7 @@ import type { APIRoute } from 'astro';
 // Cloudflare bindings + secrets are now read from the cloudflare:workers
 // virtual module.
 import { serverEnv } from '@peakscape/site-kit/cloudflare';
+import { notifyOps } from '@peakscape/site-kit/ops';
 import {
   insertLead as insertLeadBigQuery,
   createLeadData,
@@ -359,6 +360,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
     // ========================================
     if (!projectId || !credentials) {
       console.error('❌ BigQuery credentials not configured - cannot process lead');
+      await notifyOps(env, {
+        subject: '[Chef Nam] form-submit DOWN — BigQuery creds missing',
+        site: 'chefnamcatering.com',
+      });
       return new Response(
         JSON.stringify({
           success: false,
@@ -530,10 +535,23 @@ export const POST: APIRoute = async ({ request, locals }) => {
       } else {
         console.error('❌ BigQuery lead insert failed:', insertResult.error);
         // Still return success to user - we'll have logs to debug
+        // Pipeline runs in waitUntil, so this is otherwise SILENT — alert ops.
+        await notifyOps(env, {
+          subject: '[Chef Nam] BigQuery lead insert FAILED (source of truth)',
+          site: 'chefnamcatering.com',
+          context: { leadId },
+          error: insertResult.error,
+        });
       }
     } catch (bigQueryError) {
       console.error('❌ BigQuery exception:', bigQueryError);
       // Still return success to user - email notification will still work
+      await notifyOps(env, {
+        subject: '[Chef Nam] lead pipeline EXCEPTION (BigQuery)',
+        site: 'chefnamcatering.com',
+        context: { leadId },
+        error: bigQueryError,
+      });
     }
 
     // Send email notification
