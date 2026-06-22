@@ -159,7 +159,7 @@ export const POST: APIRoute = async ({ request }) => {
           leadEmail, newStatus, brevoApiKey, brevoOptions
         );
 
-        if (brevoResult.success) {
+        if (brevoResult.ok) {
           console.log(`✅ Brevo status updated: ${newStatus}${newStatus === 'won' ? ' (moved to Customers list)' : ''}`);
         } else {
           console.error('⚠️ Brevo status update failed:', brevoResult.error);

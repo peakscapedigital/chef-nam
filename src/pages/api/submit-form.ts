@@ -515,8 +515,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
               submittedAt: new Date().toISOString(),
             }, brevoApiKey);
 
-            if (brevoResult.success) {
-              console.log(`✅ Brevo contact ${brevoResult.created ? 'created' : 'updated'}:`, data.email);
+            if (brevoResult.ok) {
+              console.log(`✅ Brevo contact ${brevoResult.alreadyExists ? 'updated' : 'synced'}:`, data.email);
             } else {
               console.error('⚠️ Brevo contact sync failed:', brevoResult.error);
             }
