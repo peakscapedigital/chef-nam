@@ -6,16 +6,16 @@
  * airtable.ts's create/find/update shape, but is HEADER-NAME based (reads row 1
  * and maps by column name), so reordering columns in the Sheet never breaks it.
  *
- * Auth: service-account token via google-auth.ts (spreadsheets scope), SA key in
- * the SHEETS_CREDENTIALS worker secret (claude-automation, Editor on the Sheet).
- * Non-throwing helpers ({ success, error }) like brevo.ts / firestore.ts.
+ * Auth: service-account token via the kit `getGoogleAccessToken`
+ * (`@peakscape/site-kit/sheets`, spreadsheets scope); SA key in the
+ * SHEETS_CREDENTIALS worker secret (claude-automation, Editor on the Sheet).
+ * Non-throwing helpers ({ success, error }).
  */
 
-import { getGoogleAccessToken } from './google-auth';
+import { getGoogleAccessToken, SHEETS_SCOPE } from '@peakscape/site-kit/sheets';
 import { normalizePhone } from '@peakscape/site-kit/commerce';
 
 const SHEETS_API = 'https://sheets.googleapis.com/v4/spreadsheets';
-const SCOPE = 'https://www.googleapis.com/auth/spreadsheets';
 
 export const LEADS_SHEET_ID = '1n8220JD6Nc0xbCUh6SQnWe3lYl7ioYVeITE2zV8lhcw';
 export const LEADS_TAB = 'Leads';
@@ -171,7 +171,7 @@ export async function createSheetLead(
   extra?: { emailHash?: string; phoneHash?: string }
 ): Promise<SheetResult> {
   try {
-    const token = await getGoogleAccessToken(base64Credentials, SCOPE);
+    const token = await getGoogleAccessToken(base64Credentials, SHEETS_SCOPE);
     const rows = await getRows(token);
     const header = rows[0] || [];
     const idCol = header.indexOf('Lead ID');
@@ -208,7 +208,7 @@ export async function getSheetLead(
   base64Credentials: string
 ): Promise<{ success: boolean; lead?: Record<string, string>; rowNumber?: number; error?: string }> {
   try {
-    const token = await getGoogleAccessToken(base64Credentials, SCOPE);
+    const token = await getGoogleAccessToken(base64Credentials, SHEETS_SCOPE);
     const rows = await getRows(token);
     const header = rows[0] || [];
     const idCol = header.indexOf('Lead ID');
@@ -235,7 +235,7 @@ export async function updateSheetLead(
   base64Credentials: string
 ): Promise<SheetResult> {
   try {
-    const token = await getGoogleAccessToken(base64Credentials, SCOPE);
+    const token = await getGoogleAccessToken(base64Credentials, SHEETS_SCOPE);
     const rows = await getRows(token);
     const header = rows[0] || [];
     const idCol = header.indexOf('Lead ID');
