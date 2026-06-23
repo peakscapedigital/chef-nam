@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
-import { consentBootstrapScript, consentBannerScript } from '@peakscape/site-kit/consent';
+import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED } from '@peakscape/site-kit/consent';
 
 export interface Props {
   title: string;
@@ -61,7 +61,7 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <slot name="head" />
 
   <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBootstrapScript()} />
+  <script is:inline set:html={consentBootstrapScript({ regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
 
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
@@ -96,13 +96,8 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WCMPN842"
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
-  <!-- Cookie consent banner — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBannerScript({
-    accent: '#2C3E50',
-    accentText: '#FFFEFA',
-    background: '#FFFEFA',
-    text: '#2C3E50',
-  })} />
+  <!-- No cookie banner — US-first posture (matches Sugar House): Consent Mode v2
+       region defaults handle compliance (US/RoW granted, EEA/UK/CH denied). -->
 
   <slot />
 

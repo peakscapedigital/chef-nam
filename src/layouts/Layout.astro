@@ -6,7 +6,7 @@ import Footer from '../components/sections/Footer.astro';
 import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
 import { gtmLoaderScript } from '@peakscape/site-kit/analytics';
-import { consentBootstrapScript, consentBannerScript } from '@peakscape/site-kit/consent';
+import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED } from '@peakscape/site-kit/consent';
 
 export interface Props {
   title: string;
@@ -97,7 +97,7 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <slot name="head" />
   
   <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBootstrapScript()} />
+  <script is:inline set:html={consentBootstrapScript({ regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
 
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <!-- Writes utm_*/gclid/fbclid + referrer + lead_source into the `ps_attr` -->
@@ -116,13 +116,8 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   <!-- End Google Tag Manager (noscript) -->
 
-  <!-- Cookie consent banner — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBannerScript({
-    accent: '#2C3E50',
-    accentText: '#FFFEFA',
-    background: '#FFFEFA',
-    text: '#2C3E50',
-  })} />
+  <!-- No cookie banner — US-first posture (matches Sugar House): Consent Mode v2
+       region defaults handle compliance (US/RoW granted, EEA/UK/CH denied). -->
 
   <div class="sticky top-0 z-50">
     <TopBar />
