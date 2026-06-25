@@ -1,17 +1,24 @@
+import { toText, cleanSections, type IndexItem, type IndexSection } from '@peakscape/site-kit/site-index';
 import { client } from './sanity';
 import { allPostsQuery } from './queries';
 
-// Single source of truth for the site's page directory, consumed by both
-// /llms.txt (AI index) and /sitemap (human directory page) so the two can
-// never drift. Paths are site-relative with NO trailing slash (the site uses
-// trailingSlash: 'never'); llms.txt prepends the origin.
+// Per-site config for the shared /llms.txt + /sitemap surfaces. The identical
+// plumbing (types, toText, cleanSections, the llms.txt assembler) lives in
+// @peakscape/site-kit/site-index; this file holds only what's Chef Nam
+// specific: the curated page list and the CMS-backed sections.
+//
+// Paths are site-relative with NO trailing slash (trailingSlash: 'never').
 
-export type IndexItem = { title: string; path: string; desc?: string };
-export type IndexSection = { heading: string; items: IndexItem[] };
+export type { IndexItem, IndexSection };
 
-// Curated, stable pages. Order = importance. Descriptions are hand-written.
-// Mirrors the sitemap.xml exclusion (no /admin) and skips utility/ad routes
-// (api, thank-you, landing pages, drafts).
+export const SITE = {
+  title: 'Chef Nam Catering',
+  blurb:
+    'Full-service catering in Ann Arbor, Michigan for weddings, corporate events, and special occasions, with global flavors and thoughtful hospitality.',
+};
+
+// Curated, stable pages. Mirrors the sitemap.xml /admin exclusion and skips
+// utility/ad routes (api, thank-you, landing pages, drafts).
 export const STATIC_PAGES: IndexItem[] = [
   { path: '/', title: 'Home', desc: 'Chef Nam Catering: full-service catering in Ann Arbor, Michigan for weddings, corporate events, and special occasions with global flavors.' },
   { path: '/about', title: 'About Chef Nam', desc: 'The story behind the chef and the catering company.' },
@@ -28,25 +35,13 @@ export const STATIC_PAGES: IndexItem[] = [
   { path: '/start-planning', title: 'Start Planning', desc: 'Start planning your catered event.' },
 ];
 
-// Flattens a string or Portable Text block array down to plain text.
-export const toText = (v: unknown): string => {
-  if (typeof v === 'string') return v;
-  if (Array.isArray(v)) {
-    return v
-      .map((b: any) =>
-        Array.isArray(b?.children) ? b.children.map((c: any) => c?.text ?? '').join('') : '',
-      )
-      .join(' ');
-  }
-  return '';
-};
-
-// Live Sanity collections that stay auto-fresh. Tolerates a query failure so a
-// CMS hiccup degrades gracefully instead of breaking the page/build.
+// Live Sanity blog posts, kept auto-fresh. Tolerates a query failure so a CMS
+// hiccup degrades gracefully. desc is flattened to a plain string here so the
+// /sitemap page can render it directly (llms.txt re-truncates via the kit).
 export async function getDynamicSections(): Promise<IndexSection[]> {
   const posts = await client.fetch(allPostsQuery).catch(() => []);
 
-  const sections: IndexSection[] = [
+  return cleanSections([
     {
       heading: 'Blog Posts',
       items: (posts as any[]).map((p) => ({
@@ -55,10 +50,5 @@ export async function getDynamicSections(): Promise<IndexSection[]> {
         desc: toText(p.excerpt),
       })),
     },
-  ];
-
-  // Drop empty sections and items missing a title/path.
-  return sections
-    .map((s) => ({ ...s, items: s.items.filter((i) => i.title && i.path) }))
-    .filter((s) => s.items.length);
+  ]);
 }
