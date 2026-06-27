@@ -1,0 +1,10 @@
+# Security headers for static/prerendered assets (the Cloudflare asset layer
+# bypasses Astro middleware). Kept in sync with @peakscape/site-kit/http
+# securityHeaders(); middleware applies the same set to SSR responses.
+# Baseline CSP is the GTM/Stripe/Sanity-safe subset (no script-src restriction).
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  Content-Security-Policy: frame-ancestors 'self'; object-src 'none'; base-uri 'self'
