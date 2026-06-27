@@ -1,0 +1,271 @@
+---
+/**
+ * Terms and Conditions — Chef Nam Catering (operated by Blue Lemon Thai LLC)
+ * Instantiated from the canonical legal template
+ * (systems/webdev/templates/pages/terms-and-conditions.astro).
+ * Catering lead-gen: quotes + bookings, no online payment.
+ */
+import Layout from '../layouts/Layout.astro';
+
+const config = {
+  businessName: 'Chef Nam Catering',
+  businessLegalName: 'Blue Lemon Thai LLC',
+  businessAddress: '4175 Whitmore Lake Rd, Ann Arbor, MI 48105',
+  websiteUrl: 'https://chefnamcatering.com',
+  contactEmail: 'nam@chefnamcatering.com',
+  governingState: 'Michigan',
+  effectiveDate: 'June 26, 2026',
+
+  hasBlog: true,
+  hasContactForm: true,
+  hasQuoteRequest: true,
+  hasBookingOrScheduling: true,
+  acceptsPayments: false,
+  hasEcommerce: false,
+  hasUserAccounts: false,
+  offersServices: true,
+  hasTestimonials: false,
+  hasEmailNewsletter: true,
+  hasSMS: false,
+  allowsUserReviews: false,
+
+  serviceType: 'catering services',
+};
+---
+
+<Layout title="Terms and Conditions" description="Terms and conditions governing the use of the Chef Nam Catering website and services.">
+
+  <article class="legal-section">
+    <h1>Terms and Conditions</h1>
+    <p class="effective-date"><strong>Last Updated:</strong> {config.effectiveDate}</p>
+
+    <div class="prose-content">
+
+      <h2>Agreement to Terms</h2>
+      <p>
+        By accessing or using the website at {config.websiteUrl} (the "Site"),
+        you agree to be bound by these Terms and Conditions.
+        If you do not agree to these terms, do not use the Site.
+      </p>
+      <p>
+        The Site is operated by {config.businessLegalName}
+        ("{config.businessName}," "we," "us," or "our").
+      </p>
+
+      <h2>Use of the Site</h2>
+      <p>You agree to use the Site only for lawful purposes. You may not:</p>
+      <ul>
+        <li>Use the Site in any way that violates applicable laws or regulations</li>
+        <li>Attempt to gain unauthorized access to any part of the Site or its systems</li>
+        <li>Use automated tools (bots, scrapers, crawlers) to access or collect data from the Site without our written permission</li>
+        <li>Submit false, misleading, or fraudulent information through any form on the Site</li>
+        <li>Interfere with or disrupt the Site's operation, servers, or networks</li>
+        <li>Reproduce, distribute, or create derivative works from the Site's content without permission</li>
+      </ul>
+      <p>
+        We reserve the right to restrict or terminate your access to the Site
+        at any time, without notice, for any reason.
+      </p>
+
+      <h2>Intellectual Property</h2>
+      <p>
+        All content on this Site — including text, images, graphics, logos, design,
+        and layout — is the property of {config.businessLegalName} or its licensors
+        and is protected by copyright and other intellectual property laws.
+      </p>
+      <p>
+        You may view and print pages from the Site for your personal, non-commercial use.
+        You may not otherwise reproduce, distribute, modify, or republish any content
+        from this Site without our written permission.
+      </p>
+
+      {config.hasBlog && (
+        <>
+          <h3>Blog Content</h3>
+          <p>
+            Articles, guides, and other editorial content published on our blog are
+            provided for informational purposes. You may share links to our content
+            and quote brief excerpts with attribution. You may not republish full
+            articles without written permission.
+          </p>
+        </>
+      )}
+
+      {config.offersServices && (
+        <>
+          <h2>Description of Services</h2>
+          <p>
+            The Site provides information about {config.serviceType} offered
+            by {config.businessName}. We make reasonable efforts to ensure that
+            descriptions and information about our services are accurate, but
+            we do not guarantee that all information is complete, current, or error-free.
+          </p>
+          <p>
+            Service availability, pricing, and scope may change without notice.
+            Information on the Site does not constitute a binding offer.
+            A catering agreement is formed only when we provide a written proposal,
+            quote, or confirmation that is accepted by both parties.
+          </p>
+        </>
+      )}
+
+      {config.hasContactForm && (
+        <>
+          <h2>Form Submissions and Inquiries</h2>
+          <p>
+            When you submit a contact form, request a quote, or otherwise send
+            us information through the Site, you understand that:
+          </p>
+          <ul>
+            <li>Your submission is an inquiry, not a contract or guarantee of service</li>
+            <li>We will make reasonable efforts to respond but are not obligated to do so within any specific timeframe</li>
+            <li>The information you provide must be accurate and truthful</li>
+            <li>We may use the information you provide to respond to your inquiry and, if you consent, for marketing communications</li>
+          </ul>
+          {config.hasQuoteRequest && (
+            <p>
+              Any estimates or quotes provided through the Site or in response to
+              inquiries are approximations only. Final pricing will be confirmed
+              in a separate written agreement before any event or work begins.
+            </p>
+          )}
+          {config.hasBookingOrScheduling && (
+            <p>
+              Catering and event booking requests submitted through the Site are not
+              confirmed until you receive a confirmation from us.
+              We reserve the right to decline or cancel bookings at our discretion.
+            </p>
+          )}
+        </>
+      )}
+
+      {config.hasEmailNewsletter && (
+        <>
+          <h2>Email Communications</h2>
+          <p>
+            By signing up for our email list, you agree to receive marketing
+            communications from {config.businessName}. You can unsubscribe at any
+            time by clicking the unsubscribe link in any email.
+            Unsubscribing from marketing emails does not affect transactional
+            emails related to your inquiries or active bookings.
+          </p>
+        </>
+      )}
+
+      <h2>Disclaimers</h2>
+      <p>
+        The Site and its content are provided "as is" and "as available"
+        without warranties of any kind, either express or implied, including
+        but not limited to implied warranties of merchantability, fitness for
+        a particular purpose, and non-infringement.
+      </p>
+      <p>We do not warrant that:</p>
+      <ul>
+        <li>The Site will be available at all times or free from errors</li>
+        <li>The information on the Site is complete, accurate, or current</li>
+        <li>The Site is free from viruses or other harmful components</li>
+        {config.offersServices && <li>Any particular result will be achieved through our services</li>}
+      </ul>
+
+      {config.hasBlog && (
+        <p>
+          Blog articles and other informational content are provided for
+          general guidance only and should not be relied upon as professional
+          advice. Always consult a qualified professional for advice specific
+          to your situation.
+        </p>
+      )}
+
+      <h2>Limitation of Liability</h2>
+      <p>
+        To the fullest extent permitted by law, {config.businessLegalName} and
+        its owners, employees, and agents shall not be liable for any indirect,
+        incidental, special, consequential, or punitive damages arising from
+        your use of the Site, including but not limited to:
+      </p>
+      <ul>
+        <li>Loss of profits, revenue, data, or business opportunities</li>
+        <li>Errors or omissions in the Site's content</li>
+        <li>Any unauthorized access to or use of our servers or personal information</li>
+        <li>Any interruption or cessation of transmission to or from the Site</li>
+        <li>Decisions made based on information provided on the Site</li>
+      </ul>
+      <p>
+        This limitation applies whether the alleged liability is based on
+        contract, tort, negligence, strict liability, or any other legal theory,
+        even if we have been advised of the possibility of such damages.
+      </p>
+
+      <h2>Indemnification</h2>
+      <p>
+        You agree to indemnify and hold harmless {config.businessLegalName},
+        its owners, employees, and agents from any claims, damages, losses,
+        or expenses (including reasonable attorney's fees) arising from your
+        use of the Site or violation of these terms.
+      </p>
+
+      <h2>Third-Party Links</h2>
+      <p>
+        The Site may contain links to websites operated by third parties.
+        We do not control and are not responsible for the content, privacy
+        practices, or availability of those sites. A link does not imply
+        endorsement. Use third-party sites at your own risk.
+      </p>
+
+      <h2>Governing Law and Disputes</h2>
+      <p>
+        These terms are governed by and construed in accordance with the laws
+        of the State of {config.governingState}, without regard to its conflict
+        of law provisions.
+      </p>
+      <p>
+        Any disputes arising from these terms or your use of the Site shall be
+        resolved in the state or federal courts located in {config.governingState}.
+        You consent to the personal jurisdiction of those courts.
+      </p>
+
+      <h2>Severability</h2>
+      <p>
+        If any provision of these terms is found to be unenforceable or invalid,
+        that provision will be limited or eliminated to the minimum extent
+        necessary, and the remaining provisions will continue in full force.
+      </p>
+
+      <h2>Changes to These Terms</h2>
+      <p>
+        We may update these Terms and Conditions from time to time.
+        When we make changes, we will update the "Last Updated" date at the
+        top of this page. Continued use of the Site after changes are posted
+        constitutes acceptance of the revised terms.
+      </p>
+
+      <h2>Contact Us</h2>
+      <p>If you have questions about these Terms and Conditions, contact us at:</p>
+      <address>
+        {config.businessName}<br />
+        {config.businessAddress}<br />
+        <a href={`mailto:${config.contactEmail}`}>{config.contactEmail}</a>
+      </address>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  .legal-section { max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem; }
+  .legal-section h1 { margin-bottom: 0.5rem; }
+  .effective-date { opacity: 0.65; font-size: 0.9rem; margin-bottom: 3rem; }
+  .prose-content { line-height: 1.75; }
+  .prose-content h2 {
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  }
+  .prose-content h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
+  .prose-content h3 { margin-top: 1.5rem; }
+  .prose-content p { margin-bottom: 1.25rem; }
+  .prose-content ul { padding-left: 1.5rem; list-style: disc; margin-bottom: 1.25rem; }
+  .prose-content li { margin-bottom: 0.35rem; }
+  .prose-content a { color: inherit; text-decoration: underline; }
+  .prose-content address { font-style: normal; line-height: 1.8; }
+</style>

@@ -1,0 +1,357 @@
+---
+/**
+ * Privacy Policy — Chef Nam Catering (operated by Blue Lemon Thai LLC)
+ * Instantiated from the canonical legal template (systems/webdev/templates/
+ * pages/privacy-policy.astro), tier 1: local service, search ads + conversion
+ * tracking + Google Ads enhanced conversions (hashed PII), no remarketing.
+ */
+import Layout from '../layouts/Layout.astro';
+
+const config = {
+  businessName: 'Chef Nam Catering',
+  businessLegalName: 'Blue Lemon Thai LLC',
+  businessAddress: '4175 Whitmore Lake Rd, Ann Arbor, MI 48105',
+  websiteUrl: 'https://chefnamcatering.com',
+  contactEmail: 'nam@chefnamcatering.com',
+  privacyEmail: 'nam@chefnamcatering.com',
+  state: 'Michigan',
+  effectiveDate: 'June 26, 2026',
+
+  usesGA4: true,
+  usesGTM: true,
+  usesGoogleAdsConversion: true,
+  usesGoogleAdsEnhancedConversions: true,
+  usesGoogleAdsRemarketing: false,
+  usesMetaPixel: false,
+  usesBrevo: true,
+  usesResend: true,
+  usesSanity: true,
+  usesPaymentProcessor: false,
+
+  tier: 1,
+
+  formRetentionMonths: 24,
+  emailRetentionPolicy: 'duration of subscription plus 30 days',
+  ga4RetentionMonths: 14,
+  consentRecordRetentionYears: 5,
+};
+
+// Sharing of hashed identifiers with Google for ad measurement may be "sharing"
+// under CCPA, so the Do-Not-Sell/Share section applies even without remarketing.
+const sharesForAds = config.usesGoogleAdsEnhancedConversions || config.usesGoogleAdsRemarketing || config.usesMetaPixel;
+---
+
+<Layout title="Privacy Policy" description="Privacy policy describing how Chef Nam Catering collects, uses, and protects your information.">
+
+  <article class="legal-section">
+    <h1>Privacy Policy</h1>
+    <p class="effective-date"><strong>Last Updated:</strong> {config.effectiveDate}</p>
+
+    <div class="prose-content">
+
+      <p>
+        {config.businessName}, operated by {config.businessLegalName} ("we," "us," or "our"),
+        operates the website at {config.websiteUrl}. This Privacy Policy describes how we collect,
+        use, and share your personal information when you visit our website, request a catering
+        quote, or contact us through our forms.
+      </p>
+      <p>
+        By using our website, you agree to the collection and use of information as described here.
+        If you do not agree, please do not use the website.
+      </p>
+
+      <h2>Information We Collect</h2>
+
+      <h3>Information You Provide</h3>
+      <p>When you fill out a contact form, request a catering quote, or sign up for our email list, you may provide:</p>
+      <ul>
+        <li>Name</li>
+        <li>Email address</li>
+        <li>Phone number</li>
+        <li>Event details (such as date, location, guest count, and menu preferences)</li>
+        <li>Message content</li>
+      </ul>
+      <p>You choose what information to provide. We only collect what you submit.</p>
+
+      <h3>Information Collected Automatically</h3>
+      <p>When you visit our website, we automatically collect certain information through cookies and similar technologies:</p>
+      <ul>
+        <li>IP address (used to determine approximate geographic location)</li>
+        <li>Browser type and version</li>
+        <li>Device type and operating system</li>
+        <li>Pages visited and time spent on each page</li>
+        <li>Referring website or search terms that brought you here</li>
+        <li>Date and time of your visit</li>
+      </ul>
+
+      <p>
+        If you arrive at our site by clicking on one of our advertisements,
+        we collect information about which ad you clicked and whether you took
+        an action on our site (such as submitting a form). This helps us
+        understand which ads are effective.
+      </p>
+
+      {config.usesGoogleAdsEnhancedConversions && (
+        <p>
+          When you submit a form, we may send a hashed (irreversibly scrambled) version of your
+          email address and phone number to Google to measure the effectiveness of our advertising
+          (a feature called Google Ads enhanced conversions). Hashing means Google receives a coded
+          value, not your actual email or phone number.
+        </p>
+      )}
+
+      <h2>How We Use Your Information</h2>
+      <p>We use the information we collect to:</p>
+      <ul>
+        <li>Respond to your inquiries and provide catering quotes</li>
+        <li>Send you a confirmation when you submit a form</li>
+        {config.usesBrevo && <li>Send you marketing emails if you have opted in (you can unsubscribe at any time)</li>}
+        <li>Analyze how visitors use our website so we can improve it</li>
+        <li>Measure the effectiveness of our advertising campaigns</li>
+        <li>Maintain the security and performance of our website</li>
+      </ul>
+
+      <h2>Cookies and Tracking Technologies</h2>
+      <p>
+        Cookies are small text files stored on your device when you visit a website.
+        We use cookies and similar technologies for the purposes described below.
+      </p>
+
+      <h3>Necessary Cookies</h3>
+      <p>
+        These cookies are required for our website to function properly.
+        They include security cookies from our hosting provider (Cloudflare)
+        and cookies that store your cookie preferences. You cannot opt out of these.
+      </p>
+
+      {config.usesGA4 && (
+        <>
+          <h3>Analytics Cookies</h3>
+          <p>
+            We use Google Analytics (GA4) to understand how visitors interact with our website.
+            Google Analytics uses first-party cookies (<code>_ga</code> and <code>_ga_*</code>)
+            that expire after 2 years. These cookies collect information such as pages visited,
+            time on site, and how you arrived at our website. This data is aggregated and
+            does not personally identify you.
+          </p>
+          <p>
+            You can opt out of Google Analytics by installing the{' '}
+            <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">
+              Google Analytics Opt-out Browser Add-on</a>.
+          </p>
+        </>
+      )}
+
+      {config.usesGoogleAdsConversion && (
+        <>
+          <h3>Advertising Cookies</h3>
+          <p>
+            We use Google Ads to measure the effectiveness of our advertising. When you click one
+            of our ads, Google sets cookies that let us see whether your visit led to an action
+            (such as submitting a quote request). You can manage ad personalization through{' '}
+            <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.
+          </p>
+        </>
+      )}
+
+      <p>
+        You can also control cookies through your browser settings.
+        Most browsers allow you to block or delete cookies.
+        Note that blocking cookies may affect your experience on our website.
+      </p>
+
+      {config.usesBrevo && (
+        <>
+          <h2>Consent Records</h2>
+          <p>
+            When you opt in to receive marketing emails through our forms, we record the following information:
+          </p>
+          <ul>
+            <li>The date and time you gave consent</li>
+            <li>Which types of communication you consented to</li>
+            <li>The version of the consent language you agreed to</li>
+            <li>The page on which you submitted the form</li>
+          </ul>
+          <p>
+            We retain these consent records for {config.consentRecordRetentionYears} years
+            to demonstrate compliance with applicable laws, even if you later unsubscribe.
+          </p>
+        </>
+      )}
+
+      <h2>Who We Share Your Information With</h2>
+      <p>We share your information with the following service providers who help us operate our website and business:</p>
+      <ul>
+        <li><strong>Cloudflare</strong> — Website hosting, content delivery, and security.
+          <a href="https://www.cloudflare.com/privacypolicy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        {config.usesGA4 && (
+          <li><strong>Google Analytics</strong> — Website traffic analysis.
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        )}
+        {config.usesGoogleAdsConversion && (
+          <li><strong>Google Ads</strong> — Advertising measurement, including conversion tracking and enhanced conversions.
+            <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        )}
+        <li><strong>Google Workspace (Sheets)</strong> — We store and manage lead and quote records in Google Sheets.
+          <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        <li><strong>Trello (Atlassian)</strong> — We manage the status of catering inquiries on a Trello board.
+          <a href="https://www.atlassian.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        {config.usesResend && (
+          <li><strong>Resend</strong> — Transactional email delivery (form confirmations).
+            <a href="https://resend.com/legal/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        )}
+        {config.usesBrevo && (
+          <li><strong>Brevo</strong> — Email marketing and subscriber management.
+            <a href="https://www.brevo.com/legal/privacypolicy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        )}
+        {config.usesSanity && (
+          <li><strong>Sanity</strong> — Content management system.
+            <a href="https://www.sanity.io/legal/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</li>
+        )}
+      </ul>
+
+      <p>
+        We do not sell your personal information to third parties for their own marketing purposes.
+      </p>
+
+      {sharesForAds && (
+        <p>
+          When we send hashed identifiers to Google to measure our advertising, information related
+          to your visit may be shared with Google. Under California law (CCPA), this may be considered
+          "sharing" of personal information for cross-context behavioral advertising.
+        </p>
+      )}
+
+      <h2>How Long We Keep Your Information</h2>
+      <p>We retain your information only as long as necessary for the purposes described above:</p>
+      <ul>
+        <li><strong>Contact and quote submissions:</strong> {config.formRetentionMonths} months after your inquiry is resolved, then deleted.</li>
+        {config.usesBrevo && (
+          <li><strong>Email marketing subscribers:</strong> For the {config.emailRetentionPolicy}. Inactive subscribers (no engagement for 24 months) are removed.</li>
+        )}
+        {config.usesGA4 && (
+          <li><strong>Analytics data:</strong> Google Analytics event-level data is retained for {config.ga4RetentionMonths} months. Aggregated reports are retained indefinitely.</li>
+        )}
+        {config.usesGoogleAdsConversion && (
+          <li><strong>Advertising conversion data:</strong> Retained by Google per its data retention policies (typically 90–180 days).</li>
+        )}
+        <li><strong>Server logs:</strong> Retained by our hosting provider (Cloudflare) per their data retention policy.</li>
+        {config.usesResend && (
+          <li><strong>Transactional email records:</strong> Email delivery logs are retained for 30 days by our email provider.</li>
+        )}
+        {config.usesBrevo && (
+          <li><strong>Consent records:</strong> Records of your consent preferences are retained for {config.consentRecordRetentionYears} years for compliance purposes.</li>
+        )}
+      </ul>
+
+      <h2>Your Rights and Choices</h2>
+      <p>You have the following rights regarding your personal information:</p>
+      <ul>
+        <li><strong>Access:</strong> You can request to know what personal information we have about you.</li>
+        <li><strong>Deletion:</strong> You can request that we delete your personal information.</li>
+        <li><strong>Correction:</strong> You can request that we correct inaccurate information.</li>
+        {config.usesBrevo && (
+          <li><strong>Unsubscribe from emails:</strong> You can opt out of marketing emails at any time by clicking the unsubscribe link in any email.</li>
+        )}
+        <li><strong>Analytics opt-out:</strong> You can opt out of Google Analytics using the <a href="https://tools.google.com/dlpage/gaoptout" target="_blank" rel="noopener noreferrer">browser add-on</a>.</li>
+        <li><strong>Ad personalization:</strong> You can opt out of personalized ads through <a href="https://adssettings.google.com" target="_blank" rel="noopener noreferrer">Google Ads Settings</a>.</li>
+      </ul>
+      <p>
+        To exercise any of these rights, contact us at{' '}
+        <a href={`mailto:${config.privacyEmail}`}>{config.privacyEmail}</a>.
+        We will respond within 30 days.
+      </p>
+
+      {sharesForAds && (
+        <>
+          <h2 id="do-not-sell">Do Not Sell or Share My Personal Information</h2>
+          <p>
+            When we send hashed identifiers to advertising platforms (such as Google) to measure
+            our advertising, this may be considered "sharing" under the California Consumer Privacy
+            Act (CCPA).
+          </p>
+          <p>You can opt out of this sharing in any of the following ways:</p>
+          <ul>
+            <li>Submit an opt-out request by emailing <a href={`mailto:${config.privacyEmail}`}>{config.privacyEmail}</a></li>
+            <li>Enable the Global Privacy Control (GPC) signal in your browser — we detect and honor this signal automatically</li>
+          </ul>
+          <p>
+            When you opt out, we will stop sharing your information with advertising
+            platforms. This does not affect other uses of your information (such as
+            responding to your inquiries). We will honor your opt-out for at least 12 months.
+          </p>
+        </>
+      )}
+
+      <h2>Do Not Track Signals</h2>
+      <p>
+        We honor Global Privacy Control (GPC) signals and treat them as opt-out requests for the
+        sharing of personal information. We also respect browser Do Not Track signals by limiting
+        non-essential tracking when detected.
+      </p>
+
+      <h2>Children's Privacy</h2>
+      <p>
+        Our website is not directed at children under 13 years of age.
+        We do not knowingly collect personal information from children under 13.
+        If you believe a child has provided us with personal information,
+        please contact us at <a href={`mailto:${config.privacyEmail}`}>{config.privacyEmail}</a>
+        and we will delete it.
+      </p>
+
+      <h2>Security</h2>
+      <p>
+        We use industry-standard security measures to protect your information,
+        including encrypted connections (HTTPS), secure hosting infrastructure,
+        and limited access to personal data. No method of transmission over the
+        Internet is 100% secure, but we take reasonable steps to protect your information.
+      </p>
+
+      <h2>Third-Party Links</h2>
+      <p>
+        Our website may contain links to other websites. We are not responsible for
+        the privacy practices of other sites. We encourage you to read the privacy
+        policy of any website you visit.
+      </p>
+
+      <h2>Changes to This Policy</h2>
+      <p>
+        We may update this Privacy Policy from time to time.
+        When we make changes, we will update the "Last Updated" date at the top of this page.
+        We encourage you to review this page periodically.
+      </p>
+
+      <h2>Contact Us</h2>
+      <p>If you have questions about this Privacy Policy or want to exercise your rights, contact us at:</p>
+      <address>
+        {config.businessName}<br />
+        {config.businessAddress}<br />
+        <a href={`mailto:${config.privacyEmail}`}>{config.privacyEmail}</a>
+      </address>
+
+    </div>
+  </article>
+
+</Layout>
+
+<style>
+  .legal-section { max-width: 48rem; margin: 0 auto; padding: 4rem 1.5rem; }
+  .legal-section h1 { margin-bottom: 0.5rem; }
+  .effective-date { opacity: 0.65; font-size: 0.9rem; margin-bottom: 3rem; }
+  .prose-content { line-height: 1.75; }
+  .prose-content h2 {
+    margin-top: 3rem; padding-top: 2rem;
+    border-top: 1px solid color-mix(in srgb, currentColor 15%, transparent);
+  }
+  .prose-content h2:first-of-type { border-top: none; padding-top: 0; margin-top: 2rem; }
+  .prose-content h3 { margin-top: 1.5rem; }
+  .prose-content p { margin-bottom: 1.25rem; }
+  .prose-content ul { padding-left: 1.5rem; list-style: disc; margin-bottom: 1.25rem; }
+  .prose-content li { margin-bottom: 0.35rem; }
+  .prose-content a { color: inherit; text-decoration: underline; }
+  .prose-content address { font-style: normal; line-height: 1.8; }
+  .prose-content code {
+    font-size: 0.875em; padding: 0.15em 0.4em; border-radius: 3px;
+    background: color-mix(in srgb, currentColor 8%, transparent);
+  }
+</style>
