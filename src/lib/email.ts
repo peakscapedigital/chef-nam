@@ -7,6 +7,7 @@
 // Uses the REST endpoint (not the `resend` SDK) to avoid a dependency.
 // RESEND_API_KEY is a runtime secret read from cloudflare:workers (Approach C).
 import { serverEnv } from '@peakscape/site-kit/cloudflare';
+import { escapeHtml } from '@peakscape/site-kit/html';
 
 export interface LeadEmailData {
   firstName?: string;
@@ -61,14 +62,14 @@ function buildNotificationHtml(data: LeadEmailData): string {
       ? `
         <h3>Event Details:</h3>
         <ul>
-          <li><strong>Event Type:</strong> ${data.eventType || 'Not specified'}</li>
-          <li><strong>Date:</strong> ${data.eventDate || 'Not specified'}</li>
-          <li><strong>Time:</strong> ${data.eventTime || 'Not specified'}</li>
-          <li><strong>Guest Count:</strong> ${data.guestCount || 'Not specified'}</li>
-          <li><strong>Location:</strong> ${data.location || 'Not specified'}</li>
-          <li><strong>Service Style:</strong> ${data.serviceStyle || 'Not specified'}</li>
-          <li><strong>Budget Range:</strong> ${data.budgetRange || 'Not specified'}</li>
-          <li><strong>Dietary Requirements:</strong> ${Array.isArray(data.dietaryRequirements) ? data.dietaryRequirements.join(', ') : data.dietaryRequirements || 'None'}</li>
+          <li><strong>Event Type:</strong> ${escapeHtml(data.eventType) || 'Not specified'}</li>
+          <li><strong>Date:</strong> ${escapeHtml(data.eventDate) || 'Not specified'}</li>
+          <li><strong>Time:</strong> ${escapeHtml(data.eventTime) || 'Not specified'}</li>
+          <li><strong>Guest Count:</strong> ${escapeHtml(data.guestCount) || 'Not specified'}</li>
+          <li><strong>Location:</strong> ${escapeHtml(data.location) || 'Not specified'}</li>
+          <li><strong>Service Style:</strong> ${escapeHtml(data.serviceStyle) || 'Not specified'}</li>
+          <li><strong>Budget Range:</strong> ${escapeHtml(data.budgetRange) || 'Not specified'}</li>
+          <li><strong>Dietary Requirements:</strong> ${escapeHtml(Array.isArray(data.dietaryRequirements) ? data.dietaryRequirements.join(', ') : data.dietaryRequirements) || 'None'}</li>
         </ul>
       `
       : '<p><em>General inquiry - no specific event details</em></p>';
@@ -79,15 +80,15 @@ function buildNotificationHtml(data: LeadEmailData): string {
     ? `
         <h3 style="color: #F39C12;">📊 Lead Source Information:</h3>
         <ul>
-          <li><strong>Source:</strong> ${data.lead_source || 'Direct'}</li>
-          ${data.utm_campaign ? `<li><strong>Campaign:</strong> ${data.utm_campaign}</li>` : ''}
-          ${data.utm_medium ? `<li><strong>Medium:</strong> ${data.utm_medium}</li>` : ''}
-          ${data.utm_term ? `<li><strong>Keyword:</strong> "${data.utm_term}"</li>` : ''}
-          ${data.utm_content ? `<li><strong>Ad Content:</strong> ${data.utm_content}</li>` : ''}
-          ${data.landing_page ? `<li><strong>Landing Page:</strong> ${data.landing_page}</li>` : ''}
-          ${data.submitted_from_url ? `<li><strong>Form Submitted From:</strong> ${data.submitted_from_url}</li>` : ''}
-          ${data.gclid ? `<li><strong>Google Click ID:</strong> ${data.gclid.substring(0, 20)}...</li>` : ''}
-          ${data.referrer ? `<li><strong>Referrer:</strong> ${data.referrer}</li>` : ''}
+          <li><strong>Source:</strong> ${escapeHtml(data.lead_source) || 'Direct'}</li>
+          ${data.utm_campaign ? `<li><strong>Campaign:</strong> ${escapeHtml(data.utm_campaign)}</li>` : ''}
+          ${data.utm_medium ? `<li><strong>Medium:</strong> ${escapeHtml(data.utm_medium)}</li>` : ''}
+          ${data.utm_term ? `<li><strong>Keyword:</strong> "${escapeHtml(data.utm_term)}"</li>` : ''}
+          ${data.utm_content ? `<li><strong>Ad Content:</strong> ${escapeHtml(data.utm_content)}</li>` : ''}
+          ${data.landing_page ? `<li><strong>Landing Page:</strong> ${escapeHtml(data.landing_page)}</li>` : ''}
+          ${data.submitted_from_url ? `<li><strong>Form Submitted From:</strong> ${escapeHtml(data.submitted_from_url)}</li>` : ''}
+          ${data.gclid ? `<li><strong>Google Click ID:</strong> ${escapeHtml(data.gclid.substring(0, 20))}...</li>` : ''}
+          ${data.referrer ? `<li><strong>Referrer:</strong> ${escapeHtml(data.referrer)}</li>` : ''}
         </ul>
       `
     : '';
@@ -97,9 +98,9 @@ function buildNotificationHtml(data: LeadEmailData): string {
 
         <h3>Contact Information:</h3>
         <ul>
-          <li><strong>Name:</strong> ${data.firstName} ${data.lastName}</li>
-          <li><strong>Email:</strong> <a href="mailto:${data.email}">${data.email}</a></li>
-          <li><strong>Phone:</strong> <a href="tel:${data.phone}">${data.phone}</a></li>
+          <li><strong>Name:</strong> ${escapeHtml(data.firstName)} ${escapeHtml(data.lastName)}</li>
+          <li><strong>Email:</strong> <a href="mailto:${escapeHtml(data.email)}">${escapeHtml(data.email)}</a></li>
+          <li><strong>Phone:</strong> <a href="tel:${escapeHtml(data.phone)}">${escapeHtml(data.phone)}</a></li>
           <li><strong>Preferred Contact:</strong> ${formatContactMethod(data.preferredContact)}</li>
         </ul>
 
@@ -109,12 +110,12 @@ function buildNotificationHtml(data: LeadEmailData): string {
 
         ${data.message ? `
           <h3>Message:</h3>
-          <p>${data.message}</p>
+          <p>${escapeHtml(data.message)}</p>
         ` : ''}
 
         ${data.eventDescription ? `
           <h3>Event Description:</h3>
-          <p>${data.eventDescription}</p>
+          <p>${escapeHtml(data.eventDescription)}</p>
         ` : ''}
 
         <hr>
@@ -125,19 +126,19 @@ function buildNotificationHtml(data: LeadEmailData): string {
 function buildConfirmationHtml(data: LeadEmailData): string {
   return `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <h2 style="color: #2C3E50;">Thank you for your catering inquiry${data.firstName ? ', ' + data.firstName : ''}!</h2>
+          <h2 style="color: #2C3E50;">Thank you for your catering inquiry${data.firstName ? ', ' + escapeHtml(data.firstName) : ''}!</h2>
 
-          <p>Hi ${data.firstName || 'there'},</p>
+          <p>Hi ${escapeHtml(data.firstName) || 'there'},</p>
 
-          <p>Thank you for reaching out to Chef Nam Catering! We've received your inquiry${data.eventType ? ' for your ' + data.eventType : ''} and are excited to help make your event special.</p>
+          <p>Thank you for reaching out to Chef Nam Catering! We've received your inquiry${data.eventType ? ' for your ' + escapeHtml(data.eventType) : ''} and are excited to help make your event special.</p>
 
           ${data.hasEvent === 'yes' || data.hasEvent === true ? `
           <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #F39C12; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #2C3E50;">Your Event Details:</h3>
             <ul style="list-style: none; padding: 0;">
-              ${data.eventType ? `<li><strong>Event:</strong> ${data.eventType}</li>` : ''}
-              ${data.eventDate ? `<li><strong>Date:</strong> ${data.eventDate}</li>` : ''}
-              ${data.guestCount ? `<li><strong>Guests:</strong> ${data.guestCount}</li>` : ''}
+              ${data.eventType ? `<li><strong>Event:</strong> ${escapeHtml(data.eventType)}</li>` : ''}
+              ${data.eventDate ? `<li><strong>Date:</strong> ${escapeHtml(data.eventDate)}</li>` : ''}
+              ${data.guestCount ? `<li><strong>Guests:</strong> ${escapeHtml(data.guestCount)}</li>` : ''}
               ${data.preferredContact ? `<li><strong>Preferred contact:</strong> ${formatContactMethod(data.preferredContact)}</li>` : ''}
             </ul>
           </div>
