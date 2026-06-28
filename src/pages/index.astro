@@ -10,6 +10,7 @@ import BlogPreviewSection from '../components/sections/BlogPreviewSection.astro'
 import CTASection from '../components/sections/CTASection.astro';
 import ContactSection from '../components/sections/ContactSection.astro';
 import { getPosts, getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
+import { caterer, breadcrumbList } from '../lib/schema';
 
 // Fetch dynamic content from Sanity with fallback for performance
 let homepage = null;
@@ -88,162 +89,12 @@ const aboutProps = homepage?.about ? {
     slot="head"
   />
 
-  <!-- Main Business Structured Data -->
-  <script type="application/ld+json" slot="head">
-    {
-      "@context": "https://schema.org",
-      "@type": ["Caterer", "Organization"],
-      "@id": "https://chefnamcatering.com/#caterer",
-      "name": "Chef Nam Catering",
-      "alternateName": "Chef Nam",
-      "description": "Premier catering service in Ann Arbor, Michigan specializing in Thai fusion cuisine for weddings, corporate events, and social gatherings. Professional catering with authentic flavors and exceptional service.",
-      "url": "https://chefnamcatering.com",
-      "logo": {
-        "@type": "ImageObject",
-        "url": "https://chefnamcatering.com/logo.png",
-        "width": 512,
-        "height": 512
-      },
-      "image": [
-        "https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-        "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
-      ],
-      "telephone": "+1-734-623-9799",
-      "hasMap": "https://maps.app.goo.gl/myS6TpT33dQj8C1p6",
-      "email": "nam@chefnamcatering.com",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Ann Arbor",
-        "addressRegion": "MI",
-        "addressCountry": "US",
-        "postalCode": "48104"
-      },
-      "geo": {
-        "@type": "GeoCoordinates",
-        "latitude": 42.2808,
-        "longitude": -83.7430
-      },
-      "areaServed": [
-        { "@type": "Place", "name": "Ann Arbor, Michigan" },
-        { "@type": "Place", "name": "Ypsilanti, Michigan" },
-        { "@type": "Place", "name": "Dexter, Michigan" },
-        { "@type": "Place", "name": "Saline, Michigan" },
-        { "@type": "Place", "name": "Washtenaw County, Michigan" }
-      ],
-      "servesCuisine": [
-        "Thai",
-        "Asian Fusion",
-        "American",
-        "Contemporary"
-      ],
-      "priceRange": "$$-$$$",
-      "currenciesAccepted": "USD",
-      "paymentAccepted": ["Cash", "Credit Card", "Check", "Invoice"],
-      "openingHours": "Mo-Fr 09:00-18:00",
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Catering Services",
-        "itemListElement": [
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Wedding Catering",
-              "description": "Full-service wedding catering with customized menus"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Corporate Catering",
-              "description": "Professional business catering for meetings and events"
-            }
-          },
-          {
-            "@type": "Offer",
-            "itemOffered": {
-              "@type": "Service",
-              "name": "Social Event Catering",
-              "description": "Catering for parties, celebrations, and social gatherings"
-            }
-          }
-        ]
-      },
-      "owns": [
-        {
-          "@type": "Service",
-          "@id": "https://chefnamcatering.com/services/weddings#weddingservice"
-        },
-        {
-          "@type": "Service", 
-          "@id": "https://chefnamcatering.com/services/corporate#corporateservice"
-        },
-        {
-          "@type": "Service",
-          "@id": "https://chefnamcatering.com/services/social#socialservice"
-        }
-      ],
-      "sameAs": [
-        "https://www.facebook.com/chefnamcatering",
-        "https://www.instagram.com/chefnamcatering"
-      ],
-      "foundingDate": "2020",
-      "founder": {
-        "@type": "Person",
-        "name": "Nam",
-        "jobTitle": "Chef and Owner"
-      },
-      "slogan": "Authentic Thai Fusion Catering in Ann Arbor",
-      "knowsAbout": [
-        "Thai Cuisine",
-        "Catering",
-        "Event Planning",
-        "Wedding Catering",
-        "Corporate Events"
-      ]
-    }
-  </script>
+  <!-- Caterer/Organization business node, @id-linked (@peakscape/site-kit/seo).
+       WebSite + SearchAction now emitted globally by Layout. -->
+  <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify(caterer())} />
 
-  <!-- Website Structured Data -->
-  <script type="application/ld+json" slot="head">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "@id": "https://chefnamcatering.com/#website",
-      "url": "https://chefnamcatering.com",
-      "name": "Chef Nam Catering",
-      "description": "Professional catering services in Ann Arbor, Michigan for weddings, corporate events, and social gatherings.",
-      "publisher": {
-        "@type": "Organization",
-        "@id": "https://chefnamcatering.com/#caterer"
-      },
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": {
-          "@type": "EntryPoint",
-          "urlTemplate": "https://chefnamcatering.com/search?q={search_term_string}"
-        },
-        "query-input": "required name=search_term_string"
-      }
-    }
-  </script>
-
-  <!-- BreadcrumbList for Homepage -->
-  <script type="application/ld+json" slot="head">
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        {
-          "@type": "ListItem",
-          "position": 1,
-          "name": "Home",
-          "item": "https://chefnamcatering.com/"
-        }
-      ]
-    }
-  </script>
+  <!-- BreadcrumbList -->
+  <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify(breadcrumbList([{ name: 'Home', url: '/' }]))} />
   <main>
     <HeroSection {...heroProps} height="compact" />
     <AboutPreviewSection {...aboutProps} />
