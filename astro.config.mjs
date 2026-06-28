@@ -18,7 +18,9 @@ export default defineConfig({
   adapter: cloudflare(),
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/admin'),
+      // Exclude admin + pages that serve noindex (thank-you, /lp/ landing pages)
+      // so the sitemap never advertises a URL marked noindex (GSC flags those).
+      filter: (page) => !['/admin', '/thank-you', '/lp/'].some((p) => page.includes(p)),
       serialize(item) {
         // Remove trailing slashes from URLs
         item.url = item.url.replace(/\/$/, '');
