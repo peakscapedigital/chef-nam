@@ -7,6 +7,7 @@ import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
 import { gtmLoaderScript } from '@peakscape/site-kit/analytics';
 import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED } from '@peakscape/site-kit/consent';
+import { webSite } from '../lib/schema';
 
 export interface Props {
   title: string;
@@ -71,24 +72,8 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <meta property="twitter:image:alt" content="Chef Nam Event Catering - Ann Arbor" />
   
   
-  <!-- Site Name for Google -->
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Chef Nam Catering",
-      "alternateName": "Chef Nam",
-      "url": "https://chefnamcatering.com",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Chef Nam Catering",
-        "logo": {
-          "@type": "ImageObject",
-          "url": "https://chefnamcatering.com/favicon.png"
-        }
-      }
-    }
-  </script>
+  <!-- WebSite + SearchAction, @id-linked (@peakscape/site-kit/seo) -->
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(webSite())} />
   
   <title>{title}</title>
   <meta property="og:site_name" content="Chef Nam Catering" />
