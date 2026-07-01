@@ -57,8 +57,8 @@ export const HEAD: APIRoute = async () => {
  *   - Quote Amount custom field is set → Quote conversion
  *   - Order Amount custom field is set → Purchase conversion
  *
- * Trello remains the human kanban + the trigger. (Firestore/BigQuery/Airtable are
- * being retired; this handler no longer reads or writes them.)
+ * Trello remains the human kanban + the trigger; the Google Sheet is the store
+ * of record. (Firestore, BigQuery, and Airtable were retired — CN-006.)
  *
  * Handled events:
  * - updateCard (listAfter)  - card moved between lists = status change

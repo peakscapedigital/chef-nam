@@ -4,14 +4,6 @@ import type { APIRoute } from 'astro';
 // virtual module.
 import { serverEnv } from '@peakscape/site-kit/cloudflare';
 import { notifyOps } from '@peakscape/site-kit/ops';
-import {
-  insertLead as insertLeadBigQuery,
-  createLeadData,
-  sha256Hash,
-  findContactByEmailOrPhone,
-  createContact,
-  updateContactForNewLead
-} from '../../lib/bigquery';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { createSheetLead } from '../../lib/sheets';
 import { upsertBrevoContact } from '../../lib/brevo';
@@ -20,6 +12,15 @@ import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
 // Spam signatures are shared across all sites via the kit (was lib/spam.ts +
 // a local hasSuspiciousMixedCase — both byte-identical to these, now de-forked).
 import { isSolicitationSpam, hasSuspiciousMixedCase } from '@peakscape/site-kit/forms';
+
+// SHA-256 hash for Google Enhanced Conversions (email/phone). WebCrypto only.
+// (Relocated here from the retired lib/bigquery.ts — CN-006.)
+async function sha256Hash(value: string): Promise<string> {
+  const normalized = value.trim().toLowerCase();
+  const encoded = new TextEncoder().encode(normalized);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', encoded);
+  return Array.from(new Uint8Array(hashBuffer)).map((b) => b.toString(16).padStart(2, '0')).join('');
+}
 
 // Check if submission is likely spam
 function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
@@ -343,167 +344,68 @@ export const POST: APIRoute = async ({ request, locals }) => {
       guestCount: data.guestCount
     });
 
-    // Generate UUIDs for lead and potentially new contact
     const leadId = crypto.randomUUID();
 
     // Access Cloudflare env vars + secrets (Astro 6: from cloudflare:workers)
     const env = serverEnv();
-    const projectId = env.BIGQUERY_PROJECT_ID;
-    const credentials = env.BIGQUERY_CREDENTIALS;
-
-    // Track contact info
-    let contactId: string | undefined;
-    let isReturningCustomer = false;
-
-    // ========================================
-    // BIGQUERY-FIRST: Source of Truth
-    // ========================================
-    if (!projectId || !credentials) {
-      console.error('❌ BigQuery credentials not configured - cannot process lead');
-      await notifyOps(env, {
-        subject: '[Chef Nam] form-submit DOWN — BigQuery creds missing',
-        site: 'chefnamcatering.com',
-      });
-      return new Response(
-        JSON.stringify({
-          success: false,
-          message: 'Server configuration error. Please try again later.'
-        }),
-        { status: 500, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
 
     // Run the full lead pipeline in the BACKGROUND so the visitor gets the
-    // confirmation immediately (was ~7s of serial third-party calls). Same
-    // success semantics — this endpoint already returns success regardless of
-    // downstream outcome; Cloudflare's waitUntil guarantees the work completes
-    // after the response. Locally (no cfContext) we await so it still runs.
+    // confirmation immediately (was ~7s of serial third-party calls). Cloudflare's
+    // waitUntil guarantees the work completes after the response. Locally (no
+    // cfContext) we await so it still runs.
     const runPipeline = async () => {
-    try {
-      // ========================================
-      // 1. CHECK FOR EXISTING CONTACT
-      // ========================================
-      console.log('🔍 Checking for existing contact by email/phone...');
-      const contactResult = await findContactByEmailOrPhone(
-        data.email,
-        data.phone,
-        projectId,
-        credentials
-      );
+      try {
+        // Hash email and phone for Google Enhanced Conversions.
+        const emailHash = data.email ? await sha256Hash(data.email) : undefined;
+        const phoneHash = data.phone ? await sha256Hash(data.phone) : undefined;
 
-      if (!contactResult.success) {
-        console.error('❌ Contact lookup failed:', contactResult.error);
-        // Continue with new contact creation
-      }
-
-      if (contactResult.contact) {
         // ========================================
-        // 2a. EXISTING CONTACT - Update it
+        // 1. LEAD STORE: GOOGLE SHEET (system of record)
         // ========================================
-        contactId = contactResult.contact.contact_id;
-        isReturningCustomer = true;
-        console.log('🔄 RETURNING CUSTOMER found:', {
-          contactId,
-          email: contactResult.contact.email,
-          phone: contactResult.contact.phone,
-          totalLeads: contactResult.contact.total_leads
-        });
-
-        // Update contact with new lead info (increment count, add alternates)
-        const updateResult = await updateContactForNewLead(
-          contactId,
-          data.email,
-          data.phone,
-          contactResult.contact,
-          projectId,
-          credentials
-        );
-
-        if (!updateResult.success) {
-          console.error('⚠️ Contact update failed:', updateResult.error);
-          // Continue anyway - lead insert is more important
-        }
-      } else {
-        // ========================================
-        // 2b. NEW CONTACT - Create it
-        // ========================================
-        contactId = crypto.randomUUID();
-        console.log('👤 Creating new contact:', contactId);
-
-        const createResult = await createContact({
-          contact_id: contactId,
-          email: data.email,
-          phone: data.phone,
-          first_name: data.firstName,
-          last_name: data.lastName,
-          preferred_contact: data.preferredContact,
-          first_utm_source: data.utm_source,
-          first_utm_medium: data.utm_medium,
-          first_utm_campaign: data.utm_campaign,
-          first_lead_source: data.lead_source,
-          first_landing_page: data.landing_page,
-          first_referrer: data.referrer,
-        }, projectId, credentials);
-
-        if (!createResult.success) {
-          console.error('⚠️ Contact creation failed:', createResult.error);
-          // Continue anyway - lead insert is more important
-        }
-      }
-
-      // ========================================
-      // 3. INSERT LEAD TO BIGQUERY
-      // ========================================
-      // Hash email and phone for enhanced conversions
-      const emailHash = data.email ? await sha256Hash(data.email) : undefined;
-      const phoneHash = data.phone ? await sha256Hash(data.phone) : undefined;
-
-      // ========================================
-      // LEAD STORE: GOOGLE SHEET (the hub)
-      // ========================================
-      // The Sheet is the system of record going forward; the Trello webhook reads
-      // GCLID / writes status from it. Written independently of BigQuery, which is
-      // retained for contact dedup / returning-customer detection + lead-id
-      // generation (Firestore + the /admin dashboard were retired 2026-06-22).
-      const sheetsCredentials = env.SHEETS_CREDENTIALS;
-      if (sheetsCredentials) {
-        try {
-          const sheetResult = await createSheetLead(data, leadId, sheetsCredentials, { emailHash, phoneHash });
-          if (sheetResult.success) {
-            console.log('✅ Lead written to Sheet:', leadId);
-          } else {
-            console.error('⚠️ Sheet lead write failed:', sheetResult.error);
+        // The Sheet is the single store of record. The Trello webhook reads GCLID
+        // and writes status back from it. (BigQuery + Firestore + the /admin
+        // dashboard were retired 2026-06-30 — CN-006. Sheet-only: no contact-dedup
+        // / returning-customer layer; each lead gets a fresh UUID.)
+        const sheetsCredentials = env.SHEETS_CREDENTIALS;
+        if (!sheetsCredentials) {
+          console.error('❌ SHEETS_CREDENTIALS not configured — lead not stored to Sheet');
+          await notifyOps(env, {
+            subject: '[Chef Nam] form-submit DOWN — Sheets creds missing',
+            site: 'chefnamcatering.com',
+            context: { leadId },
+          });
+        } else {
+          try {
+            const sheetResult = await createSheetLead(data, leadId, sheetsCredentials, { emailHash, phoneHash });
+            if (sheetResult.success) {
+              console.log('✅ Lead written to Sheet:', leadId);
+            } else {
+              console.error('⚠️ Sheet lead write failed:', sheetResult.error);
+              await notifyOps(env, {
+                subject: '[Chef Nam] Sheet lead write FAILED (store of record)',
+                site: 'chefnamcatering.com',
+                context: { leadId },
+                error: sheetResult.error,
+              });
+            }
+          } catch (sheetError) {
+            console.error('⚠️ Sheet exception:', sheetError);
+            await notifyOps(env, {
+              subject: '[Chef Nam] lead pipeline EXCEPTION (Sheet)',
+              site: 'chefnamcatering.com',
+              context: { leadId },
+              error: sheetError,
+            });
           }
-        } catch (sheetError) {
-          console.error('⚠️ Sheet exception:', sheetError);
         }
-      } else {
-        console.log('ℹ️ SHEETS_CREDENTIALS not configured, skipping Sheet write');
-      }
-
-      const leadData = createLeadData({
-        ...data,
-        email_hash: emailHash,
-        phone_hash: phoneHash,
-        contact_id: contactId, // UUID from BigQuery contact
-      }, leadId);
-
-      const insertResult = await insertLeadBigQuery(leadData, projectId, credentials);
-
-      if (insertResult.success) {
-        console.log('✅ Lead inserted to BigQuery:', {
-          leadId,
-          contactId,
-          isReturning: isReturningCustomer
-        });
 
         // ========================================
-        // 4. CREATE TRELLO CARD (Lead Pipeline)
+        // 2. CREATE TRELLO CARD (Lead Pipeline)
         // ========================================
         await sendToTrello(data, env, leadId);
 
         // ========================================
-        // 5. ADD CONTACT TO BREVO (Email Marketing)
+        // 3. ADD CONTACT TO BREVO (Email Marketing)
         // ========================================
         const brevoApiKey = env.BREVO_API_KEY;
         if (brevoApiKey) {
@@ -531,31 +433,18 @@ export const POST: APIRoute = async ({ request, locals }) => {
         } else {
           console.log('ℹ️ BREVO_API_KEY not configured, skipping Brevo sync');
         }
-
-      } else {
-        console.error('❌ BigQuery lead insert failed:', insertResult.error);
-        // Still return success to user - we'll have logs to debug
-        // Pipeline runs in waitUntil, so this is otherwise SILENT — alert ops.
+      } catch (pipelineError) {
+        console.error('❌ Lead pipeline exception:', pipelineError);
         await notifyOps(env, {
-          subject: '[Chef Nam] BigQuery lead insert FAILED (source of truth)',
+          subject: '[Chef Nam] lead pipeline EXCEPTION',
           site: 'chefnamcatering.com',
           context: { leadId },
-          error: insertResult.error,
+          error: pipelineError,
         });
       }
-    } catch (bigQueryError) {
-      console.error('❌ BigQuery exception:', bigQueryError);
-      // Still return success to user - email notification will still work
-      await notifyOps(env, {
-        subject: '[Chef Nam] lead pipeline EXCEPTION (BigQuery)',
-        site: 'chefnamcatering.com',
-        context: { leadId },
-        error: bigQueryError,
-      });
-    }
 
-    // Send email notification
-    await sendEmailNotification(data, false);
+      // Send email notification (the guaranteed safety net — always fires).
+      await sendEmailNotification(data, false);
     };
 
     const cfCtx = (locals as { cfContext?: { waitUntil?: (p: Promise<unknown>) => void } }).cfContext;

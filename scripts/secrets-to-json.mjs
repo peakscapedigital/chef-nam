@@ -1,6 +1,6 @@
 // Convert the build-time .env into a JSON map for `wrangler secret bulk`.
 // JSON format preserves complex values — e.g. the GCP service-account JSON
-// in BIGQUERY_CREDENTIALS / FIREBASE_CREDENTIALS, whose escaped newlines the
+// in SHEETS_CREDENTIALS, whose escaped newlines the
 // .env parser mangles (breaking JSON.parse at runtime). Values are taken
 // verbatim (everything after the first '='); no escape interpretation.
 import { readFileSync, writeFileSync } from 'node:fs';

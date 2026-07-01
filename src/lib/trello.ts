@@ -3,7 +3,7 @@
  * Used by the webhook handler and form submission flow
  *
  * Custom fields on Catering Leads board:
- *   - "Lead ID" (text)         — links card to BigQuery/Firestore lead
+ *   - "Lead ID" (text)         — links card to the Sheet lead row (lead_id)
  *   - "Lead Received" (date)   — submission timestamp for response time tracking
  *   - "Quote Sent" (date)      — when quote was sent
  *   - "Quote Amount" (number)  — quoted dollar amount
