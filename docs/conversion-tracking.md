@@ -1,3 +1,8 @@
+> **SUPERSEDED (2026-07-28).** The canonical standard is now
+> `systems-v2/conversion-tracking-standard.md` (kit `ps_attr` cookie + `@peakscape/site-kit/tracking`,
+> GTM merge-import, GA4 key events). This doc's localStorage capture + Sanity/BigQuery refs are
+> retired — kept only for Chef Nam's historical container/config specifics. Do not copy its patterns.
+
 # Conversion Tracking Implementation Guide
 
 > **STATUS (2026-06-21): partially superseded — read this caveat first.**
