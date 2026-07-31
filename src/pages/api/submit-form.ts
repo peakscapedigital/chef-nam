@@ -3,6 +3,8 @@ import type { APIRoute } from 'astro';
 // Cloudflare bindings + secrets are now read from the cloudflare:workers
 // virtual module.
 import { serverEnv } from '@peakscape/site-kit/cloudflare';
+import { recordConversion } from '@peakscape/site-kit/analytics';
+import { CONVERSION_ACTION_CATERING_LEAD } from '../../lib/conversion-actions';
 import { notifyOps } from '@peakscape/site-kit/ops';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
 import { createSheetLead } from '../../lib/sheets';
@@ -397,6 +399,26 @@ export const POST: APIRoute = async ({ request, locals }) => {
               error: sheetError,
             });
           }
+        }
+
+        // ========================================
+        // 1b. GOOGLE ADS OFFLINE CONVERSION (server-side backup)
+        // ========================================
+        // Fire the "Catering Lead" OCI on every lead carrying a gclid. Deterministic
+        // and independent of the browser Submit Form tag + Consent Mode (the 2026-06-20
+        // consent gate muzzled the browser tag → 0 Ads conversions in Jul 2026). No
+        // eventName is passed, so the GA4 sink is skipped (the client already fired
+        // generate_lead); only the Ads offline upload runs. recordConversion never
+        // throws and logs its own ok/FAIL outcome. Catering Lead is a secondary action
+        // (primaryForGoal=false), so it records in all_conversions without
+        // double-counting the primary Submit Form tag.
+        if (data.gclid) {
+          await recordConversion(env, {
+            gclid: data.gclid,
+            conversionActionId: CONVERSION_ACTION_CATERING_LEAD,
+            value: 0,
+            currency: 'USD',
+          });
         }
 
         // ========================================
