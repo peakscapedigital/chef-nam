@@ -6,7 +6,7 @@ import Footer from '../components/sections/Footer.astro';
 import { getHomepage, urlFor, urlForOptimized } from '../utils/sanity';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
 import { gtmLoaderScript } from '@peakscape/site-kit/analytics';
-import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED } from '@peakscape/site-kit/consent';
+import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED, ALL_GRANTED } from '@peakscape/site-kit/consent';
 import { webSite } from '../lib/schema';
 
 export interface Props {
@@ -81,8 +81,12 @@ const logoAlt = homepage?.logo?.alt || 'Chef Nam Catering';
   <!-- Additional head content from pages -->
   <slot name="head" />
   
-  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBootstrapScript({ regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
+  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent.
+       US-only local business: grant ad_storage/ad_user_data by default (US/RoW) so the
+       Google Ads conversion + linker + EC tags (all gated NEEDED:ad_storage in GTM v27)
+       actually fire; EEA/UK/CH stay denied. Fixes the June-20 collapse where the global
+       US_DEFAULTS denied ad_storage for everyone with no banner to grant it. -->
+  <script is:inline set:html={consentBootstrapScript({ defaults: ALL_GRANTED, regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
 
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <!-- Writes utm_*/gclid/fbclid + referrer + lead_source into the `ps_attr` -->

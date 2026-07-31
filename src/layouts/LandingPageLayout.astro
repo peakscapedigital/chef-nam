@@ -1,7 +1,7 @@
 ---
 import '../styles/global.css';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
-import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED } from '@peakscape/site-kit/consent';
+import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED, ALL_GRANTED } from '@peakscape/site-kit/consent';
 
 export interface Props {
   title: string;
@@ -60,8 +60,10 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <!-- Additional head content -->
   <slot name="head" />
 
-  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent -->
-  <script is:inline set:html={consentBootstrapScript({ regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
+  <!-- Consent Mode v2 defaults (must run before GTM) — @peakscape/site-kit/consent.
+       US-only local business: grant ad_* by default (US/RoW), deny EEA/UK/CH. Restores
+       the Google Ads conversion/linker/EC tags gated NEEDED:ad_storage in GTM v27. -->
+  <script is:inline set:html={consentBootstrapScript({ defaults: ALL_GRANTED, regionDefaults: [{ regions: EEA_UK_REGIONS, defaults: ALL_DENIED }] })} />
 
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
