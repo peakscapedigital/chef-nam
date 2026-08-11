@@ -60,6 +60,7 @@ jobs:
           printf '%s\n' "$ENV_FILE" > .env
           printf 'RESEND_API_KEY=%s\n' "$RESEND_API_KEY" >> .env
           printf 'SHEETS_CREDENTIALS=%s\n' "$SHEETS_CREDENTIALS" >> .env
+          printf 'TRELLO_API_SECRET=%s\n' "$TRELLO_API_SECRET" >> .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
           # Discrete rotatable secret (site-deploy-standard rule 3) for the
@@ -67,6 +68,11 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           # Service-account key (base64) for the Google Sheet lead hub.
           SHEETS_CREDENTIALS: ${{ secrets.SHEETS_CREDENTIALS }}
+          # Trello API Secret (paired with the API KEY at trello.com/app-key; NOT
+          # the token). Verifies the x-trello-webhook HMAC so /api/webhooks/trello
+          # cannot be forged (CN-008). The handler FAILS CLOSED without it: if this
+          # is ever unset the webhook 401s and the lead pipeline stops.
+          TRELLO_API_SECRET: ${{ secrets.TRELLO_API_SECRET }}
 
       - name: Build
         run: npm run build
