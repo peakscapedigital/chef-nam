@@ -4,6 +4,17 @@ on:
   push:
     branches: [main]
     # Doc-only commits never reach the Worker build — skip prod deploys for them.
+    #
+    # This stays a DENYLIST on purpose. An allowlist (`paths:`) is tidier and
+    # fails the wrong way: forget an entry there and the repo silently stops
+    # deploying, so main reads current while production goes stale with nothing
+    # to signal it. Here, forgetting an entry only costs a wasted deploy.
+    # Keep the list short and add only what provably cannot change the build.
+    #
+    # Deliberately NOT ignored, and must never be:
+    #   package.json / package-lock.json — a site-kit bump is a real source change
+    #   src/**, public/**, scripts/**, astro.config.mjs, tsconfig.json,
+    #   tailwind.config.mjs, wrangler.toml
     paths-ignore:
       - '*.md'
       - 'docs/**'
@@ -12,6 +23,15 @@ on:
       # via `sanity deploy`, not the site Worker. Studio-only changes must
       # not trigger a live-site redeploy.
       - 'chef-nam-catering/**'
+      # Inert on the runner: `node-version: 22` ships npm 10.9.8, and
+      # min-release-age did not exist until npm 11.6.0. CI only runs `npm ci`
+      # from the committed lockfile, which resolves nothing. Byte-identical build.
+      - '.npmrc'
+      # A workflow edit must not deploy production. Test with workflow_dispatch
+      # or on a branch.
+      - '.github/**'
+      # Cannot reach the build.
+      - '.gitignore'
 
 concurrency:
   group: deploy-production
