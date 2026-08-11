@@ -23,7 +23,11 @@ High-performance website for Chef Nam Catering, a women-owned Thai fusion cateri
 ### Key URLs
 - **Website**: https://chefnamcatering.com
 - **Sanity Studio**: https://chefnamcatering.com/admin
-- **Email Worker**: https://chefnam-email-worker.dspjson.workers.dev
+
+> There is **no standalone email worker**. `chefnam-email-worker` was never deployed and the
+> send was folded into the site Worker (`src/lib/email.ts`, SYS-008) because a Worker cannot
+> fetch another Worker on the same account by public URL (CF error 1042). The `email-worker/`
+> directory in this repo is dead source — do not deploy it.
 
 ### Environment Variables
 ```bash
@@ -35,130 +39,66 @@ SANITY_API_TOKEN=[stored in Cloudflare env]
 # Site Config
 PUBLIC_SITE_URL=https://chefnamcatering.com
 
-# Email (Cloudflare Worker only)
-RESEND_API_KEY=[stored in Worker env]
+# Email
+RESEND_API_KEY=[Worker secret]   # transactional (lead notify + customer confirm)
+BREVO_API_KEY=[Worker secret]    # marketing list
 
-# Google Cloud / BigQuery
-BIGQUERY_PROJECT_ID=chef-nam-analytics
-BIGQUERY_CREDENTIALS=[base64 encoded service account JSON]
+# Lead store (Google Sheet, system of record)
+SHEETS_CREDENTIALS=[Worker secret]   # claude-automation SA, Editor on the Sheet
+
+# Trello (status write-back)
+TRELLO_API_KEY=[Worker secret]
+TRELLO_API_TOKEN=[Worker secret]
 ```
 
-## Google Cloud Integration
+All secrets are read from the `cloudflare:workers` virtual module via `serverEnv()`, not
+`Astro.locals.runtime.env` (removed in Astro 6 / adapter v13). See `src/env.d.ts`.
 
-### Project Configuration
-- **Google Cloud Project ID**: `chef-nam-analytics`
-- **Google Ads Account ID**: `3871181264`
-- **Authentication**: Service Account with JWT (no Node.js SDK, uses REST API)
+## Lead Pipeline (system of record)
 
-### BigQuery Datasets
+> **BigQuery + Firestore + the `/admin` dashboard were RETIRED 2026-06-30 (CN-006).**
+> `src/lib/bigquery.ts` no longer exists and no `BIGQUERY_*` env var is read anywhere in
+> `src/`. If you find a doc, script, or plan describing a BigQuery lead write, an
+> `analytics.leads` insert, or a Supabase/marketing-crm attribution sync, that is the old
+> reality — do not revive it. Canon: `systems-v2/capability-catalog.md` ("No Airtable,
+> BigQuery, Looker, or warehouse is in any live path") and
+> `systems-v2/conversion-tracking-standard.md:14`.
 
-| Dataset | Purpose | Key Tables/Views |
-|---------|---------|------------------|
-| `leads` | Website form submissions | `website_leads` (partitioned by `submitted_at`, clustered on `status`, `gclid`) |
-| `google_ads_export` | Google Ads data transfer | 50+ views: `ads_CampaignStats_*`, `ads_AdStats_*`, `ads_ConversionStats_*`, etc. |
-| `searchconsole` | Google Search Console data | Search performance data |
-| `analytics_501458691` | GA4 BigQuery export | `events_*`, `pseudonymous_users_*` (daily tables) |
+### The Google Sheet is the store of record
 
-### BigQuery Architecture
-The site uses a custom BigQuery REST API implementation (`src/lib/bigquery.ts`) that:
-- Creates JWTs signed with service account private key
-- Exchanges JWTs for access tokens via Google OAuth
-- Performs streaming inserts and DML queries directly via REST
+Lead writes go to the **Chef Nam Catering - Operations** Sheet, `Leads` tab, through the
+shared kit writer (`@peakscape/site-kit/sheets` → `SheetsTable`) — the same header-name-based
+writer Trombone and Sugar House use. It reads row 1 and maps by column NAME, so reordering
+columns never breaks it. `create` / `get` / `update` are keyed on **Lead ID**.
 
-### Service Account Requirements
-The service account needs these roles:
-- `roles/bigquery.dataEditor` - Insert and update rows
-- `roles/bigquery.jobUser` - Run queries
+- Adapter: `src/lib/sheets.ts` (thin wrapper, non-throwing `{ success, error }` helpers)
+- Auth: `SHEETS_CREDENTIALS` Worker secret — the `claude-automation` SA, Editor on the Sheet
+- Write path: `src/pages/api/submit-form.ts`
+- Sheet-only consequence: there is **no contact-dedup / returning-customer layer**. Every
+  submission gets a fresh UUID.
 
-### Credentials Format
-The `BIGQUERY_CREDENTIALS` env var accepts either:
-1. **Raw JSON** - The full service account JSON file contents
-2. **Base64 encoded** - `base64 -i service-account.json` (preferred for env vars)
+### Status write-back
 
-### BigQuery Table Schema
-```sql
--- leads.website_leads table structure
-CREATE TABLE leads.website_leads (
-  lead_id STRING NOT NULL,
-  first_name STRING,
-  last_name STRING,
-  email STRING,
-  email_hash STRING,        -- SHA256 for enhanced conversions
-  phone STRING,
-  phone_hash STRING,        -- SHA256 for enhanced conversions
-  preferred_contact STRING,
-  has_event BOOL,
-  event_type STRING,
-  event_date DATE,
-  event_time STRING,
-  guest_count STRING,
-  location STRING,
-  service_style STRING,
-  budget_range STRING,
-  dietary_requirements ARRAY<STRING>,
-  message STRING,
-  event_description STRING,
-  gclid STRING,             -- Google Ads click ID
-  ga_client_id STRING,      -- GA4 client ID
-  fbclid STRING,
-  utm_source STRING,
-  utm_medium STRING,
-  utm_campaign STRING,
-  utm_term STRING,
-  utm_content STRING,
-  lead_source STRING,
-  landing_page STRING,
-  referrer STRING,
-  submitted_from_url STRING,
-  status STRING,
-  notes STRING,
-  booking_value FLOAT64,
-  submitted_at TIMESTAMP,
-  status_updated_at TIMESTAMP,
-  notes_updated_at TIMESTAMP,
-  won_at TIMESTAMP,
-  form_source STRING,
-  is_spam BOOL,
-  is_test BOOL
-);
-```
+`src/pages/api/webhooks/trello.ts` reads the GCLID from the Sheet and writes lead status
+back to it. `src/lib/conversion-actions.ts` handles the Google Ads offline conversion upload.
+Enhanced-conversion hashing (SHA-256 of email/phone, WebCrypto only) lives inline in
+`submit-form.ts` — it was relocated there from the retired `lib/bigquery.ts`.
 
-### Local Development with BigQuery
-```bash
-# Set up local environment variables
-export BIGQUERY_PROJECT_ID=chef-nam-analytics
-export BIGQUERY_CREDENTIALS=$(cat /path/to/service-account.json | base64)
+### What still lives in GCP `chef-nam-analytics`
 
-# Or use gcloud CLI for testing queries
-gcloud config set project chef-nam-analytics
-bq query --use_legacy_sql=false 'SELECT * FROM leads.website_leads LIMIT 10'
-```
+The project is ACTIVE and **liened**, but the site does not write to it. It holds
+platform-managed analytics exports and the automation identity:
 
-### Common BigQuery Commands
-```bash
-# List datasets
-bq ls chef-nam-analytics:
+| Dataset / resource | What it is | In the site's path? |
+|---|---|---|
+| `analytics_501458691` | GA4 BigQuery export (Google-managed) | No — read-only analytics |
+| `google_ads_export` | Google Ads data transfer | No — read-only analytics |
+| `searchconsole` | Search Console export | No — read-only analytics |
+| `leads` | The RETIRED lead table | No — dead, retained data only |
+| SA `claude-automation` | Default automation identity (Sheets/Drive/BQ/GTM) | Yes — mints the Sheets token |
 
-# List tables in leads dataset
-bq ls chef-nam-analytics:leads
-
-# Query recent leads
-bq query --use_legacy_sql=false \
-  'SELECT lead_id, first_name, last_name, email, status, submitted_at
-   FROM `chef-nam-analytics.leads.website_leads`
-   ORDER BY submitted_at DESC LIMIT 20'
-
-# Export leads to CSV
-bq extract --destination_format=CSV \
-  chef-nam-analytics:leads.website_leads \
-  gs://your-bucket/leads-export.csv
-```
-
-### Integration with Marketing CRM (Phase 2)
-The PHASE-2-PLAN.md outlines future integration:
-1. Form submissions will also write to Supabase (marketing-crm)
-2. Nightly sync from Supabase → BigQuery for attribution
-3. BigQuery enables joining lead status with GA4/Ads data
+Google Ads account: `3871181264`. Registry of record for all of the above:
+`systems-v2/infrastructure-inventory.md`.
 
 ## Deployment Workflow
 
@@ -198,10 +138,8 @@ npx wrangler deploy --name chef-nam
 ```
 
 ### Email Worker Deployment
-```bash
-cd email-worker
-npm run deploy
-```
+**Removed.** Email sends from the site Worker (`src/lib/email.ts`) and ships with the normal
+deploy above. Running `cd email-worker && npm run deploy` would publish a retired worker.
 
 ## Site Structure
 
@@ -362,16 +300,18 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 ## Key Integrations
 
 ### Forms & Lead Tracking
-- Form submissions → `/api/submit-form`, which fans ONE lead out to 4 destinations
-  (see `src/pages/api/submit-form.ts`):
-  - **Trello card** — Nam's frontend pipeline kanban (with LEAD_ID + LEAD_RECEIVED custom fields)
-  - **Google Sheet** (`Leads` tab, `LEADS_SHEET_ID`) — store of record / lead-count truth
-  - **BigQuery** `leads.website_leads` — source of truth for contact dedup, returning-customer
-    detection, and lead-id generation (required; submit-form 500s without it). Headless now —
-    the `/admin/leads` dashboard was retired 2026-06-22; a Sheet-only migration of this contact
-    model is a separate ticket.
-  - **Brevo** contact — email lifecycle
-  - (Firestore + the `/admin/leads` dashboard retired 2026-06-22, SH-014. NOT Sanity — content/CMS only.)
+- Form submissions → `/api/submit-form`, which fans ONE lead out to **3** destinations, in
+  this order (see `src/pages/api/submit-form.ts`):
+  1. **Google Sheet** (`Leads` tab, `LEADS_SHEET_ID` in `src/lib/sheets.ts`) — the system of
+     record. Written first; everything else is downstream.
+  2. **Trello card** — Nam's pipeline kanban (with LEAD_ID + LEAD_RECEIVED custom fields)
+  3. **Brevo** contact — email lifecycle
+- **BigQuery and Firestore are NOT destinations.** Both were retired 2026-06-30 (CN-006)
+  along with the `/admin/leads` dashboard. The old note that BigQuery was "required" and that
+  "submit-form 500s without it" was wrong as of that retirement — `src/lib/bigquery.ts` no
+  longer exists and no `BIGQUERY_*` secret is read. Sanity is content/CMS only, never leads.
+- **Consequence of Sheet-only:** no contact dedup and no returning-customer detection. Every
+  submission gets a fresh UUID. That model was never re-implemented on the Sheet.
 - **Trello card movement → Sheet** (`src/pages/api/webhooks/trello.ts`): moving a card
   between lists updates the Sheet Status + stage timestamp; setting a Trello custom field
   (e.g. Order Amount) writes to the Sheet column; also syncs status to Brevo and fires
@@ -475,6 +415,14 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 
 ---
 
-**Last Updated**: 2026-06-21 (reconciled against `origin/main`: added missing live pages /graduation-catering, /contact, /lp/catering, /admin/leads; corrected lead storage Sanity → BigQuery/Firestore/Sheets)
+**Last Updated**: 2026-08-10 — reconciled against live `src/`. Removed the BigQuery/Firestore
+lead architecture (retired 2026-06-30, CN-006): env vars, dataset tables, table schema, `bq`
+commands, and the "Phase 2 marketing-crm / Supabase → BigQuery" plan, whose `PHASE-2-PLAN.md`
+no longer exists. Corrected the fan-out from 4 destinations to 3 (Sheet → Trello → Brevo) and
+removed the false claim that submit-form 500s without BigQuery. Removed the standalone email
+worker URL and its deploy step (never deployed; folded into the site Worker, SYS-008).
+Prior: 2026-06-21.
 **Project Status**: LIVE in production with auto-deployment
-**Current Phase**: Ongoing content expansion and optimization; Phase 2 CRM integration planned
+**Current Phase**: Ongoing content expansion and optimization. **No CRM integration is
+planned** — the marketing-crm product is shelved and the BigQuery attribution path it assumed
+is retired (`systems-v2/capability-catalog.md`).
