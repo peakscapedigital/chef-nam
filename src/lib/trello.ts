@@ -11,6 +11,58 @@
  *   - "Order" (text)           — order details
  */
 
+/**
+ * Verify a Trello webhook signature (CN-008).
+ *
+ * Trello signs every webhook POST with:
+ *   x-trello-webhook = base64( HMAC-SHA1( rawRequestBody + callbackURL, apiSecret ) )
+ *
+ * The callback URL must be the EXACT string registered with Trello, byte for byte —
+ * a trailing slash or an http/https mismatch changes the digest and fails every request.
+ * Registered value, read from the Trello API on 2026-08-10:
+ *   https://chefnamcatering.com/api/webhooks/trello
+ *
+ * WebCrypto is native on Workers, so this needs no dependency. The comparison is
+ * constant-time: a fast-exit compare leaks how much of the digest matched, which is
+ * enough to forge one byte at a time.
+ *
+ * @param rawBody   the request body as received, NOT re-serialized from a parsed object
+ * @param signature the `x-trello-webhook` header, or null when absent
+ * @param callbackURL the exact registered callback URL
+ * @param secret    the Trello API Secret (NOT the API token)
+ */
+export async function verifyTrelloWebhook(
+  rawBody: string,
+  signature: string | null,
+  callbackURL: string,
+  secret: string
+): Promise<boolean> {
+  if (!signature) return false;
+
+  const key = await crypto.subtle.importKey(
+    'raw',
+    new TextEncoder().encode(secret),
+    { name: 'HMAC', hash: 'SHA-1' },
+    false,
+    ['sign']
+  );
+  const mac = await crypto.subtle.sign(
+    'HMAC',
+    key,
+    new TextEncoder().encode(rawBody + callbackURL)
+  );
+
+  // base64 of the raw digest, matching Trello's encoding
+  const expected = btoa(String.fromCharCode(...new Uint8Array(mac)));
+
+  if (expected.length !== signature.length) return false;
+  let diff = 0;
+  for (let i = 0; i < expected.length; i++) {
+    diff |= expected.charCodeAt(i) ^ signature.charCodeAt(i);
+  }
+  return diff === 0;
+}
+
 // Custom Field IDs (Catering Leads board)
 export const CUSTOM_FIELD_LEAD_ID = '69b8d1b4dedc722fcd0b9bd1';
 export const CUSTOM_FIELD_LEAD_RECEIVED = '69a080be13db331102cbd35c';

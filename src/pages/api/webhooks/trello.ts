@@ -9,6 +9,7 @@ import {
 import {
   LIST_STATUS_MAP,
   getLeadIdFromCard,
+  verifyTrelloWebhook,
   CUSTOM_FIELD_QUOTE_AMOUNT,
   CUSTOM_FIELD_ORDER_AMOUNT,
 } from '../../../lib/trello';
@@ -65,9 +66,47 @@ export const HEAD: APIRoute = async () => {
  * - updateCustomFieldItem   - custom field value changed (quote/order amounts)
  * - commentCard             - comment added = append to notes
  */
+/** The exact callback URL registered with Trello. The HMAC is computed over
+ *  body + THIS string, so it must match byte for byte. Override per environment
+ *  with TRELLO_CALLBACK_URL (preview deployments register their own URL). */
+const DEFAULT_CALLBACK_URL = 'https://chefnamcatering.com/api/webhooks/trello';
+
 export const POST: APIRoute = async ({ request }) => {
   try {
-    const body = await request.json() as {
+    // CN-008: prove the request came from Trello BEFORE acting on it. Without this
+    // anyone who learns a card ID can post an attacker-chosen Order Amount, which
+    // this handler writes to the Sheet and uploads to Google Ads as a purchase.
+    // Read the RAW body: the HMAC covers the exact bytes Trello signed, so a
+    // re-serialized parse would not reproduce the digest.
+    const rawBody = await request.text();
+
+    const envForAuth = serverEnv();
+    const trelloApiSecret = envForAuth.TRELLO_API_SECRET;
+    const callbackURL = envForAuth.TRELLO_CALLBACK_URL || DEFAULT_CALLBACK_URL;
+
+    if (!trelloApiSecret) {
+      // Fail closed. An unverifiable webhook that still writes conversion data is
+      // the exact defect CN-008 exists to close, so a missing secret is an outage,
+      // not a bypass. Trello disabling the webhook after repeated failures is the
+      // loud signal we want; a silent accept is not.
+      console.error('❌ CN-008: TRELLO_API_SECRET not configured — rejecting webhook');
+      return new Response('unauthorized', { status: 401 });
+    }
+
+    const signature = request.headers.get('x-trello-webhook');
+    const verified = await verifyTrelloWebhook(
+      rawBody, signature, callbackURL, trelloApiSecret
+    );
+
+    if (!verified) {
+      console.error(
+        `❌ CN-008: bad Trello signature (header ${signature ? 'present' : 'MISSING'}, ` +
+        `callback ${callbackURL}) — rejecting`
+      );
+      return new Response('unauthorized', { status: 401 });
+    }
+
+    const body = JSON.parse(rawBody) as {
       action: {
         type: string;
         data: {

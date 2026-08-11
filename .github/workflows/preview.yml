@@ -54,6 +54,7 @@ jobs:
           printf '%s\n' "$ENV_FILE" > .env
           printf 'RESEND_API_KEY=%s\n' "$RESEND_API_KEY" >> .env
           printf 'SHEETS_CREDENTIALS=%s\n' "$SHEETS_CREDENTIALS" >> .env
+          printf 'TRELLO_API_SECRET=%s\n' "$TRELLO_API_SECRET" >> .env
           echo "WORKER_ENV=preview" >> .env
         env:
           ENV_FILE: ${{ secrets.ENV_FILE }}
@@ -62,6 +63,8 @@ jobs:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
           # Service-account key (base64) for the Google Sheet lead hub.
           SHEETS_CREDENTIALS: ${{ secrets.SHEETS_CREDENTIALS }}
+          # Trello webhook HMAC secret (CN-008). Handler fails closed without it.
+          TRELLO_API_SECRET: ${{ secrets.TRELLO_API_SECRET }}
 
       - name: Build
         run: npm run build
