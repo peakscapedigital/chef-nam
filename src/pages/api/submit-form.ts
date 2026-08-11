@@ -53,21 +53,6 @@ function isLikelySpam(data: any): { isSpam: boolean; reason?: string } {
     return { isSpam: true, reason: `Solicitation spam: ${data.email}` };
   }
 
-  // STOPGAP (2026-08): local-lead / "your Google Maps pins" solicitation family
-  // (the "Alex Morgan / Harvest Kitchen" pitch that reached /contact as a fake
-  // inquiry). These signatures now live in @peakscape/site-kit/forms
-  // isSolicitationSpam (kit >= v0.31); Chef Nam pins v0.24.0, so they run here
-  // until the kit dep is bumped. REMOVE this block once that bump lands — the kit
-  // owns these. Kept tight so a real "I found you on Google Maps" inquiry passes.
-  const localLeadSpam = [
-    /only (take|accept|work with) (one|1|a single)\b.{0,40}\bper (area|zip|city|region|town|market)/,
-    /want (them|these|those|the (leads?|traffic|customers?)|that traffic) coming to you instead/,
-    /worth \d+\s*(to|-|–|—)\s*\d+\s*(people|customers?|clients?|leads?|covers|guests)\s*(a|per)\s*month/,
-  ];
-  if (localLeadSpam.some((rx) => rx.test(solicitationText.toLowerCase()))) {
-    return { isSpam: true, reason: 'Solicitation spam: local-lead/GMB pitch' };
-  }
-
   return { isSpam: false };
 }
 
