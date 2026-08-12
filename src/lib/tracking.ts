@@ -14,21 +14,37 @@
  * peakscape-site-kit/src/tracking/CONTRACT.md
  */
 
-import { trackEvent } from '@peakscape/site-kit/tracking';
+import {
+  trackEvent,
+  trackPhoneClick as kitPhoneClick,
+  trackGenerateLead as kitGenerateLead,
+} from '@peakscape/site-kit/tracking';
 
-/** GA4 phone_click. Attribution + page_location auto-attached by the kit. */
+/**
+ * GA4 phone_click — the kit's typed helper owns the payload shape.
+ *
+ * Was a raw `trackEvent('phone_click', …)` that restated the shape locally. That
+ * met the migration bar (no hand-rolled dataLayer.push) and still made phone_click
+ * mean something different here than on the sites using the helper. `event_label`
+ * and `event_category` are dropped: they are Universal Analytics dimensions, GA4
+ * has no such concept, and the live Phone Click tag reads only phone_number and
+ * link_location (verified against the container 2026-08-12).
+ *
+ * `event_label` stays in this signature so call sites keep type-checking; it is
+ * accepted and intentionally not forwarded. Remove it from the call sites, then
+ * from here.
+ */
 export function trackPhoneClick(params: {
   phone_number: string;
   link_text?: string;
   link_location?: string;
+  /** @deprecated UA relic, not forwarded. Drop from call sites. */
   event_label?: string;
 }) {
-  trackEvent('phone_click', {
+  kitPhoneClick({
     phone_number: params.phone_number,
     link_text: params.link_text,
     link_location: params.link_location,
-    event_category: 'engagement',
-    event_label: params.event_label,
   });
 }
 
@@ -64,16 +80,15 @@ export function trackGenerateLead(params: {
   form_name: string;
   form_type: string;
   form_destination?: string;
+  /** @deprecated UA relic, not forwarded. Drop from call sites. */
   event_label?: string;
   user_data?: Record<string, unknown>;
 }) {
-  trackEvent('generate_lead', {
+  kitGenerateLead({
     form_name: params.form_name,
     form_type: params.form_type,
     form_destination: params.form_destination,
-    event_category: 'engagement',
-    event_label: params.event_label,
-    ...(params.user_data ? { user_data: params.user_data } : {}),
+    ...(params.user_data ? { user_data: params.user_data as never } : {}),
   });
 }
 
