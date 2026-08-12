@@ -81,7 +81,7 @@ jobs:
       - name: Push runtime secrets to the preview Worker
         # JSON format (not .env) so service-account JSON values survive intact.
         run: |
-          node scripts/secrets-to-json.mjs
+          node node_modules/@peakscape/site-kit/scripts/secrets-to-json.mjs
           npx wrangler secret bulk secrets.json --name chef-nam-preview
           rm -f secrets.json
         env:

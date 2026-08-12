@@ -111,7 +111,7 @@ jobs:
         # baked into the bundle. JSON format (not .env) so service-account JSON
         # values survive intact. Idempotent; persists across deploys.
         run: |
-          node scripts/secrets-to-json.mjs
+          node node_modules/@peakscape/site-kit/scripts/secrets-to-json.mjs
           npx wrangler secret bulk secrets.json --name chef-nam
           rm -f secrets.json
         env:
