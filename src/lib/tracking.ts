@@ -5,12 +5,11 @@
  * every event). This file only adapts Chef Nam's call sites; it adds no dataLayer
  * logic of its own. Mirrors Sugar House's lib/tracking.ts (the reference adapter).
  *
- * Scope note (2026-06-20): this pass routes every event through the kit and drops
- * the hand-rolled `dataLayer.push` + manual attribution spreads. It deliberately
- * PRESERVES each form's current Enhanced-Conversions field shape (contact sends
- * nested `user_data`; thank-you sends flat email/phone fields) so live EC is
- * unchanged. Normalizing EC to the kit's nested `user_data` everywhere is a
- * separate cross-client step (shared with SH). Contract:
+ * Scope note (2026-08-14): Enhanced-Conversions PII is now nested `user_data` on
+ * BOTH lead paths. The 2026-06-20 pass deliberately left thank-you sending FLAT
+ * email/phone fields so live EC kept resolving; that flat shape was the last
+ * kit-named event bypassing its typed helper. It is gone. `user_data` is built by
+ * the local `userData()` adapter below, never restated at a call site. Contract:
  * peakscape-site-kit/src/tracking/CONTRACT.md
  */
 
@@ -18,7 +17,32 @@ import {
   trackEvent,
   trackPhoneClick as kitPhoneClick,
   trackGenerateLead as kitGenerateLead,
+  trackThankYouLoaded as kitThankYou,
+  type UserData,
 } from '@peakscape/site-kit/tracking';
+
+/**
+ * Build kit Enhanced-Conversions UserData from Chef Nam's flat PII, or undefined
+ * if the page had none — so EC is never sent a hollow object. Mirrors Sugar
+ * House's builder (lib/tracking.ts) minus `zip`, which Chef Nam does not collect.
+ */
+function userData(
+  email?: string,
+  phone?: string,
+  firstName?: string,
+  lastName?: string,
+): UserData | undefined {
+  if (!email && !phone && !firstName && !lastName) return undefined;
+  const ud: UserData = {};
+  if (email) ud.email_address = email;
+  if (phone) ud.phone_number = phone;
+  if (firstName || lastName) {
+    ud.address = {};
+    if (firstName) ud.address.first_name = firstName;
+    if (lastName) ud.address.last_name = lastName;
+  }
+  return ud;
+}
 
 /**
  * GA4 phone_click — the kit's typed helper owns the payload shape.
@@ -93,9 +117,23 @@ export function trackGenerateLead(params: {
 }
 
 /**
- * thank_you_loaded — lead conversion + Enhanced-Conversions data on the thank-you
- * page. PRESERVES the current FLAT EC fields so the live GTM EC variable keeps
- * resolving. The caller still decides whether to skip for test submissions.
+ * thank_you_loaded — the kit's typed helper owns the payload shape. This event is
+ * load-bearing for Ads: trigger 47 fires BOTH the conversion tag (29, awct) and
+ * the Enhanced-Conversions tag (35, awud). The caller still decides whether to
+ * skip for test submissions.
+ *
+ * Was a raw `trackEvent('thank_you_loaded', …)` pushing PII FLAT (`email`,
+ * `phone_number`, `first_name`, `last_name`) while the kit helper takes it nested
+ * under `user_data`. The call-site signature stays flat so thank-you.astro is
+ * unchanged; the flat -> nested map happens here, in the adapter.
+ *
+ * `form_destination: '/thank-you'` is dropped, not carried into the kit. Verified
+ * against the live container 2026-08-14: `{{dlv - form_destination}}` has exactly
+ * one reader, tag 11 `Form Submit - GA4`, and tag 11 fires on trigger 51
+ * (`CE - generate_lead`), never on 47. Nothing on 47 reads it — tag 29 reads no
+ * dataLayer variable at all and tag 35 reads only `{{EC - User Provided Data}}`.
+ * So the kit did NOT need widening here; `trackGenerateLead` already carries the
+ * field for the tag that actually reads it.
  */
 export function trackThankYouLoaded(params: {
   form_type: string;
@@ -105,13 +143,9 @@ export function trackThankYouLoaded(params: {
   firstName?: string;
   lastName?: string;
 }) {
-  trackEvent('thank_you_loaded', {
+  kitThankYou({
     form_type: params.form_type,
     form_name: params.form_name,
-    form_destination: '/thank-you',
-    email: params.email,
-    phone_number: params.phone,
-    first_name: params.firstName,
-    last_name: params.lastName,
+    user_data: userData(params.email, params.phone, params.firstName, params.lastName),
   });
 }
