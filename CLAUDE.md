@@ -127,8 +127,7 @@ gh run list -R peakscapedigital/chef-nam --branch main --limit 3
 > **NOTE (reconciled 2026-06-20):** Deploy is GitHub-Actions-driven `wrangler deploy` to the
 > **Worker** `chef-nam`, NOT Cloudflare Pages. `wrangler pages …` commands and the Pages
 > deployments API do not apply (the Pages project no longer exists). Doc-only commits are
-> path-filtered out of the prod build. `DEPLOY.md` (project `chef-nam-website`,
-> manual-wrangler-first, Pages-era) is stale — this section is authoritative.
+> path-filtered out of the prod build.
 
 ### Manual Deployment (Only if needed)
 ```bash
@@ -337,24 +336,6 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 - UTM parameter tracking
 - Lead source attribution
 
-## Documentation Structure
-
-### Organized Documentation
-```
-/docs/           # Reference materials
-  - seo.md
-  - architecture.md
-  - design.md
-/instructions/   # Behavioral rules
-  - seo.instructions.md
-  - development.instructions.md
-  - design.instructions.md
-/specs/          # Implementation specs
-  - seo.spec.md
-  - architecture.spec.md
-  - design.spec.md
-```
-
 ## Common Commands
 
 ```bash
@@ -415,7 +396,15 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 
 ---
 
-**Last Updated**: 2026-08-10 — reconciled against live `src/`. Removed the BigQuery/Firestore
+**Last Updated**: 2026-08-14 — deleted four docs that still described the retired
+BigQuery/Firestore/Retool/Pages architecture, rather than patching them: `.claude/CLAUDE.md`
+(a second, fully stale CLAUDE.md that also ordered a read of `docs/bigquery.md`, deleted),
+`CONTINUE.md`, `DEPLOY.md` (forked from `systems-v2/playbooks/website/deploy.md`, and listing
+`BIGQUERY_*`/`FIREBASE_*`/`PUBLIC_SUPABASE_*` as live Worker secrets), and
+`docs/form-submission-architecture.md`. Also removed this file's own "Documentation Structure"
+section, which listed `/docs/seo.md`, `/instructions/`, and `/specs/*.spec.md` — none of which
+exist. This file is now the only doc in the repo that describes the stack.
+Prior: 2026-08-10 — reconciled against live `src/`. Removed the BigQuery/Firestore
 lead architecture (retired 2026-06-30, CN-006): env vars, dataset tables, table schema, `bq`
 commands, and the "Phase 2 marketing-crm / Supabase → BigQuery" plan, whose `PHASE-2-PLAN.md`
 no longer exists. Corrected the fan-out from 4 destinations to 3 (Sheet → Trello → Brevo) and
