@@ -27,77 +27,25 @@ import { Icon } from 'astro-icon/components';
           
           <!-- Contact Form -->
           <div class="bg-white rounded-xl shadow-xl border border-gray-100 p-8">
-            <h2 class="text-2xl font-serif font-semibold text-brand-indigo mb-6">Send Us A Message</h2>
-            <p class="text-brand-indigo/70 mb-8">We're always open to questions, feedback, and opportunities.</p>
-            
-            <form id="contact-form" action="#" method="POST" class="space-y-6">
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label for="firstName" class="block text-sm font-medium text-brand-indigo mb-2">First Name *</label>
-                  <input 
-                    type="text" 
-                    id="firstName" 
-                    name="firstName" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
-                  />
-                </div>
-                <div>
-                  <label for="lastName" class="block text-sm font-medium text-brand-indigo mb-2">Last Name *</label>
-                  <input 
-                    type="text" 
-                    id="lastName" 
-                    name="lastName" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
-                  />
-                </div>
-              </div>
-
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <div>
-                  <label for="email" class="block text-sm font-medium text-brand-indigo mb-2">Email Address *</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
-                  />
-                </div>
-                <div>
-                  <label for="phone" class="block text-sm font-medium text-brand-indigo mb-2">Phone Number *</label>
-                  <input 
-                    type="tel" 
-                    id="phone" 
-                    name="phone" 
-                    required
-                    class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label for="message" class="block text-sm font-medium text-brand-indigo mb-2">How Can We Help</label>
-                <textarea 
-                  id="message" 
-                  name="message" 
-                  rows="5"
-                  placeholder="Ask about our services, share feedback, inquire about availability, or tell us about partnership opportunities..."
-                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-amber focus:border-brand-amber"
-                ></textarea>
-              </div>
-
-              <button 
-                type="submit"
-                class="w-full bg-brand-amber text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors"
-              >
-                Submit
-              </button>
-              <p class="text-brand-indigo/60 text-sm text-center">
-                Response within 24 hours • Free consultation • No obligations
-              </p>
-            </form>
+            <h2 class="text-2xl font-serif font-semibold text-brand-indigo mb-6">Planning an Event?</h2>
+            <p class="text-brand-indigo/70 mb-8 leading-relaxed">
+              Tell us your date, guest count and the style of service you have in mind. Those details
+              let us come back with a real menu proposal and pricing, instead of another round of
+              questions.
+            </p>
+            <a
+              href="/start-planning"
+              class="block w-full bg-brand-amber text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-amber/90 transition-colors text-center"
+            >
+              Start Planning Your Event
+            </a>
+            <p class="text-brand-indigo/60 text-sm text-center mt-4">
+              Response within 24 hours &bull; Free consultation &bull; No obligations
+            </p>
+            <p class="text-brand-indigo/70 text-sm mt-8 pt-6 border-t border-gray-200">
+              Prefer to talk first? Call <a href="tel:+17346239799" class="text-brand-amber font-semibold hover:underline">(734) 623-9799</a>
+              or email <a href="mailto:nam@chefnamcatering.com" class="text-brand-amber font-semibold hover:underline">nam@chefnamcatering.com</a>.
+            </p>
           </div>
 
           <!-- Contact Information -->
@@ -265,92 +213,3 @@ import { Icon } from 'astro-icon/components';
 
   </main>
 </Layout>
-
-<script>
-// Short form submission for contact page
-import { trackGenerateLead } from '../lib/tracking';
-
-document.addEventListener('DOMContentLoaded', function() {
-  const form = document.getElementById('contact-form') as HTMLFormElement | null;
-
-  if (form) {
-    form.addEventListener('submit', async function(e) {
-      e.preventDefault();
-
-      const firstName = (document.getElementById('firstName') as HTMLInputElement | null)?.value ?? '';
-      const lastName = (document.getElementById('lastName') as HTMLInputElement | null)?.value ?? '';
-      const email = (document.getElementById('email') as HTMLInputElement | null)?.value ?? '';
-      const phone = (document.getElementById('phone') as HTMLInputElement | null)?.value ?? '';
-      const message = (document.getElementById('message') as HTMLTextAreaElement | null)?.value ?? '';
-      
-      // Validate required fields
-      if (!firstName || !lastName || !email || !phone) {
-        alert('Please fill in all required fields');
-        return;
-      }
-      
-      const submitButton = form.querySelector('button[type="submit"]') as HTMLButtonElement | null;
-      const originalText = submitButton?.textContent ?? '';
-      if (submitButton) {
-        submitButton.textContent = 'Sending...';
-        submitButton.disabled = true;
-      }
-
-      try {
-        // Attribution is read server-side from the first-party `ps_attr` cookie
-        // (SYS-007); the form no longer sends client-gathered attribution fields.
-        const response = await fetch('/api/submit-form', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            firstName: firstName,
-            lastName: lastName,
-            email: email,
-            phone: phone,
-            message: message,
-            source: 'contact',
-            submitted_from_url: window.location.href
-          })
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-          // Lead conversion via the shared kit (attribution auto-attached);
-          // preserves contact's nested user_data for Enhanced Conversions.
-          trackGenerateLead({
-            form_name: 'contact',
-            form_destination: '/api/submit-form',
-            form_type: 'contact_inquiry',
-            event_label: 'Contact Form',
-            user_data: {
-              email_address: email,
-              phone_number: phone,
-              address: {
-                first_name: firstName,
-                last_name: lastName,
-              },
-            },
-          });
-          
-          // Show success message and reset form
-          alert('Thank you for your message! We\'ll get back to you within 24 hours.');
-          form.reset();
-        } else {
-          throw new Error(result.message || 'Failed to submit form');
-        }
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('Sorry, there was an error. Please try again or contact us directly.');
-      } finally {
-        if (submitButton) {
-          submitButton.textContent = originalText;
-          submitButton.disabled = false;
-        }
-      }
-    });
-  }
-});
-</script>
