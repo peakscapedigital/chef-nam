@@ -399,7 +399,7 @@ Zingerman's Catering, Katherine's Catering, Food Art Catered Affairs
 **Last Updated**: 2026-08-14 — deleted four docs that still described the retired
 BigQuery/Firestore/Retool/Pages architecture, rather than patching them: `.claude/CLAUDE.md`
 (a second, fully stale CLAUDE.md that also ordered a read of `docs/bigquery.md`, deleted),
-`CONTINUE.md`, `DEPLOY.md` (forked from `systems-v2/playbooks/website/deploy.md`, and listing
+`CONTINUE.md`, `DEPLOY.md` (forked from `systems-v2/runbooks/website/deploy.md`, and listing
 `BIGQUERY_*`/`FIREBASE_*`/`PUBLIC_SUPABASE_*` as live Worker secrets), and
 `docs/form-submission-architecture.md`. Also removed this file's own "Documentation Structure"
 section, which listed `/docs/seo.md`, `/instructions/`, and `/specs/*.spec.md` — none of which
