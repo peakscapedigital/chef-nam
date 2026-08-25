@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import { attributionCaptureScript } from '@peakscape/site-kit/attribution';
 import { consentBootstrapScript, EEA_UK_REGIONS, ALL_DENIED, ALL_GRANTED } from '@peakscape/site-kit/consent';
+import { gtmLoaderScript } from '@peakscape/site-kit/analytics';
 
 export interface Props {
   title: string;
@@ -68,30 +69,10 @@ const canonicalUrl = canonical || `https://chefnamcatering.com${Astro.url.pathna
   <!-- First-party attribution capture (@peakscape/site-kit, SYS-007) -->
   <script is:inline set:html={attributionCaptureScript({ domain: 'chefnamcatering.com' })} />
 
-  <!-- Google Tag Manager -->
-  <script>
-  // Window augmented with GTM's dataLayer (untyped third-party global).
-  interface DataLayerWindow extends Window { dataLayer?: Record<string, unknown>[]; }
-  const dlw = window as DataLayerWindow;
-  dlw.dataLayer = dlw.dataLayer || [];
-  let gtmLoaded = false;
-  function loadGTM() {
-    if (gtmLoaded) return;
-    gtmLoaded = true;
-    // Typed equivalent of the standard GTM snippet (id GTM-WCMPN842).
-    dlw.dataLayer = dlw.dataLayer || [];
-    dlw.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
-    const f = document.getElementsByTagName('script')[0];
-    const j = document.createElement('script');
-    j.async = true;
-    j.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-WCMPN842';
-    f?.parentNode?.insertBefore(j, f);
-  }
-  ['mousedown', 'touchstart', 'keydown', 'scroll'].forEach(event =>
-    document.addEventListener(event, loadGTM, {once: true, passive: true})
-  );
-  setTimeout(loadGTM, 3000);
-  </script>
+  <!-- Google Tag Manager — production-hostname-gated loader (@peakscape/site-kit/analytics).
+       Eager load (GA4 best practice — don't undercount quick bounces); no-ops on previews + localhost. -->
+  <script is:inline set:html={gtmLoaderScript({ containerId: 'GTM-WCMPN842', hostnames: ['chefnamcatering.com', 'www.chefnamcatering.com'], strategy: 'immediate' })} />
+  <!-- End Google Tag Manager -->
 </head>
 <body class="bg-brand-white text-brand-indigo">
   <!-- GTM noscript -->
