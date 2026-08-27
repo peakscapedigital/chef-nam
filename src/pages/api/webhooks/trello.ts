@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { serverEnv } from '@peakscape/site-kit/cloudflare';
 import {
   getSheetLead,
+  getSheetLeadByCardId,
   updateSheetLead,
   STATUS_DISPLAY,
   STATUS_TIMESTAMP_COLUMN,
@@ -143,6 +144,43 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!sheetsCredentials || !trelloApiKey || !trelloApiToken) {
       console.error('Missing required credentials for webhook processing');
+      return new Response('ok', { status: 200 });
+    }
+
+    // Handle: Card DELETED. Must run BEFORE the Lead ID lookup below, because
+    // that lookup fetches the card and a deleted card is already 404 (probed
+    // 2026-08-27). The payload carries only card.id, so the Sheet's stored
+    // `Trello Card ID` is the sole match key.
+    //
+    // The row is MARKED, never removed: deleting a card is a kanban action, and
+    // silently dropping the marketing record of a real inquiry would destroy the
+    // attribution it was captured for. Nam deleted 8 cards this way; 4 were spam
+    // and 3 were real leads, one of them Qualified with a callback promised.
+    if (actionType === 'deleteCard') {
+      const found = await getSheetLeadByCardId(cardId, sheetsCredentials);
+      if (!found.success || !found.lead) {
+        console.error(`❌ deleteCard ${cardId}: no Sheet row carries this card id (pre-dates the column, or already unlinked)`);
+        return new Response('ok', { status: 200 });
+      }
+      const deletedLeadId = found.lead['Lead ID'];
+      const priorStatus = found.lead['Status'] || '';
+      // Preserve the status it died at; a row that reached Won is a booking whose
+      // card was tidied away, not a lead to reopen.
+      const note = `[${new Date().toISOString().split('T')[0]}] Trello card deleted (was ${priorStatus || 'no status'})`;
+      const existingNotes = found.lead['Notes'] || '';
+      const upd = await updateSheetLead(
+        deletedLeadId,
+        {
+          'Card Deleted At': new Date().toISOString(),
+          Notes: existingNotes ? `${existingNotes}\n${note}` : note,
+        },
+        sheetsCredentials
+      );
+      console.log(
+        upd.success
+          ? `✅ deleteCard: lead ${deletedLeadId} marked (was ${priorStatus})`
+          : `❌ deleteCard: Sheet update FAILED for ${deletedLeadId}: ${upd.error}`
+      );
       return new Response('ok', { status: 200 });
     }
 

@@ -7,7 +7,7 @@ import { recordConversion } from '@peakscape/site-kit/analytics';
 import { CONVERSION_ACTION_CATERING_LEAD } from '../../lib/conversion-actions';
 import { notifyOps } from '@peakscape/site-kit/ops';
 import { CUSTOM_FIELD_LEAD_ID, CUSTOM_FIELD_LEAD_RECEIVED } from '../../lib/trello';
-import { createSheetLead } from '../../lib/sheets';
+import { createSheetLead, updateSheetLead } from '../../lib/sheets';
 import { upsertBrevoContact } from '../../lib/brevo';
 import { sendLeadEmails } from '../../lib/email';
 import { parseAttributionCookie } from '@peakscape/site-kit/attribution';
@@ -425,7 +425,21 @@ export const POST: APIRoute = async ({ request, locals }) => {
         // ========================================
         // 2. CREATE TRELLO CARD (Lead Pipeline)
         // ========================================
-        await sendToTrello(data, env, leadId);
+        // Store the card id on the Sheet row. The deleteCard webhook payload
+        // carries ONLY card.id (no name, no custom fields) and the card is 404
+        // by the time it fires, so this column is the only thing a deletion can
+        // ever be matched on. Without it a deleted card silently orphans its row.
+        const trelloCard = await sendToTrello(data, env, leadId);
+        if (trelloCard?.id && sheetsCredentials) {
+          const linkResult = await updateSheetLead(
+            leadId,
+            { 'Trello Card ID': trelloCard.id },
+            sheetsCredentials
+          );
+          if (!linkResult.success) {
+            console.error('⚠️ Trello card id not written to Sheet:', linkResult.error);
+          }
+        }
 
         // ========================================
         // 3. ADD CONTACT TO BREVO (Email Marketing)

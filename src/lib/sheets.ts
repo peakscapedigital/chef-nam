@@ -175,6 +175,22 @@ export async function getSheetLead(
 }
 
 /**
+ * Find a lead by its Trello card id.
+ *
+ * The deleteCard webhook payload carries only `card.id` -- no name, no email,
+ * no custom fields -- and the card returns 404 from the API the moment it is
+ * deleted (probed 2026-08-27). So the stored card id is the ONLY key a deletion
+ * can be matched on, and without this the row is silently orphaned.
+ */
+export async function getSheetLeadByCardId(
+  cardId: string,
+  base64Credentials: string
+): Promise<{ success: boolean; lead?: Record<string, string>; error?: string }> {
+  const res = await leadsTable(base64Credentials).getByKey('Trello Card ID', cardId);
+  return { success: res.success, lead: res.fields, error: res.error };
+}
+
+/**
  * Patch a lead row (by Lead ID) with header-keyed values. Always stamps
  * "Updated At". Writes only the named columns (other cells untouched). Date columns
  * are promoted to real Sheets dates; everything else stays literal.
