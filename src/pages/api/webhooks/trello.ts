@@ -9,6 +9,7 @@ import {
 } from '../../../lib/sheets';
 import {
   LIST_STATUS_MAP,
+  STAGES_IMPLYING_CONTACT,
   getLeadIdFromCard,
   verifyTrelloWebhook,
   CUSTOM_FIELD_QUOTE_AMOUNT,
@@ -209,8 +210,26 @@ export const POST: APIRoute = async ({ request }) => {
       // Update the Sheet: Status + milestone timestamp (set once per stage)
       const updates: Record<string, string> = { Status: STATUS_DISPLAY[newStatus] || newStatus };
       const timestampCol = STATUS_TIMESTAMP_COLUMN[newStatus];
+      const movedAt = new Date().toISOString();
       if (timestampCol) {
-        updates[timestampCol] = new Date().toISOString();
+        updates[timestampCol] = movedAt;
+      }
+
+      // Backfill Contacted At when a card jumps STRAIGHT PAST the Contacted list.
+      // Reaching Qualified or beyond is only possible if someone made contact, so
+      // the absent stamp is a recording gap, not an untouched lead. Without this,
+      // time-to-first-contact is measured on a biased sample: fast replies are the
+      // ones that skip the column, so the metric over-reports how slow we are.
+      //
+      // Written ONLY when blank. This column means FIRST contact, and a later stage
+      // move must never overwrite the real timestamp with today's date. updateByKey
+      // patches unconditionally, so the guard has to happen here, on a read.
+      if (STAGES_IMPLYING_CONTACT.has(newStatus) && newStatus !== 'contacted') {
+        const current = await getSheetLead(leadId, sheetsCredentials);
+        if (current.success && current.lead && !current.lead['Contacted At']) {
+          updates['Contacted At'] = movedAt;
+          console.log(`✅ Contacted At backfilled (card jumped straight to ${newStatus})`);
+        }
       }
 
       const sheetResult = await updateSheetLead(leadId, updates, sheetsCredentials);

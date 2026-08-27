@@ -85,6 +85,33 @@ export const LIST_STATUS_MAP: Record<string, string> = {
 };
 
 /**
+ * Stages that can only be reached by actually contacting the lead.
+ *
+ * `Contacted At` used to be written ONLY when a card entered the Contacted list,
+ * so dragging New -> Qualified (which is what happens when someone replies fast)
+ * left no stamp at all. Measured 2026-08-27: 29 of 117 post-wiring leads had no
+ * Contacted At, and 14 of those carried a LATER stage stamp -- proof the lead was
+ * worked and the column simply missed it. That made time-to-first-contact
+ * unmeasurable on a quarter of the pipeline, and biased it toward the SLOW cases,
+ * because a fast reply is exactly what skips the column.
+ *
+ * `lost` and `no_response` are deliberately NOT here. `no_response` means never
+ * engaged, and Lost is where stale cards get bulk-dragged in cleanup sweeps
+ * (three were closed within 80 seconds of each other on 2026-06-08). Inferring
+ * contact from either would manufacture the evidence this column exists to hold.
+ */
+export const STAGES_IMPLYING_CONTACT = new Set([
+  'contacted',
+  'qualified',
+  'quoted',
+  'tasting',
+  'invoice_sent',
+  'booked',
+  'invoice_paid',
+  'won',
+]);
+
+/**
  * Fetch the Lead ID from a Trello card's custom fields
  */
 export async function getLeadIdFromCard(
