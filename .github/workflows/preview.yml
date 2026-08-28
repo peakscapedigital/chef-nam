@@ -69,6 +69,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check internal links (blocking)
+        # Now gradeable: this site prerenders since the output:'static'
+        # switch. Blocks on an internal 301 hop or a dead link.
+        run: npx site-kit check-links
+
       - name: Deploy preview to Cloudflare Workers
         # --name override gives a separate preview Worker (chef-nam-preview) with
         # its own auto-provisioned chef-nam-preview-session KV. Apex domain stays

@@ -1,4 +1,11 @@
 ---
+// SSR, deliberately. This route returns a real 302 Response, which a prerendered
+// page cannot do: under output:'static' Astro degrades it to a meta-refresh page
+// that makes the browser wait ~2s and briefly renders a redirect notice. One
+// route opting out is the fleet pattern (Tier A / Tier B) -- it does NOT require
+// output:'server' for the whole site.
+export const prerender = false;
+
 // Redirect to Sanity Studio
 // Production: Sanity managed hosting
 // Development: Local studio on port 3333
