@@ -97,6 +97,11 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Check internal links (blocking)
+        # Now gradeable: this site prerenders since the output:'static'
+        # switch. Blocks on an internal 301 hop or a dead link.
+        run: npx site-kit check-links
+
       - name: Deploy to Cloudflare Workers
         # @astrojs/cloudflare v13 writes .wrangler/deploy/config.json at repo
         # root pointing wrangler at dist/. Worker name comes from wrangler.toml

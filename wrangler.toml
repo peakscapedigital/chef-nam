@@ -9,6 +9,17 @@ compatibility_flags = ["nodejs_compat"]
 # Workers Logs — retains console.* (incl. site-kit recordConversion + notifyOps
 # output) so the backgrounded lead pipeline's failures are debuggable. Standard
 # for all client workers (see systems-v2/site-deploy-standard.md).
+# Astro's trailingSlash:'never' governs the SSR routes; this governs the
+# PRERENDERED ones, and without it the two disagree. Cloudflare's asset layer
+# defaults to html_handling="auto-trailing-slash", which serves a folder index
+# (about/index.html) WITH a slash -- so every canonical bare URL 307'd to the
+# slashed form the moment this site went static. Measured on the preview:
+# /about -> 307 -> /about/, the exact inverse of production. drop-trailing-slash
+# makes the asset layer match the site's own convention.
+[assets]
+html_handling = "drop-trailing-slash"
+not_found_handling = "404-page"
+
 [observability]
 enabled = true
 

@@ -9,12 +9,18 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://chefnamcatering.com',
-  output: 'server', // Server mode required for API endpoints
+  // WAS output:'server' with the comment "Server mode required for API endpoints".
+  // That was wrong, and it was the first site in the portfolio, so nobody
+  // revisited it. Both API routes (submit-form, webhooks/trello) already declare
+  // `export const prerender = false` themselves, which is what actually opts a
+  // route into SSR; /admin does the same because it returns a 302 Response.
+  // Everything else prerenders and is edge-cached. Measured on the switch: 0
+  // static pages before, 21 after, with all three SSR routes intact.
+  output: 'static',
   trailingSlash: 'never', // Redirect trailing slashes to non-trailing slash URLs
   // @astrojs/cloudflare v13 removed the `mode` and `functionPerRoute` options
   // (v12-era). v13 builds a single directory Worker by default, so bare
   // cloudflare() reproduces the prior mode:'directory' / functionPerRoute:false
-  // behavior. output:'server' stays — this site has API routes (submit-form).
   adapter: cloudflare(),
   integrations: [
     sitemap({
