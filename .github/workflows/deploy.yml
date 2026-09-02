@@ -1,6 +1,7 @@
 name: Deploy to Cloudflare Workers (production)
 
 on:
+  workflow_dispatch:
   push:
     branches: [main]
     # Doc-only commits never reach the Worker build — skip prod deploys for them.
@@ -102,23 +103,17 @@ jobs:
         # switch. Blocks on an internal 301 hop or a dead link.
         run: npx site-kit check-links
 
-      - name: Deploy to Cloudflare Workers
-        # @astrojs/cloudflare v13 writes .wrangler/deploy/config.json at repo
-        # root pointing wrangler at dist/. Worker name comes from wrangler.toml
-        # (chef-nam). SESSION KV is auto-provisioned as chef-nam-session.
-        run: npx wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-
-      - name: Push runtime secrets to the Worker (Approach C)
-        # Server code reads secrets at runtime via `cloudflare:workers` — NOT
-        # baked into the bundle. JSON format (not .env) so service-account JSON
-        # values survive intact. Idempotent; persists across deploys.
+      - name: Deploy code and runtime secrets to Cloudflare Workers
+        # One deployment owns code, config, secrets, and provenance. A separate
+        # `wrangler secret bulk` would immediately create an untagged active
+        # version. Existing secrets omitted from secrets.json are preserved.
         run: |
+          trap 'rm -f secrets.json' EXIT
           node node_modules/@peakscape/site-kit/scripts/secrets-to-json.mjs
-          npx wrangler secret bulk secrets.json --name chef-nam
-          rm -f secrets.json
+          npx wrangler deploy \
+            --secrets-file secrets.json \
+            --tag "$GITHUB_SHA" \
+            --message "repo=$GITHUB_REPOSITORY sha=$GITHUB_SHA run=$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
