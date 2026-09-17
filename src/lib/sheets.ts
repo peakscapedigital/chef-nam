@@ -12,7 +12,7 @@
  */
 
 import { SheetsTable, sheetDate, type CellValue } from '@peakscape/site-kit/sheets';
-import { normalizePhone } from '@peakscape/site-kit/commerce';
+import { normalizePhone } from '@peakscape/site-kit/forms';
 
 export const LEADS_SHEET_ID = '1n8220JD6Nc0xbCUh6SQnWe3lYl7ioYVeITE2zV8lhcw';
 export const LEADS_TAB = 'Leads';
