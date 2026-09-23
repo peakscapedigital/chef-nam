@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "site-kit gen-headers",
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
